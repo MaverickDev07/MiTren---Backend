@@ -1,18 +1,21 @@
 import boom from "boom";
 import cors from "cors";
-import express, { json, urlencoded } from "express";
+import express, { Application, json, urlencoded } from "express";
 import fs from "fs";
 import helmet from "helmet";
 import morgan from "morgan";
 
-// import config from "./config/";
+import "./database/connection";
+import EnvManager from "./EnvManager";
+import errorHandler from "./middlewares/errorHandler";
 
 // App
-const app = express();
+const app: Application = express();
 const pkg = JSON.parse(fs.readFileSync("package.json", "utf-8"));
-const port = process.env.PORT ?? 3000;
+const port = EnvManager.getPort(3000);
 
 // Settings
+app.disable("x-powered-by");
 app.set("pkg", pkg);
 app.set("port", port);
 
@@ -50,6 +53,7 @@ app.get("/", (req, res) => {
     license: app.get("pkg").license,
     author: app.get("pkg").author,
     homepage: app.get("pkg").homepage,
+    environment: process.env.NODE_ENV,
   });
 });
 
@@ -61,5 +65,8 @@ app.use((req, res) => {
 
   res.status(statusCode).json(payload);
 });
+
+// Error handlers
+app.use(errorHandler);
 
 export default app;

@@ -1,11 +1,16 @@
-type ErrorName =
+export type ErrorName =
   | "NOT_FOUND_ERROR"
   | "CONNECTION_ERROR"
   | "METHOD_NOT_IMPLEMENTED"
   | "FILTER_BY_ERROR";
-type ErrorCode = "ERR_NF" | "ERR_REMOTE" | "NOT_IMPL" | "ERR_VALID" | "ERR_FTB";
+export type ErrorCode =
+  | "ERR_NF"
+  | "ERR_REMOTE"
+  | "NOT_IMPL"
+  | "ERR_VALID"
+  | "ERR_FTB";
 
-type ValidationError = {
+export type ValidationError = {
   error: {
     message: string;
     code: ErrorCode;

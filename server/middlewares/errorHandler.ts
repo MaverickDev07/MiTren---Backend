@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from "express";
-import ApiError from "../errors/ApiError";
 import Joi from "joi";
+
+import ApiError from "../errors/ApiError";
+import { type ValidationError } from "../utils/types";
 
 export default function errorHandler(
   error: Error,
