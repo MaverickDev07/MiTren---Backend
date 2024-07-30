@@ -5,9 +5,6 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
-  '@sequelize/core':
-    specifier: 7.0.0-alpha.37
-    version: 7.0.0-alpha.37
   '@sequelize/mssql':
     specifier: 7.0.0-alpha.41
     version: 7.0.0-alpha.41
@@ -38,9 +35,15 @@ dependencies:
   morgan:
     specifier: ^1.10.0
     version: 1.10.0
+  sequelize:
+    specifier: ^6.37.3
+    version: 6.37.3(tedious@18.3.0)
   sequelize-typescript:
     specifier: ^2.1.6
     version: 2.1.6(@types/node@20.14.12)(@types/validator@13.12.0)(reflect-metadata@0.2.2)(sequelize@6.37.3)
+  tedious:
+    specifier: ^18.3.0
+    version: 18.3.0
 
 devDependencies:
   '@types/boom':
@@ -301,59 +304,6 @@ packages:
     dependencies:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.17.1
-    dev: false
-
-  /@sequelize/core@7.0.0-alpha.37:
-    resolution: {integrity: sha512-xDpfOqQI3luNjpZ4ywIcteZg6wgY7Ov0T/4tTPuE0ZVNROTsZFhnpn/yYzQcskE2h6T7uF5CzSR2exH3OMhlBg==}
-    engines: {node: '>=18.0.0'}
-    peerDependencies:
-      ibm_db: '*'
-      mariadb: '*'
-      mysql2: '*'
-      odbc: '*'
-      pg: '*'
-      snowflake-sdk: '*'
-      sqlite3: '*'
-      tedious: '*'
-    peerDependenciesMeta:
-      ibm_db:
-        optional: true
-      mariadb:
-        optional: true
-      mysql2:
-        optional: true
-      odbc:
-        optional: true
-      pg:
-        optional: true
-      snowflake-sdk:
-        optional: true
-      sqlite3:
-        optional: true
-      tedious:
-        optional: true
-    dependencies:
-      '@types/debug': 4.1.12
-      '@types/validator': 13.12.0
-      bnf-parser: 3.1.6
-      dayjs: 1.11.12
-      debug: 4.3.5(supports-color@5.5.0)
-      dottie: 2.0.6
-      fast-glob: 3.3.2
-      inflection: 3.0.0
-      lodash: 4.17.21
-      pg-connection-string: 2.6.4
-      pg-hstore: 2.3.4
-      retry-as-promised: 7.0.4
-      semver: 7.6.3
-      sequelize-pool: 8.0.0
-      toposort-class: 1.0.1
-      type-fest: 3.13.1
-      uuid: 9.0.1
-      validator: 13.12.0
-      wkx: 0.5.0
-    transitivePeerDependencies:
-      - supports-color
     dev: false
 
   /@sequelize/core@7.0.0-alpha.41:
@@ -1486,13 +1436,6 @@ packages:
     resolution: {integrity: sha512-v+Z7W/0EO707aNMaAEfiGnGL9sxxumwLl2fJvCQtMn9Fxsg+lPpPkdcyBSv/KFgpGdYkMfn+EI1Or2EHjpgLCA==}
     dev: false
 
-  /pg-hstore@2.3.4:
-    resolution: {integrity: sha512-N3SGs/Rf+xA1M2/n0JBiXFDVMzdekwLZLAO0g7mpDY9ouX+fDI7jS6kTq3JujmYbtNSJ53TJ0q4G98KVZSM4EA==}
-    engines: {node: '>= 0.8.x'}
-    dependencies:
-      underscore: 1.13.7
-    dev: false
-
   /picomatch@2.3.1:
     resolution: {integrity: sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==}
     engines: {node: '>=8.6'}
@@ -1655,10 +1598,10 @@ packages:
       '@types/validator': 13.12.0
       glob: 7.2.0
       reflect-metadata: 0.2.2
-      sequelize: 6.37.3
+      sequelize: 6.37.3(tedious@18.3.0)
     dev: false
 
-  /sequelize@6.37.3:
+  /sequelize@6.37.3(tedious@18.3.0):
     resolution: {integrity: sha512-V2FTqYpdZjPy3VQrZvjTPnOoLm0KudCRXfGWp48QwhyPPp2yW8z0p0sCYZd/em847Tl2dVxJJ1DR+hF+O77T7A==}
     engines: {node: '>=10.0.0'}
     peerDependencies:
@@ -1703,6 +1646,7 @@ packages:
       retry-as-promised: 7.0.4
       semver: 7.6.3
       sequelize-pool: 7.1.0
+      tedious: 18.3.0
       toposort-class: 1.0.1
       uuid: 8.3.2
       validator: 13.12.0
@@ -1866,11 +1810,6 @@ packages:
     resolution: {integrity: sha512-xNvxJEOUiWPGhUuUdQgAJPKOOJfGnIyKySOc09XkKsgdUV/3E2zvwZYdejjmRgPCgcym1juLH3226yA7sEFJKQ==}
     dev: false
 
-  /type-fest@3.13.1:
-    resolution: {integrity: sha512-tLq3bSNx+xSpwvAJnzrK0Ep5CLNWjvFTOp71URMaAEWBfRb9nnJiBoUe0tF8bI4ZFO3omgBR6NvnbzVUT3Ly4g==}
-    engines: {node: '>=14.16'}
-    dev: false
-
   /type-fest@4.23.0:
     resolution: {integrity: sha512-ZiBujro2ohr5+Z/hZWHESLz3g08BBdrdLMieYFULJO+tWc437sn8kQsWLJoZErY8alNhxre9K4p3GURAG11n+w==}
     engines: {node: '>=16'}
@@ -1893,10 +1832,6 @@ packages:
   /undefsafe@2.0.5:
     resolution: {integrity: sha512-WxONCrssBM8TSPRqN5EmsjVrsv4A8X12J4ArBiiayv3DyyG3ZlIg6yysuuSYdZsVz3TKcTg2fd//Ujd4CHV1iA==}
     dev: true
-
-  /underscore@1.13.7:
-    resolution: {integrity: sha512-GMXzWtsc57XAtguZgaQViUOzs0KTkk8ojr3/xAxXLITqf/3EMwxC0inyETfDFjH/Krbhuep0HNbbjI9i/q3F3g==}
-    dev: false
 
   /undici-types@5.26.5:
     resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}

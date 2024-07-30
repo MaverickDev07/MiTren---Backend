@@ -1,4 +1,7 @@
+import dotenv from "dotenv";
 import { studlyCaseToSnakeCase } from "./utils/functions";
+
+dotenv.config();
 
 class EnvManager {
   [x: string]: any;

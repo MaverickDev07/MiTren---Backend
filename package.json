@@ -7,7 +7,7 @@
     "format": "prettier --write .",
     "lint": "eslint --fix . --ext .ts,.tsx",
     "start": "pnpm run start:server",
-    "start:server": "NODE_ENV=development DEBUG=mitren-api*,app:* nodemon server.ts",
+    "start:server": "NODE_ENV=development DEBUG=mitren-api*,app:*,error:* nodemon server.ts",
     "start:serverw": "SET NODE_ENV=development & DEBUG=mitren-api*,app:* & ts-node server.ts"
   },
   "repository": {
@@ -27,7 +27,6 @@
   },
   "homepage": "https://mitren.com",
   "dependencies": {
-    "@sequelize/core": "7.0.0-alpha.37",
     "@sequelize/mssql": "7.0.0-alpha.41",
     "boom": "^7.3.0",
     "cors": "^2.8.5",
@@ -38,7 +37,9 @@
     "joi": "^17.13.3",
     "liqe": "^3.8.0",
     "morgan": "^1.10.0",
-    "sequelize-typescript": "^2.1.6"
+    "sequelize": "^6.37.3",
+    "sequelize-typescript": "^2.1.6",
+    "tedious": "^18.3.0"
   },
   "devDependencies": {
     "@types/boom": "^7.3.5",
