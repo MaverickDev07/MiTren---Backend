@@ -1,10 +1,10 @@
-import Debug from "debug";
+import Debug from 'debug'
 
-import app from "./server/app";
+import app from './server/app'
 
-const debug = Debug("app:server");
-const port = app.get("port");
+const debug = Debug('app:server')
+const port = app.get('port')
 
 app.listen(port, () => {
-  debug(`Listening http://localhost:${port}`);
-});
+  debug(`Listening http://localhost:${port}`)
+})

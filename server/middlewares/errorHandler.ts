@@ -1,8 +1,8 @@
-import { NextFunction, Request, Response } from "express";
-import Joi from "joi";
+import { NextFunction, Request, Response } from 'express'
+import Joi from 'joi'
 
-import ApiError from "../errors/ApiError";
-import { type ValidationError } from "../utils/types";
+import ApiError from '../errors/ApiError'
+import { type ValidationError } from '../utils/types'
 
 export default function errorHandler(
   error: Error,
@@ -11,20 +11,20 @@ export default function errorHandler(
   next: NextFunction,
 ) {
   if (res.headersSent) {
-    return next(error);
+    return next(error)
   }
 
   if (Joi.isError(error)) {
     const validationError: ValidationError = {
       error: {
-        message: "Validation error",
-        code: "ERR_VALID",
-        errors: error.details.map((item) => ({
+        message: 'Validation error',
+        code: 'ERR_VALID',
+        errors: error.details.map(item => ({
           message: item.message,
         })),
       },
-    };
-    return res.status(423).json(validationError);
+    }
+    return res.status(423).json(validationError)
   }
 
   if (error instanceof ApiError) {
@@ -33,22 +33,20 @@ export default function errorHandler(
         message: error.message,
         code: error.code,
       },
-    });
+    })
   }
 
-  if (process.env.NODE_ENV === "development") {
-    next(error);
+  if (process.env.NODE_ENV === 'development') {
+    next(error)
   } else {
-    if (process.env.NODE_ENV !== "test") {
-      console.log(error);
+    if (process.env.NODE_ENV !== 'test') {
+      console.log(error)
     }
 
     res.status(401).json({
       error: {
-        message:
-          error.message ||
-          "An error occurred. Please view logs for more details",
+        message: error.message || 'An error occurred. Please view logs for more details',
       },
-    });
+    })
   }
 }

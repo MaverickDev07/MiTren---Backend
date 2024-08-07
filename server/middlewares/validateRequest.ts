@@ -1,22 +1,18 @@
-import { NextFunction, Request, Response } from "express";
-import { ObjectSchema } from "joi";
+import { NextFunction, Request, Response } from 'express'
+import { ObjectSchema } from 'joi'
 
 export default function validateRequest(schema: ObjectSchema) {
-  return async function validator(
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ) {
+  return async function validator(req: Request, res: Response, next: NextFunction) {
     if (!req.body) {
-      next();
+      next()
     }
     try {
-      await schema.validateAsync(req.body, { abortEarly: false });
+      await schema.validateAsync(req.body, { abortEarly: false })
     } catch (error) {
-      next(error);
-      return;
+      next(error)
+      return
     }
 
-    next();
-  };
+    next()
+  }
 }

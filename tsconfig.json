@@ -1,28 +1,17 @@
 {
-  "$schema": "https://json.schemastore.org/tsconfig",
-  "display": "Default",
   "compilerOptions": {
-    "lib": ["ES2015"],
-    "target": "es6",
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "module": "CommonJS",
-    "outDir": "./dist",
-    "rootDir": "./server",
-    "composite": false,
-    "declaration": true,
-    "declarationMap": true,
+    "module": "commonjs",
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "inlineSources": false,
-    "isolatedModules": true,
+    "target": "es6",
+    "noImplicitAny": true,
     "moduleResolution": "node",
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "preserveWatchOutput": true,
-    "skipLibCheck": true,
-    "strict": true
+    "sourceMap": true,
+    "outDir": "dist",
+    "baseUrl": ".",
+    "paths": {
+      "*": ["node_modules/*", "src/types/*"]
+    }
   },
-  "exclude": ["node_modules"],
-  "include": ["server"]
+  "include": ["server/**/*", "server.ts"],
+  "exclude": ["node_modules", "dist"]
 }

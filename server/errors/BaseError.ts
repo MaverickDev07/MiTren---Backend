@@ -1,8 +1,8 @@
 class BaseError<N extends string, C extends string> extends Error {
-  name: N;
-  message: string;
-  status: number;
-  code?: C;
+  name: N
+  message: string
+  status: number
+  code?: C
 
   constructor({
     name,
@@ -10,17 +10,17 @@ class BaseError<N extends string, C extends string> extends Error {
     status,
     code,
   }: {
-    name: N;
-    message: string;
-    status: number;
-    code?: C;
+    name: N
+    message: string
+    status: number
+    code?: C
   }) {
-    super();
-    this.name = name;
-    this.message = message;
-    this.status = status;
-    this.code = code;
+    super()
+    this.name = name
+    this.message = message
+    this.status = status
+    this.code = code
   }
 }
 
-export default BaseError;
+export default BaseError
