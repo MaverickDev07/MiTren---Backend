@@ -1,0 +1,70 @@
+use('mitren_db')
+
+db.createCollection('tickets', {
+  validator: {
+    $jsonSchema: {
+      bsonType: 'object',
+      required: ['start_station', 'end_station', 'kiosk_id', 'method_name'],
+      properties: {
+        qr_code: {
+          bsonType: 'string'
+        },
+        date_time: {
+          bsonType: 'date'
+        },
+        start_station: {
+          bsonType: 'string'
+        },
+        end_station: {
+          bsonType: 'string'
+        },
+        kiosk_id: {
+          bsonType: 'objectId',
+        },
+        method_name: {
+          bsonType: 'string'
+        },
+        total_price: {
+          bsonType: 'decimal128'
+        },
+        route: {
+          bsonType: 'object',
+          required: ['route_id', 'zones'],
+          properties: {
+            route_id: {
+              bsonType: 'objectId'
+            },
+            zones: {
+              bsonType: 'array',
+              minItems: 1,
+              uniqueItems: true,
+              items: {
+                bsonType: 'string'
+              }
+            },
+            prices: {
+              bsonType: 'array',
+              minItems: 1,
+              uniqueItems: true,
+              items: {
+                bsonType: 'object',
+                required: ['qty', 'customer_type', 'base_price'],
+                properties: {
+                  qty: {
+                    bsonType: 'string'
+                  },
+                  customer_type: {
+                    bsonType: 'string'
+                  },
+                  base_price: {
+                    bsonType: 'decimal128'
+                  },
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+})
