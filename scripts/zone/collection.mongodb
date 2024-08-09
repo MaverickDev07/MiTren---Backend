@@ -1,0 +1,28 @@
+use('mitren_db')
+
+db.createCollection('zones', {
+  validator: {
+    $jsonSchema: {
+      bsonType: 'object',
+      required: ['zone_code', 'zone_name', 'line_id'],
+      properties: {
+        zone_code: {
+          bsonType: 'string'
+        },
+        zone_name: {
+          bsonType: 'string'
+        },
+        line_id: {
+          bsonType: 'objectId'
+        },
+        stations: {
+          bsonType: 'array',
+          uniqueItems: true,
+          items: {
+            bsonType: 'string'
+          }
+        }
+      }
+    }
+  }
+})
