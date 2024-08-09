@@ -7,10 +7,12 @@ db.createCollection('tickets', {
       required: ['start_station', 'end_station', 'kiosk_id', 'method_name'],
       properties: {
         qr_code: {
-          bsonType: 'string'
+          bsonType: 'string',
+          description: 'tiene que ser una cadena tipo JWT, con hora de expiración, para mejor control.'
         },
         date_time: {
-          bsonType: 'date'
+          bsonType: 'date',
+          description: 'Fecha y hora en que se creó este Ticket, debe añadirse de forma automática.'
         },
         start_station: {
           bsonType: 'string'
@@ -25,7 +27,8 @@ db.createCollection('tickets', {
           bsonType: 'string'
         },
         total_price: {
-          bsonType: 'decimal128'
+          bsonType: 'decimal',
+          description: 'Precio total del ticket, cada ruta tiene diferentes precios de acuerdo al tipo del cliente.'
         },
         route: {
           bsonType: 'object',
@@ -51,13 +54,16 @@ db.createCollection('tickets', {
                 required: ['qty', 'customer_type', 'base_price'],
                 properties: {
                   qty: {
-                    bsonType: 'string'
+                    bsonType: 'int',
+                    minimum: 1,
+                    description: 'Cantidad de clientes por tipo.'
                   },
                   customer_type: {
                     bsonType: 'string'
                   },
                   base_price: {
-                    bsonType: 'decimal128'
+                    bsonType: 'decimal',
+                    description: 'Precio base de una ruta en particular para un tipo de cliente, cada vez que se añada un item incrementar: total_price.'
                   },
                 }
               }

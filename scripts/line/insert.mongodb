@@ -1,11 +1,7 @@
 use('mitren_db')
 
-db.lines.insertOne({
-  line_name: 'Línea Roja'
-})
-db.lines.insertOne({
-  line_name: 'Línea Amarilla'
-})
-db.lines.insertOne({
-  line_name: 'Línea Verde'
-})
+db.lines.insertMany([
+  { line_name: 'Línea Roja' },
+  { line_name: 'Línea Amarilla' },
+  { line_name: 'Línea Verde' }
+])
