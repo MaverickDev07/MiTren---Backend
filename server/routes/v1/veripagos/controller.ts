@@ -1,0 +1,35 @@
+import { NextFunction, Request, Response } from 'express'
+import LinkserService from '../../../utils/LinkserService'
+import EnvManager from '../../../config/EnvManager'
+
+const linkserService = new LinkserService('https://veripagos.com/api', EnvManager.getCredentialQR())
+
+export const generateQR = async (req: Request, res: Response, next: NextFunction) => {
+  const { body: data } = req
+
+  try {
+    const response = await linkserService.generateQr({
+      secret_key: EnvManager.getQrKey(),
+      ...data,
+    })
+
+    res.status(200).json(response)
+  } catch (error: any) {
+    next(error)
+  }
+}
+
+export const verifyQrStatus = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const response = await linkserService.verifyQrStatus({
+      secret_key: 'a3b54556-f0d9-11ed-85b9-50',
+      movimiento_id: '25',
+    })
+
+    const status = response.Data ? 200 : 500
+
+    res.status(status).send(response)
+  } catch (error) {
+    next(error)
+  }
+}

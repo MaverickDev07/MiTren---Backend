@@ -8,6 +8,7 @@ import morgan from 'morgan'
 import './database/connection'
 import EnvManager from './config/EnvManager'
 import errorHandler from './middlewares/errorHandler'
+import v1 from './routes/v1'
 
 // App
 const app: Application = express()
@@ -53,6 +54,9 @@ app.get('/', (req, res) => {
     environment: process.env.NODE_ENV,
   })
 })
+
+// App V1
+app.use('/api/v1', v1)
 
 // Verify router
 app.use((req, res) => {

@@ -10,6 +10,12 @@ class EnvManager {
     const PASSWORD = encodeURIComponent(process.env.DB_PASSWORD)
     return `mongodb://${USER}:${PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}?authMechanism=DEFAULT`
   }
+  getCredentialQR() {
+    const USER = process.env.QR_USERNAME
+    const PASSWORD = process.env.QR_PASSWORD
+
+    return Buffer.from(`${USER}:${PASSWORD}`).toString('base64')
+  }
 }
 const envManager = new EnvManager()
 
