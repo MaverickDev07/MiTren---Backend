@@ -55,8 +55,8 @@ app.get('/', (req, res) => {
   })
 })
 
-// App V1
-app.use('/api/v1', v1)
+// API-REST V1
+app.use('/v1', v1)
 
 // Verify router
 app.use((req, res) => {

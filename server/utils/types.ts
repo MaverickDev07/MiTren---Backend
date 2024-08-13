@@ -12,3 +12,10 @@ export type ValidationError = {
     errors: Array<{ message: string }>
   }
 }
+
+// Types Models
+export type LineAttributes = {
+  line_name: string
+  created_at: Date
+  updated_at: Date
+}

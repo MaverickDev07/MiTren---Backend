@@ -1,21 +1,21 @@
-import { ModelStatic } from '@sequelize/core'
+import { Model, Document, FilterQuery, UpdateQuery, QueryOptions, Types } from 'mongoose'
 import { parse } from 'liqe'
 import ApiError from '../errors/ApiError'
-import getSequelizeWhereClause from '../utils/getSequelizeWhereClause'
+import getMongooseWhereClause from '../utils/getMongooseWhereClause'
 
-export default abstract class BaseRepository<A> {
-  modelClass: ModelStatic<any>
+export default abstract class BaseRepository<T extends Document> {
+  model: Model<T>
   protected allowedSortByFields: Array<string> = ['created_at']
   protected allowedFilterByFields: Array<string> = []
 
-  constructor(modelClass: ModelStatic<any>) {
-    this.modelClass = modelClass
+  constructor(model: Model<T>) {
+    this.model = model
   }
 
-  getAll(options: Record<string, any> = {}): Promise<Array<A>> {
+  async getAll(options: Record<string, any> = {}): Promise<Array<T>> {
     const orderBy = this.getOrderBy(options.sortBy)
     delete options.sortBy
-    options.order = orderBy
+    options.sort = orderBy
 
     if (options.filterBy) {
       const filterBy = this.getFilterBy(options.filterBy)
@@ -23,27 +23,26 @@ export default abstract class BaseRepository<A> {
       options.where = filterBy
     }
 
-    return this.modelClass.findAll(options)
+    return this.model
+      .find(options.where || {})
+      .sort(options.sort)
+      .exec()
   }
 
-  getById(id: string, options: Record<string, any> = {}): Promise<A> {
-    return this.modelClass.findByPk(id, options)
+  async getById(id: string | Types.ObjectId, options: QueryOptions = {}): Promise<T | null> {
+    return this.model.findById(id, options).exec()
   }
 
-  create(body: Record<string, any>): Promise<A> {
-    return this.modelClass.create(body)
+  async create(body: Record<string, any>): Promise<T> {
+    return this.model.create(body)
   }
 
-  async update(id: string, body: Record<string, any>): Promise<A> {
-    const instance = await this.modelClass.findByPk(id)
-    if (!instance) {
-      return instance
-    }
-    return instance.update(body)
+  async update(id: string | Types.ObjectId, body: UpdateQuery<T>): Promise<T | null> {
+    return this.model.findByIdAndUpdate(id, body, { new: true }).exec()
   }
 
-  async delete(id: string): Promise<A> {
-    const instance = await this.modelClass.findByPk(id)
+  async delete(id: string | Types.ObjectId): Promise<T | null> {
+    const instance = await this.model.findByIdAndDelete(id).exec() // Cambiamos a findByIdAndDelete para retornar el documento eliminado
     if (!instance) {
       throw new ApiError({
         name: 'NOT_FOUND_ERROR',
@@ -52,11 +51,11 @@ export default abstract class BaseRepository<A> {
         code: 'ERR_NF',
       })
     }
-    return instance.destroy()
+    return instance
   }
 
-  protected getOrderBy(sortBy: string | undefined): Array<[string, string]> {
-    const orderBy: Array<[string, string]> = [['created_at', 'DESC']]
+  protected getOrderBy(sortBy: string | undefined): Record<string, any> {
+    const orderBy: Record<string, any> = { created_at: -1 } // Por defecto ordenado por 'created_at' descendente
 
     if (!sortBy) {
       return orderBy
@@ -72,12 +71,12 @@ export default abstract class BaseRepository<A> {
       return orderBy
     }
 
-    return [[parts[0], parts[1].toLowerCase()]]
+    return { [parts[0]]: parts[1].toLowerCase() === 'asc' ? 1 : -1 }
   }
 
-  protected getFilterBy(filterBy: string): Record<string, any> {
+  protected getFilterBy(filterBy: string): FilterQuery<T> {
     try {
-      return getSequelizeWhereClause(parse(filterBy), this.allowedFilterByFields)
+      return getMongooseWhereClause(parse(filterBy), this.allowedFilterByFields)
     } catch (error: any) {
       throw new ApiError({
         name: 'FILTER_BY_ERROR',

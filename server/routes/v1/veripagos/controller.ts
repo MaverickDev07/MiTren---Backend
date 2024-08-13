@@ -20,10 +20,12 @@ export const generateQR = async (req: Request, res: Response, next: NextFunction
 }
 
 export const verifyQrStatus = async (req: Request, res: Response, next: NextFunction) => {
+  const { body: data } = req
+
   try {
     const response = await linkserService.verifyQrStatus({
-      secret_key: 'a3b54556-f0d9-11ed-85b9-50',
-      movimiento_id: '25',
+      secret_key: EnvManager.getQrKey(),
+      ...data,
     })
 
     const status = response.Data ? 200 : 500
