@@ -5,8 +5,9 @@
   "main": "server.ts",
   "scripts": {
     "format": "prettier --write .",
-    "lint": "eslint --fix . --ext .ts,.tsx",
+    "lint": "tsc --noEmit && eslint \"server/**/*.ts*\"",
     "start": "pnpm run start:server",
+    "dev": "dotenv -- nodemon --exec \"node -r esbuild-register ./server.ts\" -e .ts",
     "start:server": "NODE_ENV=development DEBUG=mitren-api*,app:*,error:* nodemon server.ts",
     "start:serverw": "SET NODE_ENV=development & DEBUG=mitren-api*,app:* & ts-node server.ts"
   },
@@ -54,6 +55,7 @@
     "@types/mongoose": "^5.11.97",
     "@types/morgan": "^1.9.9",
     "@types/node": "^20.14.12",
+    "dotenv-cli": "^7.4.2",
     "eslint": "^9.8.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",

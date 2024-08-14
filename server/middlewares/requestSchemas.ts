@@ -1,15 +1,21 @@
 import Joi from 'joi'
 
-export const createTravelSchema = Joi.object({
-  name: Joi.string().min(3).max(30).required(),
-  description: Joi.string(),
-  number_of_days: Joi.number().integer().greater(0).required(),
-  is_public: Joi.bool().default(true),
+// Line
+export const createLineSchema = Joi.object({
+  line_name: Joi.string().min(3).max(30).required(),
 })
 
-export const updateTravelSchema = Joi.object({
-  name: Joi.string().min(3).max(30),
-  description: Joi.string(),
-  number_of_days: Joi.number().integer().greater(0),
-  is_public: Joi.bool(),
-}).or('name', 'description', 'number_of_days', 'is_public')
+export const updateLineSchema = Joi.object({
+  line_name: Joi.string().min(3).max(30),
+}).or('line_name')
+
+// Zone
+export const createZoneSchema = Joi.object({
+  zone_code: Joi.string().min(3).max(10).required(),
+  zone_name: Joi.string().min(3).max(30).required(),
+})
+
+export const updateZoneSchema = Joi.object({
+  zone_code: Joi.string().min(3).max(10).required(),
+  zone_name: Joi.string().min(3).max(30).required(),
+}).or('zone_code', 'zone_name')

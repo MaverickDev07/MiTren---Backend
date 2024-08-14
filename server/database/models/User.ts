@@ -1,4 +1,4 @@
-import { Document, model, Schema, Types } from 'mongoose';
+import { Document, model, Schema, Types } from 'mongoose'
 
 /**
  * Type to model the User Schema for TypeScript.
@@ -12,14 +12,14 @@ import { Document, model, Schema, Types } from 'mongoose';
  * @param status:string
  */
 interface IUser extends Document {
-  role_id: Types.ObjectId;
-  email: string;
-  password: string;
-  name: string;
-  lastname: string;
-  doc_type: string;
-  doc_number: string;
-  status: string;
+  role_id: Types.ObjectId
+  email: string
+  password: string
+  name: string
+  lastname: string
+  doc_type: string
+  doc_number: string
+  status: string
 }
 
 const UserSchema = new Schema<IUser>({
@@ -30,8 +30,8 @@ const UserSchema = new Schema<IUser>({
   lastname: { type: String, required: true },
   doc_type: { type: String, required: true },
   doc_number: { type: String, required: true },
-  status: { type: String, required: true }
-});
+  status: { type: String, required: true },
+})
 
-const User = model<IUser>('User', UserSchema);
-export default User;
+const User = model<IUser>('User', UserSchema)
+export default User

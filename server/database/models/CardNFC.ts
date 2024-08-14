@@ -1,4 +1,4 @@
-import { Document, model, Schema, Types } from 'mongoose';
+import { Document, model, Schema, Types } from 'mongoose'
 
 /**
  * Type to model the CardNFC Schema for TypeScript.
@@ -10,12 +10,12 @@ import { Document, model, Schema, Types } from 'mongoose';
  * @param status:string
  */
 interface ICardNFC extends Document {
-  user_id: Types.ObjectId;
-  customer_id: Types.ObjectId;
-  card_code: string;
-  balance: number;
-  issue_date: Date;
-  status: string;
+  user_id: Types.ObjectId
+  customer_id: Types.ObjectId
+  card_code: string
+  balance: number
+  issue_date: Date
+  status: string
 }
 
 const CardNFCSchema = new Schema<ICardNFC>({
@@ -24,8 +24,8 @@ const CardNFCSchema = new Schema<ICardNFC>({
   card_code: { type: String, required: true },
   balance: { type: Number, required: true },
   issue_date: { type: Date, required: true },
-  status: { type: String, required: true }
-});
+  status: { type: String, required: true },
+})
 
-const CardNFC = model<ICardNFC>('CardNFC', CardNFCSchema);
-export default CardNFC;
+const CardNFC = model<ICardNFC>('CardNFC', CardNFCSchema)
+export default CardNFC

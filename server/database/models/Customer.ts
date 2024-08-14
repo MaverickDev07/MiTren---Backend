@@ -1,4 +1,4 @@
-import { Document, model, Schema, Types } from 'mongoose';
+import { Document, model, Schema, Types } from 'mongoose'
 
 /**
  * Type to model the Customer Schema for TypeScript.
@@ -11,13 +11,13 @@ import { Document, model, Schema, Types } from 'mongoose';
  * @param status:string
  */
 interface ICustomer extends Document {
-  type_id: Types.ObjectId;
-  email: string;
-  name: string;
-  lastname: string;
-  doc_type: string;
-  doc_number: string;
-  status: string;
+  type_id: Types.ObjectId
+  email: string
+  name: string
+  lastname: string
+  doc_type: string
+  doc_number: string
+  status: string
 }
 
 const CustomerSchema = new Schema<ICustomer>({
@@ -27,8 +27,8 @@ const CustomerSchema = new Schema<ICustomer>({
   lastname: { type: String, required: true },
   doc_type: { type: String, required: true },
   doc_number: { type: String, required: true },
-  status: { type: String, required: true }
-});
+  status: { type: String, required: true },
+})
 
-const Customer = model<ICustomer>('Customer', CustomerSchema);
-export default Customer;
+const Customer = model<ICustomer>('Customer', CustomerSchema)
+export default Customer

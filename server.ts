@@ -1,3 +1,4 @@
+/// <reference path="./server/types.d.ts" />
 import Debug from 'debug'
 
 import app from './server/app'

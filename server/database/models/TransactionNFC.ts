@@ -1,4 +1,4 @@
-import { Document, model, Schema, Types } from 'mongoose';
+import { Document, model, Schema, Types } from 'mongoose'
 
 /**
  * Type to model the TransactionNFC Schema for TypeScript.
@@ -9,11 +9,11 @@ import { Document, model, Schema, Types } from 'mongoose';
  * @param date_time:Date
  */
 interface ITransactionNFC extends Document {
-  card_id: Types.ObjectId;
-  method_id: Types.ObjectId;
-  type: string;
-  amount: number;
-  date_time: Date;
+  card_id: Types.ObjectId
+  method_id: Types.ObjectId
+  type: string
+  amount: number
+  date_time: Date
 }
 
 const TransactionNFCSchema = new Schema<ITransactionNFC>({
@@ -21,8 +21,8 @@ const TransactionNFCSchema = new Schema<ITransactionNFC>({
   method_id: { type: Schema.Types.ObjectId, ref: 'Method', required: true },
   type: { type: String, required: true },
   amount: { type: Number, required: true },
-  date_time: { type: Date, required: true }
-});
+  date_time: { type: Date, required: true },
+})
 
-const TransactionNFC = model<ITransactionNFC>('TransactionNFC', TransactionNFCSchema);
-export default TransactionNFC;
+const TransactionNFC = model<ITransactionNFC>('TransactionNFC', TransactionNFCSchema)
+export default TransactionNFC

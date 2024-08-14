@@ -1,4 +1,4 @@
-import { Document, model, Schema, Types } from 'mongoose';
+import { Document, model, Schema, Types } from 'mongoose'
 
 /**
  * Type to model the Price Schema for TypeScript.
@@ -7,9 +7,9 @@ import { Document, model, Schema, Types } from 'mongoose';
  * @param base_price:number
  */
 interface IPrice extends Document {
-  qty: number;
-  customer_type: string;
-  base_price: number;
+  qty: number
+  customer_type: string
+  base_price: number
 }
 
 /**
@@ -19,9 +19,9 @@ interface IPrice extends Document {
  * @param prices:IPrice[]
  */
 interface IRoute extends Document {
-  route_id: Types.ObjectId;
-  zones: string[];
-  prices: IPrice[];
+  route_id: Types.ObjectId
+  zones: string[]
+  prices: IPrice[]
 }
 
 /**
@@ -36,27 +36,27 @@ interface IRoute extends Document {
  * @param route:IRoute
  */
 interface ITicket extends Document {
-  codigoQR: string;
-  date_time: Date;
-  start_station: string;
-  end_station: string;
-  kiosk_id: Types.ObjectId;
-  method_name: string;
-  total_price: number;
-  route: IRoute;
+  codigoQR: string
+  date_time: Date
+  start_station: string
+  end_station: string
+  kiosk_id: Types.ObjectId
+  method_name: string
+  total_price: number
+  route: IRoute
 }
 
 const PriceSchema = new Schema<IPrice>({
   qty: { type: Number, required: true },
   customer_type: { type: String, required: true },
-  base_price: { type: Number, required: true }
-});
+  base_price: { type: Number, required: true },
+})
 
 const RouteSchema = new Schema<IRoute>({
   route_id: { type: Schema.Types.ObjectId, ref: 'Route', required: true },
   zones: [{ type: String, required: true }],
-  prices: [PriceSchema]
-});
+  prices: [PriceSchema],
+})
 
 const TicketSchema = new Schema<ITicket>({
   codigoQR: { type: String, required: true },
@@ -66,9 +66,8 @@ const TicketSchema = new Schema<ITicket>({
   kiosk_id: { type: Schema.Types.ObjectId, ref: 'Kiosk', required: true },
   method_name: { type: String, required: true },
   total_price: { type: Number, required: true },
-  route: { type: RouteSchema, required: true }
-});
+  route: { type: RouteSchema, required: true },
+})
 
-const Ticket = model<ITicket>('Ticket', TicketSchema);
-export default Ticket;
-    
+const Ticket = model<ITicket>('Ticket', TicketSchema)
+export default Ticket
