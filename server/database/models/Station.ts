@@ -10,9 +10,19 @@ export interface StationAttributes extends StationEntity, Document {}
 
 const StationSchema = new Schema<StationAttributes>(
   {
-    station_name: { type: String, required: true },
+    station_name: {
+      type: String,
+      uppercase: true,
+      trim: true,
+      unique: true,
+      required: true,
+    },
 
-    zone_id: { type: Schema.Types.ObjectId, ref: 'Zone', required: true },
+    zone_id: {
+      type: Schema.Types.ObjectId,
+      ref: 'Zone',
+      required: true,
+    },
   },
   {
     timestamps: true,

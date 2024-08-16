@@ -1,6 +1,5 @@
-import { Model, Document, FilterQuery, UpdateQuery, QueryOptions, Types } from 'mongoose'
+import mongoose, { Model, Document, FilterQuery, UpdateQuery, QueryOptions, Types } from 'mongoose'
 import { parse } from 'liqe'
-// import camelCase from 'lodash.camelcase'
 
 import ApiError from '../errors/ApiError'
 import getMongooseWhereClause from '../utils/getMongooseWhereClause'
@@ -36,10 +35,12 @@ export default abstract class BaseRepository<T extends Document> {
   }
 
   async create(body: Record<string, any>): Promise<T> {
+    await this.validateReferences(body)
     return this.model.create(body)
   }
 
   async update(id: string | Types.ObjectId, body: UpdateQuery<T>): Promise<T | null> {
+    await this.validateReferences(body)
     return this.model.findByIdAndUpdate(id, body, { new: true }).exec()
   }
 
@@ -89,11 +90,12 @@ export default abstract class BaseRepository<T extends Document> {
     }
   }
 
-  /*protected async validateReferences(body: Record<string, any>): Promise<void> {
+  protected async validateReferences(body: Record<string, any>): Promise<void> {
     const idFields = Object.keys(body).filter(key => key.endsWith('_id'))
 
     for (const field of idFields) {
-      const modelName = camelCase(field.replace('_id', ''))
+      const modelName = this.convertToCamelCase(field.replace('_id', ''))
+
       const model = this.getModelByName(modelName)
 
       if (!model) {
@@ -116,5 +118,17 @@ export default abstract class BaseRepository<T extends Document> {
         })
       }
     }
-  }*/
+  }
+
+  protected convertToCamelCase(input: string): string {
+    return input
+      .toLowerCase()
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join('')
+  }
+
+  protected getModelByName<T extends mongoose.Document>(modelName: string): Model<T> | undefined {
+    return mongoose.models[modelName] as Model<T> | undefined
+  }
 }

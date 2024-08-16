@@ -3,6 +3,7 @@ import Joi from 'joi'
 
 import ApiError from '../errors/ApiError'
 
+/* eslint-disable max-params */
 export default function errorHandler(
   error: Error,
   req: Request,
@@ -36,16 +37,27 @@ export default function errorHandler(
   }
 
   if (process.env.NODE_ENV === 'development') {
-    next(error)
+    console.log('Full error object:', JSON.stringify(error, null, 2)) // Imprime todo el objeto con formato legible
+
+    // Manejo para otros tipos de errores
+    return res.status(500).json({
+      error: {
+        code: 'ERR_UNKNOWN',
+        message: error.message,
+        stack: error.stack, // Incluye el stack trace para facilitar la depuración
+      },
+    })
   } else {
     if (process.env.NODE_ENV !== 'test') {
       console.log(error)
     }
 
-    res.status(401).json({
+    res.status(500).json({
       error: {
+        code: 'ERR_UNKNOWN',
         message: error.message || 'An error occurred. Please view logs for more details',
       },
     })
   }
 }
+/* eslint-enable max-params */
