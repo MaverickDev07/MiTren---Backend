@@ -4,6 +4,7 @@ type ErrorName =
   | 'CONNECTION_ERROR'
   | 'METHOD_NOT_IMPLEMENTED'
   | 'FILTER_BY_ERROR'
+
 type ErrorCode = 'ERR_NF' | 'ERR_REMOTE' | 'NOT_IMPL' | 'ERR_VALID' | 'ERR_FTB'
 
 type ValidationError = {
@@ -61,6 +62,7 @@ type LineEntity = {
   id: string
   line_name: string
 }
+
 type ZoneEntity = {
   id: string
   zone_code: string

@@ -10,6 +10,6 @@ export interface LineAttributes extends Document {
 export interface ZoneAttributes extends Document {
   zone_code: string
   zone_name: string
-  stations: Array<String> | []
+  stations: Array<string> | []
   line_id: Array<Types.ObjectId> | []
 }

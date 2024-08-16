@@ -1,19 +1,25 @@
-import { Document, model, Schema, Types } from 'mongoose'
+import { Schema, model, Document } from 'mongoose'
 
-/**
- * Type to model the Station Schema for TypeScript.
- * @param station_name:string
- * @param zone_id:ref => Zone._id
- */
-interface IStation extends Document {
+export type StationEntity = {
+  id?: string | any
   station_name: string
-  zone_id: Types.ObjectId
+  zone_id: Schema.Types.ObjectId
 }
 
-const StationSchema = new Schema<IStation>({
-  station_name: { type: String, required: true },
-  zone_id: { type: Schema.Types.ObjectId, ref: 'Zone', required: true },
-})
+export interface StationAttributes extends StationEntity, Document {}
 
-const Station = model<IStation>('Station', StationSchema)
+const StationSchema = new Schema<StationAttributes>(
+  {
+    station_name: { type: String, required: true },
+
+    zone_id: { type: Schema.Types.ObjectId, ref: 'Zone', required: true },
+  },
+  {
+    timestamps: true,
+    versionKey: false,
+  },
+)
+
+const Station = model<StationAttributes>('Station', StationSchema)
+
 export default Station

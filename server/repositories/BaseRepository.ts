@@ -1,5 +1,7 @@
 import { Model, Document, FilterQuery, UpdateQuery, QueryOptions, Types } from 'mongoose'
 import { parse } from 'liqe'
+// import camelCase from 'lodash.camelcase'
+
 import ApiError from '../errors/ApiError'
 import getMongooseWhereClause from '../utils/getMongooseWhereClause'
 
@@ -86,4 +88,33 @@ export default abstract class BaseRepository<T extends Document> {
       })
     }
   }
+
+  /*protected async validateReferences(body: Record<string, any>): Promise<void> {
+    const idFields = Object.keys(body).filter(key => key.endsWith('_id'))
+
+    for (const field of idFields) {
+      const modelName = camelCase(field.replace('_id', ''))
+      const model = this.getModelByName(modelName)
+
+      if (!model) {
+        throw new ApiError({
+          name: 'MODEL_NOT_FOUND_ERROR',
+          message: `Model ${modelName} not found`,
+          status: 400,
+          code: 'ERR_MNF',
+        })
+      }
+
+      // Verificar si existe el documento referenciado
+      const exists = await model.exists({ _id: body[field] })
+      if (!exists) {
+        throw new ApiError({
+          name: 'REFERENCE_ERROR',
+          message: `Referenced ${modelName} with id ${body[field]} not found`,
+          status: 400,
+          code: 'ERR_REF',
+        })
+      }
+    }
+  }*/
 }

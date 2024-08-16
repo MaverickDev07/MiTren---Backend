@@ -1,4 +1,5 @@
 import { Schema, model } from 'mongoose'
+
 import { LineAttributes } from '../../utils/types'
 
 // Definición del esquema de Mongoose para el modelo Line

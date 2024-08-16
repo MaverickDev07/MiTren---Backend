@@ -35,6 +35,9 @@ dependencies:
   liqe:
     specifier: ^3.8.0
     version: 3.8.0
+  lodash.camelcase:
+    specifier: ^4.3.0
+    version: 4.3.0
   mongoose:
     specifier: ^8.5.2
     version: 8.5.2
@@ -2136,6 +2139,10 @@ packages:
     dependencies:
       p-locate: 5.0.0
     dev: true
+
+  /lodash.camelcase@4.3.0:
+    resolution: {integrity: sha512-TwuEnCnxbc3rAvhf/LbG7tJUDzhqXyFnv3dtzLOPgCG/hODL7WFnsbwktkD7yUV0RrreP/l1PALq/YSg6VvjlA==}
+    dev: false
 
   /lodash.includes@4.3.0:
     resolution: {integrity: sha512-W3Bx6mdkRTGtlJISOvVD/lbqjTlPPUDTMnlXZFnVwi9NKJ6tiAk6LVdlhZMm17VZisqhKcgzpO5Wz91PCt5b0w==}
