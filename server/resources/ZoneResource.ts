@@ -7,6 +7,7 @@ class ZoneResource extends BaseResource<ZoneAttributes, ZoneEntity>() {
       id: this.instance.id,
       zone_code: this.instance.zone_code,
       zone_name: this.instance.zone_name,
+      lines: this.instance.lines,
     }
 
     return zoneResource

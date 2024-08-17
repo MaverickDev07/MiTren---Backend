@@ -13,20 +13,22 @@ export const updateLineSchema = Joi.object({
 export const createZoneSchema = Joi.object({
   zone_code: Joi.string().min(3).max(10).required(),
   zone_name: Joi.string().min(3).max(30).required(),
+  lines: Joi.array().items(Joi.string().alphanum().hex().length(24)).required(),
 })
 
 export const updateZoneSchema = Joi.object({
-  zone_code: Joi.string().min(3).max(10).required(),
-  zone_name: Joi.string().min(3).max(30).required(),
-}).or('zone_code', 'zone_name')
+  zone_code: Joi.string().min(3).max(10),
+  zone_name: Joi.string().min(3).max(30),
+  lines: Joi.array().items(Joi.string().alphanum().hex().length(24)),
+}).or('zone_code', 'zone_name', 'lines')
 
 // Station
 export const createStationSchema = Joi.object({
   station_name: Joi.string().min(3).max(50).required(),
-  zone_id: Joi.string().alphanum().hex().length(24),
+  zone_id: Joi.string().alphanum().hex().length(24).required(),
 })
 
 export const updateStationSchema = Joi.object({
-  station_name: Joi.string().min(3).max(50).required(),
+  station_name: Joi.string().min(3).max(50),
   zone_id: Joi.string().alphanum().hex().length(24),
 }).or('station_name', 'zone_id')

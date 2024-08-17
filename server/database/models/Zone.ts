@@ -5,7 +5,7 @@ export type ZoneEntity = {
   zone_code: string
   zone_name: string
   stations?: Array<string> | []
-  line_id?: Array<Schema.Types.ObjectId> | []
+  lines: Array<Schema.Types.ObjectId> | []
 }
 
 export interface ZoneAttributes extends ZoneEntity, Document {}
@@ -16,7 +16,7 @@ const ZoneSchema = new Schema<ZoneAttributes>(
     zone_name: { type: String, required: true },
     stations: { type: [String] },
 
-    line_id: [
+    lines: [
       {
         type: Schema.Types.ObjectId,
         ref: 'Line',
