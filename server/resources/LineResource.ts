@@ -1,5 +1,5 @@
+import { LineAttributes, LineEntity } from '../database/models/Line'
 import BaseResource from './BaseResource'
-import { LineAttributes } from '../utils/types'
 
 class LineResource extends BaseResource<LineAttributes, LineEntity>() {
   item() {

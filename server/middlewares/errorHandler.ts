@@ -37,8 +37,6 @@ export default function errorHandler(
   }
 
   if (process.env.NODE_ENV === 'development') {
-    console.log('Full error object:', JSON.stringify(error, null, 2)) // Imprime todo el objeto con formato legible
-
     // Manejo para otros tipos de errores
     return res.status(500).json({
       error: {

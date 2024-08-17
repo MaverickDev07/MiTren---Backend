@@ -1,12 +1,20 @@
-import { Schema, model } from 'mongoose'
+import { Schema, model, Document } from 'mongoose'
 
-import { LineAttributes } from '../../utils/types'
+export type LineEntity = {
+  id?: string | any
+  line_name: string
+}
+
+export interface LineAttributes extends LineEntity, Document {}
 
 // Definición del esquema de Mongoose para el modelo Line
 const LineSchema = new Schema<LineAttributes>(
   {
     line_name: {
       type: String,
+      uppercase: true,
+      trim: true,
+      unique: true,
       required: true,
     },
   },

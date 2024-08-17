@@ -1,6 +1,14 @@
-import { Schema, model } from 'mongoose'
+import { Schema, model, Document } from 'mongoose'
 
-import { ZoneAttributes } from '../../utils/types'
+export type ZoneEntity = {
+  id?: string | any
+  zone_code: string
+  zone_name: string
+  stations?: Array<string> | []
+  line_id?: Array<Schema.Types.ObjectId> | []
+}
+
+export interface ZoneAttributes extends ZoneEntity, Document {}
 
 const ZoneSchema = new Schema<ZoneAttributes>(
   {

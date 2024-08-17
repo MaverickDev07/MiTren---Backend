@@ -24,13 +24,6 @@ type ValidationError = {
   }
 }
 
-type dbError = {
-  errorResponse: {
-    errmsg: string
-    code: ErrorCode
-  }
-}
-
 // Interface for Veripagos
 interface GenerateQrParams {
   secret_key: string
@@ -71,16 +64,4 @@ interface VerifyQrStatusResponse {
     }
   } | null
   Mensaje: string
-}
-
-// Types for Entities
-type LineEntity = {
-  id: string
-  line_name: string
-}
-
-type ZoneEntity = {
-  id: string
-  zone_code: string
-  zone_name: string
 }

@@ -1,5 +1,5 @@
+import { ZoneAttributes, ZoneEntity } from '../database/models/Zone'
 import BaseResource from './BaseResource'
-import { ZoneAttributes } from '../utils/types'
 
 class ZoneResource extends BaseResource<ZoneAttributes, ZoneEntity>() {
   item() {
