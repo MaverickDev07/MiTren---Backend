@@ -17,3 +17,4 @@ const StationSchema = new Schema<IStation>({
 
 const Station = model<IStation>('Station', StationSchema)
 export default Station
+'Estación 1', 'Estación 2'
