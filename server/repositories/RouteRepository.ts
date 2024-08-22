@@ -8,4 +8,15 @@ export default class RouteRepository extends BaseRepository<RouteAttributes> {
   constructor() {
     super(Route)
   }
+
+  createByStationRange(body: Record<string, any>) {
+    const { stations } = body
+    const route_code = stations.map((item: any) => item.station_code).join('-')
+
+    /*stations.map((station_code, station_name) => {
+    })*/
+
+    console.log(route_code)
+    return body
+  }
 }

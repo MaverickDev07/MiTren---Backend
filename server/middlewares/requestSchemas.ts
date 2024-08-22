@@ -48,6 +48,7 @@ export const updateKioskSchema = Joi.object({
 export const createRouteSchema = Joi.object({
   route_code: Joi.string().min(3).max(10).required(),
   stations: Joi.array()
+    .min(2)
     .items(
       Joi.object({
         station_code: Joi.string().min(3).max(10).required(),
@@ -56,11 +57,12 @@ export const createRouteSchema = Joi.object({
     )
     .required(),
   prices: Joi.array()
+    .min(1)
     .items(
       Joi.object({
         interstops: Joi.boolean(),
         customer_type: Joi.string().min(3).max(15).required(),
-        base_price: Joi.number().min(1),
+        base_price: Joi.number().min(1).required(),
       }),
     )
     .required(),
@@ -68,17 +70,43 @@ export const createRouteSchema = Joi.object({
 
 export const updateRouteSchema = Joi.object({
   route_code: Joi.string().min(3).max(10),
-  stations: Joi.array().items(
-    Joi.object({
-      station_code: Joi.string().min(3).max(10),
-      station_name: Joi.string().min(3).max(50),
-    }),
-  ),
-  prices: Joi.array().items(
-    Joi.object({
-      interstops: Joi.boolean(),
-      customer_type: Joi.string().min(3).max(15),
-      base_price: Joi.number().min(1),
-    }),
-  ),
+  stations: Joi.array()
+    .min(2)
+    .items(
+      Joi.object({
+        station_code: Joi.string().min(3).max(10),
+        station_name: Joi.string().min(3).max(50),
+      }),
+    ),
+  prices: Joi.array()
+    .min(1)
+    .items(
+      Joi.object({
+        interstops: Joi.boolean(),
+        customer_type: Joi.string().min(3).max(15),
+        base_price: Joi.number().min(1),
+      }),
+    ),
 }).or('route_code', 'stations', 'prices')
+
+export const createRouteStationRangeSchema = Joi.object({
+  stations: Joi.array()
+    .length(2)
+    .items(
+      Joi.object({
+        station_code: Joi.string().min(3).max(10).required(),
+        station_name: Joi.string().min(3).max(50).required(),
+      }),
+    )
+    .required(),
+  prices: Joi.array()
+    .min(1)
+    .items(
+      Joi.object({
+        interstops: Joi.boolean(),
+        customer_type: Joi.string().min(3).max(15).required(),
+        base_price: Joi.number().min(1).required(),
+      }),
+    )
+    .required(),
+})

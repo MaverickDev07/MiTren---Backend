@@ -29,40 +29,59 @@ const RouteSchema = new Schema<RouteAttributes>(
       required: true,
     },
 
-    stations: [
-      {
-        station_code: {
-          type: String,
-          uppercase: true,
-          trim: true,
-          required: true,
+    stations: {
+      type: [
+        {
+          station_code: {
+            type: String,
+            uppercase: true,
+            trim: true,
+            required: true,
+          },
+          station_name: {
+            type: String,
+            uppercase: true,
+            trim: true,
+            required: true,
+          },
         },
-        station_name: {
-          type: String,
-          uppercase: true,
-          trim: true,
-          required: true,
+      ],
+      required: true,
+      validate: {
+        validator: (value: Stations[]) => {
+          return value.length > 1
         },
+        message: 'El array "stations" debe contener al menos dos ítems.',
       },
-    ],
-    prices: [
-      {
-        interstops: {
-          type: Boolean,
-          default: true,
+    },
+
+    prices: {
+      type: [
+        {
+          interstops: {
+            type: Boolean,
+            default: true,
+          },
+          customer_type: {
+            type: String,
+            uppercase: true,
+            trim: true,
+            required: true,
+          },
+          base_price: {
+            type: Number,
+            required: true,
+          },
         },
-        customer_type: {
-          type: String,
-          uppercase: true,
-          trim: true,
-          required: true,
+      ],
+      required: true,
+      validate: {
+        validator: (value: Prices[]) => {
+          return value.length > 0
         },
-        base_price: {
-          type: Number,
-          required: true,
-        },
+        message: 'El array "prices" debe contener al menos un ítem.',
       },
-    ],
+    },
   },
   {
     timestamps: true,

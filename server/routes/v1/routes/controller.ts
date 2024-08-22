@@ -39,6 +39,22 @@ export const createRoute = async (req: Request, res: Response, next: NextFunctio
   }
 }
 
+export const createRouteByStarionRange = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const repository = new RouteRepository()
+    const routeResource = repository.createByStationRange(req.body)
+
+    // res.status(201).json({ route: routeResource.item() })
+    res.status(201).json(routeResource)
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const updateRoute = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const repository = new RouteRepository()
