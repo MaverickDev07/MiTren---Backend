@@ -24,14 +24,16 @@ export const updateZoneSchema = Joi.object({
 
 // Station
 export const createStationSchema = Joi.object({
+  station_code: Joi.string().min(3).max(10).required(),
   station_name: Joi.string().min(3).max(50).required(),
-  zone_id: Joi.string().alphanum().hex().length(24).required(),
+  line_id: Joi.string().alphanum().hex().length(24).required(),
 })
 
 export const updateStationSchema = Joi.object({
+  station_code: Joi.string().min(3).max(10),
   station_name: Joi.string().min(3).max(50),
-  zone_id: Joi.string().alphanum().hex().length(24),
-}).or('station_name', 'zone_id')
+  line_id: Joi.string().alphanum().hex().length(24),
+}).or('station_code', 'station_name', 'line_id')
 
 // Kiosk
 export const createKioskSchema = Joi.object({

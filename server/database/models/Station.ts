@@ -2,14 +2,22 @@ import { Schema, model, Document } from 'mongoose'
 
 export type StationEntity = {
   id?: string | any
+  station_code: string
   station_name: string
-  zone_id: Schema.Types.ObjectId
+  line_id: Schema.Types.ObjectId
 }
 
 export interface StationAttributes extends StationEntity, Document {}
 
 const StationSchema = new Schema<StationAttributes>(
   {
+    station_code: {
+      type: String,
+      uppercase: true,
+      trim: true,
+      unique: true,
+      required: true,
+    },
     station_name: {
       type: String,
       uppercase: true,
@@ -18,9 +26,9 @@ const StationSchema = new Schema<StationAttributes>(
       required: true,
     },
 
-    zone_id: {
+    line_id: {
       type: Schema.Types.ObjectId,
-      ref: 'Zone',
+      ref: 'Line',
       required: true,
     },
   },

@@ -5,8 +5,9 @@ class StationResource extends BaseResource<StationAttributes, StationEntity>() {
   item() {
     const stationResource: StationEntity = {
       id: this.instance.id,
+      station_code: this.instance.station_code,
       station_name: this.instance.station_name,
-      zone_id: this.instance.zone_id,
+      line_id: this.instance.line_id,
     }
 
     return stationResource
