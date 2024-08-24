@@ -1,12 +1,12 @@
 # MiTren Proyecto Backend [NodeJS, Typescript, Mongoose]
 
-### En cuanto al Análisis tenemos:
+### En cuanto al Análisis tenemos
 
 #### Diagrama Entidad Relación (DER)
 
 Está pensado aplicando patrones de desnormalización, computed pattem, relaciones y cardinalidades al modelo ER.
 
-![DER](./documentation/DER.png)
+![V2-DER-NoSQL](./documentation/V2-DER-NoSQL.png)
 
 #### Configuraciones
 
