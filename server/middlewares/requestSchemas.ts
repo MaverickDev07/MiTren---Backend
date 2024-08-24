@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import Joi from 'joi'
 
 // Line
@@ -112,3 +113,21 @@ export const createRouteStationRangeSchema = Joi.object({
     )
     .required(),
 })
+
+// Method
+export const createMethodSchema = Joi.object({
+  method_name: Joi.string().min(3).max(30).required(),
+})
+
+export const updateMethodSchema = Joi.object({
+  method_name: Joi.string().min(3).max(30),
+}).or('method_name')
+
+// CustomerType
+export const createCustomerTypeSchema = Joi.object({
+  customer_type: Joi.string().min(3).max(30).required(),
+})
+
+export const updateCustomerTypeSchema = Joi.object({
+  customer_type: Joi.string().min(3).max(30),
+}).or('customer_type')
