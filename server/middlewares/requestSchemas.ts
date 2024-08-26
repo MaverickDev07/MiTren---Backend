@@ -98,7 +98,6 @@ export const createRouteStationRangeSchema = Joi.object({
     .items(
       Joi.object({
         station_code: Joi.string().min(3).max(10).required(),
-        station_name: Joi.string().min(3).max(50).required(),
       }),
     )
     .required(),

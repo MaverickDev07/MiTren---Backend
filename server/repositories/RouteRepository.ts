@@ -25,35 +25,26 @@ export default class RouteRepository extends BaseRepository<RouteAttributes> {
     }
 
     // Obtener todas las estaciones de la línea ordenadas por station_code de forma ascendente
-    const allStations = await Station.find({ line_id: line.line_id })
+    const filteredStations = await Station.find({
+      line_id: line.line_id,
+      station_code: { $in: [startStation.station_code, endStation.station_code] },
+    })
       .sort({ station_code: 1 })
       .lean()
       .exec()
 
-    // Filtrar estaciones que están dentro del rango especificado
-    const startIndex = allStations.findIndex(
-      station => station.station_code === startStation.station_code,
-    )
-    const endIndex = allStations.findIndex(
-      station => station.station_code === endStation.station_code,
-    )
-
-    if (startIndex === -1 || endIndex === -1 || startIndex > endIndex) {
-      throw new Error('Rango de estaciones inválido')
-    }
-
-    const filteredStations = allStations.slice(startIndex, endIndex + 1)
+    console.log(filteredStations)
 
     // Generar el route_code
     const route_code = filteredStations.map(station => station.station_code).join('-')
 
     // Crear la ruta en la base de datos
-    const newRoute = await this.create({
+    /*const newRoute = await this.create({
       route_code,
       stations: filteredStations,
       prices,
-    })
+    })*/
 
-    return newRoute
+    return { route_code, stations: filteredStations, prices }
   }
 }
