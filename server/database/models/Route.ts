@@ -1,6 +1,6 @@
 import { Schema, model, Document } from 'mongoose'
 
-type Stations = {
+type Station = {
   station_code: string
   station_name: string
 }
@@ -13,7 +13,8 @@ type Prices = {
 export type RouteEntity = {
   id?: string | any
   route_code: string
-  stations: Stations[]
+  start_station: Station
+  end_station: Station
   prices: Prices[]
 }
 
@@ -29,30 +30,39 @@ const RouteSchema = new Schema<RouteAttributes>(
       required: true,
     },
 
-    stations: {
-      type: [
-        {
-          station_code: {
-            type: String,
-            uppercase: true,
-            trim: true,
-            required: true,
-          },
-          station_name: {
-            type: String,
-            uppercase: true,
-            trim: true,
-            required: true,
-          },
+    start_station: {
+      type: {
+        station_code: {
+          type: String,
+          uppercase: true,
+          trim: true,
+          required: true,
         },
-      ],
-      required: true,
-      validate: {
-        validator: (value: Stations[]) => {
-          return value.length > 1
+        station_name: {
+          type: String,
+          uppercase: true,
+          trim: true,
+          required: true,
         },
-        message: 'El array "stations" debe contener al menos dos ítems.',
       },
+      required: true,
+    },
+    end_station: {
+      type: {
+        station_code: {
+          type: String,
+          uppercase: true,
+          trim: true,
+          required: true,
+        },
+        station_name: {
+          type: String,
+          uppercase: true,
+          trim: true,
+          required: true,
+        },
+      },
+      required: true,
     },
 
     prices: {

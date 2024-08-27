@@ -50,15 +50,14 @@ export const updateKioskSchema = Joi.object({
 // Route
 export const createRouteSchema = Joi.object({
   route_code: Joi.string().min(3).max(10).required(),
-  stations: Joi.array()
-    .min(2)
-    .items(
-      Joi.object({
-        station_code: Joi.string().min(3).max(10).required(),
-        station_name: Joi.string().min(3).max(50).required(),
-      }),
-    )
-    .required(),
+  start_stations: Joi.object({
+    station_code: Joi.string().min(3).max(10).required(),
+    station_name: Joi.string().min(3).max(50).required(),
+  }).required(),
+  end_stations: Joi.object({
+    station_code: Joi.string().min(3).max(10).required(),
+    station_name: Joi.string().min(3).max(50).required(),
+  }).required(),
   prices: Joi.array()
     .min(1)
     .items(
@@ -73,14 +72,14 @@ export const createRouteSchema = Joi.object({
 
 export const updateRouteSchema = Joi.object({
   route_code: Joi.string().min(3).max(10),
-  stations: Joi.array()
-    .min(2)
-    .items(
-      Joi.object({
-        station_code: Joi.string().min(3).max(10),
-        station_name: Joi.string().min(3).max(50),
-      }),
-    ),
+  start_stations: Joi.object({
+    station_code: Joi.string().min(3).max(10).required(),
+    station_name: Joi.string().min(3).max(50).required(),
+  }),
+  end_stations: Joi.object({
+    station_code: Joi.string().min(3).max(10).required(),
+    station_name: Joi.string().min(3).max(50).required(),
+  }),
   prices: Joi.array()
     .min(1)
     .items(
@@ -93,14 +92,8 @@ export const updateRouteSchema = Joi.object({
 }).or('route_code', 'stations', 'prices')
 
 export const createRouteStationRangeSchema = Joi.object({
-  stations: Joi.array()
-    .length(2)
-    .items(
-      Joi.object({
-        station_code: Joi.string().min(3).max(10).required(),
-      }),
-    )
-    .required(),
+  start_code: Joi.string().min(3).max(10).required(),
+  end_code: Joi.string().min(3).max(10).required(),
   prices: Joi.array()
     .min(1)
     .items(

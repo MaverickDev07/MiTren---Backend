@@ -46,7 +46,7 @@ export const createRouteByStarionRange = async (
 ) => {
   try {
     const repository = new RouteRepository()
-    const routeResource = repository.createByStationRange(req.body)
+    const routeResource = await repository.createByStationRange(req.body)
 
     // res.status(201).json({ route: routeResource.item() })
     res.status(201).json(routeResource)

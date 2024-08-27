@@ -6,7 +6,8 @@ class RouteResource extends BaseResource<RouteAttributes, RouteEntity>() {
     const routeResource: RouteEntity = {
       id: this.instance.id,
       route_code: this.instance.route_code,
-      stations: this.instance.stations,
+      start_station: this.instance.start_station,
+      end_station: this.instance.end_station,
       prices: this.instance.prices,
     }
 

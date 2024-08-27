@@ -6,6 +6,7 @@ type ErrorName =
   | 'METHOD_NOT_IMPLEMENTED'
   | 'FILTER_BY_ERROR'
   | 'REFERENCE_ERROR'
+  | 'INVALID_DATA_ERROR'
 
 type ErrorCode =
   | 'ERR_MNF'
@@ -15,6 +16,7 @@ type ErrorCode =
   | 'ERR_VALID'
   | 'ERR_FTB'
   | 'ERR_REF'
+  | 'ERR_ID'
 
 type ValidationError = {
   error: {
