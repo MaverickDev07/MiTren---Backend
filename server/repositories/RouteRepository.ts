@@ -52,27 +52,44 @@ export default class RouteRepository extends BaseRepository<RouteAttributes> {
       line_id: start_line.line_id,
       station_code: { $gte: start_code, $lte: end_code },
     })
+      .select({ _id: 0, station_code: 1, station_name: 1 })
       .sort({ station_code: 1 })
       .lean()
       .exec()
 
-    const route_code = 'route_code'
-    /*const start_code = start_station.station_name
-      .toUpperCase()
-      .split(' ')
-      .map((item: string) => item[0])
-      .join('')
-    const end_code = end_station.station_name
-      .toUpperCase()
-      .split(' ')
-      .map((item: string) => item[0])
-      .join('')
+    const successRoutes: string[] = []
+    const failedRoutes: string[] = []
 
-    // Generar el route_code
-    const route_code = [start_code, end_code].join('-')*/
+    for (const [index, start_station] of filteredStations.entries()) {
+      for (const end_station of filteredStations.slice(index + 1)) {
+        const start_code = start_station.station_name
+          .toUpperCase()
+          .split(' ')
+          .map((item: string) => item[0])
+          .join('')
+        const end_code = end_station.station_name
+          .toUpperCase()
+          .split(' ')
+          .map((item: string) => item[0])
+          .join('')
+        const route_code = [start_code, end_code].join('-')
 
-    // Crear la ruta en la base de datos
+        try {
+          await this.create({
+            route_code,
+            start_station,
+            end_station,
+            prices,
+          })
 
-    return { route_code, stations: filteredStations, prices }
+          successRoutes.push(route_code)
+        } catch (error) {
+          console.log(error)
+          failedRoutes.push(route_code)
+        }
+      }
+    }
+
+    return { successRoutes, failedRoutes }
   }
 }
