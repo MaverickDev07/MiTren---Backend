@@ -7,6 +7,7 @@ import kiosks from './kiosks'
 import routes from './routes'
 import methods from './methods'
 import customerTypes from './customer_types'
+import customers from './customers'
 
 const v1: Router = express.Router()
 
@@ -18,5 +19,6 @@ v1.use('/kiosks', kiosks)
 v1.use('/methods', methods)
 v1.use('/customer_types', customerTypes)
 v1.use('/routes', routes)
+v1.use('/customers', customers)
 
 export default v1

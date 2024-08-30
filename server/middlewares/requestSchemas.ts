@@ -123,3 +123,32 @@ export const createCustomerTypeSchema = Joi.object({
 export const updateCustomerTypeSchema = Joi.object({
   customer_type: Joi.string().min(3).max(30),
 }).or('customer_type')
+
+// Customer
+export const createCustomerSchema = Joi.object({
+  email: Joi.string()
+    .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
+    .required(),
+  name: Joi.string().min(3).max(30).required(),
+  lastname: Joi.string().min(3).max(30).required(),
+  doc_type: Joi.string().min(3).max(30).required(),
+  doc_number: Joi.string().min(3).max(30).required(),
+  status: Joi.string().min(3).max(10).required(),
+  type: Joi.object({
+    type_id: Joi.string().alphanum().hex().length(24).required(),
+    customer_type: Joi.string().min(3).max(30).required(),
+  }).required(),
+})
+
+export const updateCustomerSchema = Joi.object({
+  email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }),
+  name: Joi.string().min(3).max(30),
+  lastname: Joi.string().min(3).max(30),
+  doc_type: Joi.string().min(3).max(30),
+  doc_number: Joi.string().min(3).max(30),
+  status: Joi.string().min(3).max(10),
+  type: Joi.object({
+    type_id: Joi.string().alphanum().hex().length(24),
+    customer_type: Joi.string().min(3).max(30),
+  }),
+})

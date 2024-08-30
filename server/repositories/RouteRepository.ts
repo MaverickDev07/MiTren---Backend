@@ -75,12 +75,6 @@ export default class RouteRepository extends BaseRepository<RouteAttributes> {
         const route_code = [start_code, end_code].join('-')
 
         try {
-          /*await this.create({
-            route_code,
-            start_station,
-            end_station,
-            prices,
-          })*/
           await Route.updateOne(
             { route_code },
             { route_code, start_station, end_station, prices },
@@ -94,7 +88,12 @@ export default class RouteRepository extends BaseRepository<RouteAttributes> {
         }
       }
     }
+    const response = {
+      created: successRoutes.length,
+      routes: successRoutes,
+      failed: failedRoutes,
+    }
 
-    return { successRoutes, failedRoutes }
+    return response
   }
 }
