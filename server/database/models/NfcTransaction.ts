@@ -1,18 +1,24 @@
 import { Schema, model, Document } from 'mongoose'
 
+type Method = {
+  method_id: Schema.Types.ObjectId
+  method_name: string
+}
+
 export type NfcTransactionEntity = {
   id?: string | any
-  type: string
+  customer_type: string
   amount: number
   date_time: Date
   card_id: Schema.Types.ObjectId
+  method: Method
 }
 
 export interface NfcTransactionAttributes extends NfcTransactionEntity, Document {}
 
 const NfcTransactionSchema = new Schema<NfcTransactionAttributes>(
   {
-    type: {
+    customer_type: {
       type: String,
       uppercase: true,
       trim: true,
@@ -29,6 +35,23 @@ const NfcTransactionSchema = new Schema<NfcTransactionAttributes>(
     card_id: {
       type: Schema.Types.ObjectId,
       ref: 'Card',
+      required: true,
+    },
+
+    method: {
+      type: {
+        method_id: {
+          type: Schema.Types.ObjectId,
+          ref: 'Method',
+          required: true,
+        },
+        method_name: {
+          type: String,
+          uppercase: true,
+          trim: true,
+          required: true,
+        },
+      },
       required: true,
     },
   },

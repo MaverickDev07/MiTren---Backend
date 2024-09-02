@@ -152,3 +152,41 @@ export const updateCustomerSchema = Joi.object({
     customer_type: Joi.string().min(3).max(30),
   }),
 })
+
+// Transaction NFC
+export const createNfcTransactionSchema = Joi.object({
+  customer_type: Joi.string().min(3).max(30).required(),
+  amount: Joi.number().min(1).required(),
+  card_id: Joi.string().alphanum().hex().length(24).required(),
+  method: Joi.object({
+    method_id: Joi.string().alphanum().hex().length(24).required(),
+    method_name: Joi.string().min(3).max(30).required(),
+  }).required(),
+})
+
+export const updateNfcTransactionSchema = Joi.object({
+  customer_type: Joi.string().min(3).max(30),
+  amount: Joi.number().min(1),
+  card_id: Joi.string().alphanum().hex().length(24),
+  method: Joi.object({
+    method_id: Joi.string().alphanum().hex().length(24),
+    method_name: Joi.string().min(3).max(30),
+  }),
+})
+
+// Promotion
+export const createPromotionSchema = Joi.object({
+  title: Joi.string().min(3).max(30).required(),
+  description: Joi.string().min(3).max(150).required(),
+  discount: Joi.number().min(10).required(),
+  start_date: Joi.date().required(),
+  end_date: Joi.date().required(),
+})
+
+export const updatePromotionSchema = Joi.object({
+  title: Joi.string().min(3).max(30),
+  description: Joi.string().min(3).max(150),
+  discount: Joi.number().min(10),
+  start_date: Joi.date(),
+  end_date: Joi.date(),
+})
