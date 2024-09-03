@@ -129,10 +129,10 @@ export const createCustomerSchema = Joi.object({
   email: Joi.string()
     .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
     .required(),
-  name: Joi.string().min(3).max(30).required(),
-  lastname: Joi.string().min(3).max(30).required(),
-  doc_type: Joi.string().min(3).max(30).required(),
-  doc_number: Joi.string().min(3).max(30).required(),
+  name: Joi.string().min(3).max(50).required(),
+  lastname: Joi.string().min(3).max(50).required(),
+  doc_type: Joi.string().min(3).max(20).required(),
+  doc_number: Joi.string().min(6).max(15).required(),
   status: Joi.string().min(3).max(10).required(),
   type: Joi.object({
     type_id: Joi.string().alphanum().hex().length(24).required(),
@@ -142,14 +142,57 @@ export const createCustomerSchema = Joi.object({
 
 export const updateCustomerSchema = Joi.object({
   email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }),
-  name: Joi.string().min(3).max(30),
-  lastname: Joi.string().min(3).max(30),
-  doc_type: Joi.string().min(3).max(30),
-  doc_number: Joi.string().min(3).max(30),
+  name: Joi.string().min(3).max(50),
+  lastname: Joi.string().min(3).max(50),
+  doc_type: Joi.string().min(3).max(20),
+  doc_number: Joi.string().min(6).max(15),
   status: Joi.string().min(3).max(10),
   type: Joi.object({
     type_id: Joi.string().alphanum().hex().length(24),
     customer_type: Joi.string().min(3).max(30),
+  }),
+})
+
+// Card NFC
+export const createNfcCardSchema = Joi.object({
+  card_code: Joi.string().min(3).max(10).required(),
+  balance: Joi.number().min(1).required(),
+  issue_date: Joi.date(),
+  status: Joi.string().min(3).max(10),
+  user: Joi.object({
+    user_id: Joi.string().alphanum().hex().length(24).required(),
+    name: Joi.string().min(3).max(50).required(),
+    lastname: Joi.string().min(3).max(50).required(),
+    doc_type: Joi.string().min(3).max(20).required(),
+    doc_number: Joi.string().min(6).max(15).required(),
+  }).required(),
+  customer: Joi.object({
+    customer_id: Joi.string().alphanum().hex().length(24).required(),
+    name: Joi.string().min(3).max(50).required(),
+    lastname: Joi.string().min(3).max(50).required(),
+    doc_type: Joi.string().min(3).max(20).required(),
+    doc_number: Joi.string().min(6).max(15).required(),
+  }).required(),
+})
+
+export const updateNfcCardSchema = Joi.object({
+  card_code: Joi.string().min(3).max(10),
+  balance: Joi.number().min(1),
+  issue_date: Joi.date(),
+  status: Joi.string().min(3).max(10),
+  user: Joi.object({
+    user_id: Joi.string().alphanum().hex().length(24),
+    name: Joi.string().min(3).max(50),
+    lastname: Joi.string().min(3).max(50),
+    doc_type: Joi.string().min(3).max(20),
+    doc_number: Joi.string().min(6).max(15),
+  }),
+  customer: Joi.object({
+    customer_id: Joi.string().alphanum().hex().length(24),
+    name: Joi.string().min(3).max(50),
+    lastname: Joi.string().min(3).max(50),
+    doc_type: Joi.string().min(3).max(20),
+    doc_number: Joi.string().min(6).max(15),
   }),
 })
 
@@ -189,4 +232,30 @@ export const updatePromotionSchema = Joi.object({
   discount: Joi.number().min(10),
   start_date: Joi.date(),
   end_date: Joi.date(),
+})
+
+// User
+export const createUserSchema = Joi.object({
+  email: Joi.string()
+    .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
+    .required(),
+  password: Joi.string().min(8).max(30).required(),
+  name: Joi.string().min(3).max(50).required(),
+  lastname: Joi.string().min(3).max(50).required(),
+  doc_type: Joi.string().min(3).max(20).required(),
+  doc_number: Joi.string().min(6).max(15).required(),
+  address: Joi.string().min(3).max(50).required(),
+  role_name: Joi.string().min(3).max(10).required(),
+  status: Joi.string().min(3).max(10).required(),
+})
+
+export const updateUserSchema = Joi.object({
+  email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }),
+  name: Joi.string().min(3).max(50),
+  lastname: Joi.string().min(3).max(50),
+  doc_type: Joi.string().min(3).max(20),
+  doc_number: Joi.string().min(6).max(15),
+  address: Joi.string().min(3).max(50),
+  role_name: Joi.string().min(3).max(10),
+  status: Joi.string().min(3).max(10),
 })

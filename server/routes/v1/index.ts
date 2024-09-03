@@ -8,8 +8,10 @@ import routes from './routes'
 import methods from './methods'
 import customerTypes from './customer_types'
 import customers from './customers'
+import nfcCards from './nfc_cards'
 import nfcTransactions from './nfc_transactions'
 import promotions from './promotions'
+import users from './users'
 
 const v1: Router = express.Router()
 
@@ -22,7 +24,9 @@ v1.use('/methods', methods)
 v1.use('/customer_types', customerTypes)
 v1.use('/routes', routes)
 v1.use('/customers', customers)
+v1.use('/nfc_cards', nfcCards)
 v1.use('/nfc_transactions', nfcTransactions)
 v1.use('/promotions', promotions)
+v1.use('/users', users)
 
 export default v1
