@@ -10,19 +10,6 @@ export const updateLineSchema = Joi.object({
   line_name: Joi.string().min(3).max(30),
 }).or('line_name')
 
-// Zone
-export const createZoneSchema = Joi.object({
-  zone_code: Joi.string().min(3).max(10).required(),
-  zone_name: Joi.string().min(3).max(30).required(),
-  lines: Joi.array().items(Joi.string().alphanum().hex().length(24)).required(),
-})
-
-export const updateZoneSchema = Joi.object({
-  zone_code: Joi.string().min(3).max(10),
-  zone_name: Joi.string().min(3).max(30),
-  lines: Joi.array().items(Joi.string().alphanum().hex().length(24)),
-}).or('zone_code', 'zone_name', 'lines')
-
 // Station
 export const createStationSchema = Joi.object({
   station_code: Joi.string().min(3).max(10).required(),
@@ -258,4 +245,53 @@ export const updateUserSchema = Joi.object({
   address: Joi.string().min(3).max(50),
   role_name: Joi.string().min(3).max(10),
   status: Joi.string().min(3).max(10),
+})
+
+// Ticket
+export const createTicketSchema = Joi.object({
+  start_station: Joi.string().min(3).max(50).required(),
+  end_station: Joi.string().min(3).max(50).required(),
+  kiosk_id: Joi.string().alphanum().hex().length(24).required(),
+  method_name: Joi.string().min(3).max(30).required(),
+  transfer: Joi.boolean().required(),
+  promotion_title: Joi.string().min(3).max(30).required(),
+  total_price: Joi.number().min(0).required(),
+  route: Joi.object({
+    route_id: Joi.string().alphanum().hex().length(24).required(),
+    stations: Joi.array().min(2).items(Joi.string().min(3).max(50)).required(),
+    prices: Joi.array()
+      .min(1)
+      .items(
+        Joi.object({
+          qty: Joi.number().min(1).required(),
+          customer_type: Joi.string().min(3).max(15).required(),
+          base_price: Joi.number().min(1).required(),
+        }),
+      )
+      .required(),
+  }).required(),
+})
+
+export const updateTicketSchema = Joi.object({
+  date_time: Joi.date(),
+  start_station: Joi.string().min(3).max(50),
+  end_station: Joi.string().min(3).max(50),
+  kiosk_id: Joi.string().alphanum().hex().length(24),
+  method_name: Joi.string().min(3).max(30),
+  transfer: Joi.boolean(),
+  promotion_title: Joi.string().min(3).max(30),
+  total_price: Joi.number().min(0),
+  route: Joi.object({
+    route_id: Joi.string().alphanum().hex().length(24),
+    stations: Joi.array().min(2).items(Joi.string().min(3).max(50)),
+    prices: Joi.array()
+      .min(1)
+      .items(
+        Joi.object({
+          qty: Joi.number().min(1),
+          customer_type: Joi.string().min(3).max(15),
+          base_price: Joi.number().min(1),
+        }),
+      ),
+  }),
 })
