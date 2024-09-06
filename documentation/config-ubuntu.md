@@ -8,6 +8,18 @@
 sudo apt update && sudo apt upgrade -y
 ```
 
+Si no tiene usuario, crearlo:
+
+```bash
+adduser [nameuser]
+# Responder preguntas
+usermod -aG sudo [nameuser]
+# Cambiar de usuario
+su [nameuser]
+# Actualizar repositorio con el nuevo usuario
+sudo apt update && sudo apt upgrade -y
+```
+
 Revisar y actualizar Sistema Operativo, version de Linux
 
 ```bash
@@ -46,20 +58,6 @@ cat ~/.ssh/id_rsa.pub
 # Copiar la llave pública y agregarla a las configuraciones de GitHub
 ```
 
-Crear un Nuevo Usuario
-
-```bash
-sudo adduser [gguzman]
-sudo usermod -aG sudo [gguzman]
-```
-
-Cambiar a Nuevo Usuario
-
-```bash
-su - gguzman
-sudo apt update && sudo apt upgrade -y
-```
-
 Instalar Fish Shell y Fisher
 
 ```bash
@@ -81,10 +79,54 @@ Instalar Node Version Manager (NVM) y Node.js v20.16.0 LTS/Iron
 
 ```bash
 fisher install jorgebucaran/nvm.fish
+nvm list-remote # Ver las versiones disponibles
 nvm install v20.16.0
 nvm use v20.16.0
 set --universal nvm_default_version v20.16.0 # Vesion para Instalar todo NVIM
 ```
+
+Instalar Docker
+
+```bash
+sudo apt install apt-transport-https ca-certificates curl software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
+sudo apt update
+apt-cache policy docker-ce
+sudo apt install docker-ce
+sudo systemctl status docker
+# Ejecutar el comando Docker sin sudo
+sudo usermod -aG docker ${USER}
+su - ${USER}
+id -nG
+sudo usermod -aG docker username
+```
+
+Instalar Docker Compose
+
+```bash
+sudo curl -L "https://github.com/docker/compose/releases/download/1.26.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+docker-compose --version
+```
+
+Ejecutar Docker Compose
+
+```bash
+docker-compose up -d
+```
+
+Queda Instalar el Proyecto de GitHub.
+
+Referencias:
+
+- <https://www.digitalocean.com/community/tutorials/initial-server-setup-with-ubuntu>
+
+- <https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-22-04>
+
+- <https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-compose-on-ubuntu-22-04>
+
+**_Hasta aquí la configuración básica del entorno de desarrollo para backend_**
 
 Configurar Nginx
 
