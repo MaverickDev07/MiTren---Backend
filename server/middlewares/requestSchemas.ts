@@ -120,7 +120,7 @@ export const createCustomerSchema = Joi.object({
   lastname: Joi.string().min(3).max(50).required(),
   doc_type: Joi.string().min(3).max(20).required(),
   doc_number: Joi.string().min(6).max(15).required(),
-  status: Joi.string().min(3).max(10).required(),
+  status: Joi.string().min(3).max(10),
   type: Joi.object({
     type_id: Joi.string().alphanum().hex().length(24).required(),
     customer_type: Joi.string().min(3).max(30).required(),
