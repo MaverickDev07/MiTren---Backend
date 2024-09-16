@@ -10,6 +10,7 @@ import nfcCards from './nfc_cards'
 import nfcTransactions from './nfc_transactions'
 import promotions from './promotions'
 import users from './users'
+import prices from './prices'
 import tickets from './tickets'
 
 const v1: Router = express.Router()
@@ -25,6 +26,7 @@ v1.use('/nfc_cards', nfcCards)
 v1.use('/nfc_transactions', nfcTransactions)
 v1.use('/promotions', promotions)
 v1.use('/users', users)
+v1.use('/prices', prices)
 v1.use('/tickets', tickets)
 
 export default v1

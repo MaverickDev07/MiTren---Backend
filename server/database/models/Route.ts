@@ -1,95 +1,48 @@
 import { Schema, model, Document } from 'mongoose'
 
 type Station = {
-  station_code: string
+  station_id: Schema.Types.ObjectId
   station_name: string
-}
-type Prices = {
-  interstops: boolean
-  customer_type: string
-  base_price: number
 }
 
 export type RouteEntity = {
   id?: string | any
-  route_code: string
-  start_station: Station
-  end_station: Station
-  prices: Prices[]
+  line_id: Schema.Types.ObjectId
+  stations: Array<Station>
 }
 
 export interface RouteAttributes extends RouteEntity, Document {}
 
 const RouteSchema = new Schema<RouteAttributes>(
   {
-    route_code: {
-      type: String,
-      uppercase: true,
-      trim: true,
-      unique: true,
+    line_id: {
+      type: Schema.Types.ObjectId,
+      ref: 'Line',
       required: true,
     },
 
-    start_station: {
-      type: {
-        station_code: {
-          type: String,
-          uppercase: true,
-          trim: true,
-          required: true,
-        },
-        station_name: {
-          type: String,
-          uppercase: true,
-          trim: true,
-          required: true,
-        },
-      },
-      required: true,
-    },
-    end_station: {
-      type: {
-        station_code: {
-          type: String,
-          uppercase: true,
-          trim: true,
-          required: true,
-        },
-        station_name: {
-          type: String,
-          uppercase: true,
-          trim: true,
-          required: true,
-        },
-      },
-      required: true,
-    },
-
-    prices: {
+    stations: {
       type: [
         {
-          interstops: {
-            type: Boolean,
-            default: true,
+          station_id: {
+            type: Schema.Types.ObjectId,
+            ref: 'Station',
+            required: true,
           },
-          customer_type: {
+          station_name: {
             type: String,
             uppercase: true,
             trim: true,
-            required: true,
-          },
-          base_price: {
-            type: Number,
             required: true,
           },
         },
       ],
       required: true,
       validate: {
-        validator: (value: Prices[]) => {
-          return value.length > 0
+        validator: (value: Station[]) => {
+          return value.length > 1
         },
-        message: 'El array "prices" debe contener al menos un ítem.',
+        message: 'El array "stations" debe contener al menos dos ítems.',
       },
     },
   },

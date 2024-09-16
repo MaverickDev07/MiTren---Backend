@@ -4,8 +4,8 @@ import ApiError from '../errors/ApiError'
 import BaseRepository from './BaseRepository'
 
 export default class RouteRepository extends BaseRepository<RouteAttributes> {
-  protected allowedSortByFields = ['route_code', 'createdAt', 'updatedAt']
-  protected allowedFilterByFields = ['route_code']
+  protected allowedSortByFields = ['createdAt', 'updatedAt']
+  protected allowedFilterByFields = ['line_id']
 
   constructor() {
     super(Route)

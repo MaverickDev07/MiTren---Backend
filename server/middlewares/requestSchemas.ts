@@ -36,47 +36,29 @@ export const updateKioskSchema = Joi.object({
 
 // Route
 export const createRouteSchema = Joi.object({
-  route_code: Joi.string().min(3).max(10).required(),
-  start_stations: Joi.object({
-    station_code: Joi.string().min(3).max(10).required(),
-    station_name: Joi.string().min(3).max(50).required(),
-  }).required(),
-  end_stations: Joi.object({
-    station_code: Joi.string().min(3).max(10).required(),
-    station_name: Joi.string().min(3).max(50).required(),
-  }).required(),
-  prices: Joi.array()
-    .min(1)
+  line_id: Joi.string().alphanum().hex().length(24).required(),
+  stations: Joi.array()
+    .min(2)
     .items(
       Joi.object({
-        interstops: Joi.boolean(),
-        customer_type: Joi.string().min(3).max(15).required(),
-        base_price: Joi.number().min(1).required(),
+        station_id: Joi.string().alphanum().hex().length(24).required(),
+        station_name: Joi.string().min(3).max(50).required(),
       }),
     )
     .required(),
 })
 
 export const updateRouteSchema = Joi.object({
-  route_code: Joi.string().min(3).max(10),
-  start_stations: Joi.object({
-    station_code: Joi.string().min(3).max(10).required(),
-    station_name: Joi.string().min(3).max(50).required(),
-  }),
-  end_stations: Joi.object({
-    station_code: Joi.string().min(3).max(10).required(),
-    station_name: Joi.string().min(3).max(50).required(),
-  }),
-  prices: Joi.array()
-    .min(1)
+  line_id: Joi.string().alphanum().hex().length(24),
+  stations: Joi.array()
+    .min(2)
     .items(
       Joi.object({
-        interstops: Joi.boolean(),
-        customer_type: Joi.string().min(3).max(15),
-        base_price: Joi.number().min(1),
+        station_id: Joi.string().alphanum().hex().length(24),
+        station_name: Joi.string().min(3).max(50),
       }),
     ),
-}).or('route_code', 'stations', 'prices')
+}).or('line_id', 'stations')
 
 export const createRouteStationRangeSchema = Joi.object({
   start_code: Joi.string().min(3).max(10).required(),
@@ -245,6 +227,35 @@ export const updateUserSchema = Joi.object({
   address: Joi.string().min(3).max(50),
   role_name: Joi.string().min(3).max(10),
   status: Joi.string().min(3).max(10),
+})
+
+// Price
+export const createPriceSchema = Joi.object({
+  base_price: Joi.number().min(1).required(),
+  customer_type: Joi.string().min(3).max(15).required(),
+  customer_type_id: Joi.string().alphanum().hex().length(24).required(),
+  start_stations: Joi.object({
+    station_id: Joi.string().alphanum().hex().length(24).required(),
+    station_name: Joi.string().min(3).max(50).required(),
+  }),
+  end_stations: Joi.object({
+    station_id: Joi.string().alphanum().hex().length(24).required(),
+    station_name: Joi.string().min(3).max(50).required(),
+  }),
+})
+
+export const updatePriceSchema = Joi.object({
+  base_price: Joi.number().min(1),
+  customer_type: Joi.string().min(3).max(15),
+  customer_type_id: Joi.string().alphanum().hex().length(24),
+  start_stations: Joi.object({
+    station_id: Joi.string().alphanum().hex().length(24),
+    station_name: Joi.string().min(3).max(50),
+  }),
+  end_stations: Joi.object({
+    station_id: Joi.string().alphanum().hex().length(24),
+    station_name: Joi.string().min(3).max(50),
+  }),
 })
 
 // Ticket
