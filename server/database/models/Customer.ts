@@ -59,6 +59,22 @@ const CustomerSchema = new Schema<CustomerAttributes>(
       trim: true,
       default: 'ACTIVO',
     },
+    type: {
+      type: {
+        type_id: {
+          type: Schema.Types.ObjectId,
+          ref: 'CustomerType',
+          required: true,
+        },
+        customer_type: {
+          type: String,
+          uppercase: true,
+          trim: true,
+          required: true,
+        },
+      },
+      required: true,
+    },
   },
   {
     timestamps: true,
