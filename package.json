@@ -40,6 +40,7 @@
     "liqe": "^3.8.0",
     "mongoose": "^8.5.2",
     "morgan": "^1.10.0",
+    "node-thermal-printer": "^4.4.3",
     "sequelize": "^6.37.3",
     "sequelize-typescript": "^2.1.6",
     "tedious": "^18.3.0"
