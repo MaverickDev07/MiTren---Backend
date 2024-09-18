@@ -1,17 +1,17 @@
 import Route, { RouteAttributes } from '../database/models/Route'
-import Station from '../database/models/Station'
-import ApiError from '../errors/ApiError'
 import BaseRepository from './BaseRepository'
+/*import Station from '../database/models/Station'
+import ApiError from '../errors/ApiError'*/
 
 export default class RouteRepository extends BaseRepository<RouteAttributes> {
   protected allowedSortByFields = ['createdAt', 'updatedAt']
-  protected allowedFilterByFields = ['line_id']
+  protected allowedFilterByFields = ['line_id', 'stations']
 
   constructor() {
     super(Route)
   }
 
-  async createByStationRange(body: Record<string, any>) {
+  /*async createByStationRange(body: Record<string, any>) {
     const { start_code, end_code, prices } = body
 
     const start_line = await Station.findOne({ station_code: start_code })
@@ -95,5 +95,5 @@ export default class RouteRepository extends BaseRepository<RouteAttributes> {
     }
 
     return response
-  }
+  }*/
 }

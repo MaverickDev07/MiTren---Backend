@@ -58,7 +58,7 @@ export default abstract class BaseRepository<T extends Document> {
   }
 
   protected getOrderBy(sortBy: string | undefined): Record<string, any> {
-    const orderBy: Record<string, any> = { created_at: -1 } // Por defecto ordenado por 'created_at' descendente
+    const orderBy: Record<string, any> = { createdAt: -1 } // Por defecto ordenado por 'created_at' descendente
 
     if (!sortBy) {
       return orderBy

@@ -19,6 +19,7 @@ const RouteSchema = new Schema<RouteAttributes>(
       type: Schema.Types.ObjectId,
       ref: 'Line',
       required: true,
+      unique: true,
     },
 
     stations: {

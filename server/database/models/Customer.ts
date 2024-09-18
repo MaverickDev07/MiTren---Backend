@@ -12,7 +12,7 @@ export type CustomerEntity = {
   lastname: string
   doc_type: string
   doc_number: string
-  status: string
+  status?: string
   type: CustomerType
 }
 
@@ -54,10 +54,10 @@ const CustomerSchema = new Schema<CustomerAttributes>(
     },
     status: {
       type: String,
-      enum: ['ACTIVO', 'INACTIVO'],
+      enum: ['ACTIVE', 'INACTIVE'],
       uppercase: true,
       trim: true,
-      default: 'ACTIVO',
+      default: 'ACTIVE',
     },
     type: {
       type: {

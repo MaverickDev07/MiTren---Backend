@@ -21,7 +21,7 @@ export type NfcCardEntity = {
   card_code: string
   balance: number
   issue_date: Date
-  status: string
+  status?: string
   user: User
   customer: Customer
 }
@@ -47,8 +47,10 @@ const NfcCardSchema = new Schema<NfcCardAttributes>(
     },
     status: {
       type: String,
-      enum: ['active', 'inactive', 'blocked'],
-      default: 'active',
+      enum: ['ACTIVE', 'INACTIVE', 'BLOCKED'],
+      uppercase: true,
+      trim: true,
+      default: 'ACTIVE',
     },
     user: {
       user_id: {

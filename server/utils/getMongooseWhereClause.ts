@@ -43,6 +43,18 @@ const getMongooseWhereClause = (searchQuery: LiqeQuery, allowedFilterByFields: A
       }
     }
 
+    if (expression.type === 'RegexExpression') {
+      // Extraer el valor del regex, eliminando los delimitadores '/' y posibles flags al final
+      const regex = expression.value.replace(/^\/|\/[a-z]*$/gi, '')
+
+      return {
+        [field.name]: {
+          $regex: regex,
+          $options: 'i',
+        },
+      }
+    }
+
     if (expression.type !== 'LiteralExpression') {
       throw new Error('Expected a literal expression.')
     }

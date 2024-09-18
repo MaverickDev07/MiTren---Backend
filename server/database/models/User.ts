@@ -67,10 +67,10 @@ const UserSchema = new Schema<UserAttributes>({
   },
   status: {
     type: String,
-    enum: ['ACTIVO', 'INACTIVO'],
+    enum: ['ACTIVE', 'INACTIVE'],
     uppercase: true,
     trim: true,
-    default: 'ACTIVO',
+    default: 'ACTIVE',
   },
 })
 

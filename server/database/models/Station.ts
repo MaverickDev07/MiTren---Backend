@@ -1,23 +1,22 @@
 import { Schema, model, Document } from 'mongoose'
 
+type Location = {
+  latitude: number
+  longitude: number
+}
+
 export type StationEntity = {
   id?: string | any
-  station_code: string
   station_name: string
-  line_id: Schema.Types.ObjectId
+  location: Location
+  status: string
+  line_id: Array<Schema.Types.ObjectId>
 }
 
 export interface StationAttributes extends StationEntity, Document {}
 
 const StationSchema = new Schema<StationAttributes>(
   {
-    station_code: {
-      type: String,
-      uppercase: true,
-      trim: true,
-      unique: true,
-      required: true,
-    },
     station_name: {
       type: String,
       uppercase: true,
@@ -25,9 +24,28 @@ const StationSchema = new Schema<StationAttributes>(
       unique: true,
       required: true,
     },
-
+    location: {
+      type: {
+        latitude: {
+          type: Number,
+          required: true,
+        },
+        longitude: {
+          type: Number,
+          required: true,
+        },
+      },
+      required: true,
+    },
+    status: {
+      type: String,
+      enum: ['ACTIVE', 'INACTIVE'],
+      uppercase: true,
+      trim: true,
+      default: 'ACTIVE',
+    },
     line_id: {
-      type: Schema.Types.ObjectId,
+      type: [Schema.Types.ObjectId],
       ref: 'Line',
       required: true,
     },
