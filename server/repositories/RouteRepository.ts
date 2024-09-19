@@ -1,3 +1,4 @@
+import { QueryOptions, Types } from 'mongoose'
 import Route, { RouteAttributes } from '../database/models/Route'
 import BaseRepository from './BaseRepository'
 /*import Station from '../database/models/Station'
@@ -9,6 +10,14 @@ export default class RouteRepository extends BaseRepository<RouteAttributes> {
 
   constructor() {
     super(Route)
+  }
+
+  async getPagedStationsByLine(
+    id: string | Types.ObjectId,
+    options: QueryOptions = {},
+  ): Promise<any | null> {
+    const stations = await Route.findByOne({ line_id: id }, { stations: 1 }).exec()
+    console.log(stations)
   }
 
   /*async createByStationRange(body: Record<string, any>) {

@@ -17,6 +17,25 @@ export const listRoutes = async (req: Request, res: Response, next: NextFunction
   }
 }
 
+export const listDestinationsFromStation = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const repository = new RouteRepository()
+    const routes = RouteResource.collection(
+      await repository.getAll({
+        sortBy: req.query.sort_by as string,
+        filterBy: req.query.filter_by as string,
+      }),
+    )
+    res.status(200).json({ routes })
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const getRoute = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const repository = new RouteRepository()
