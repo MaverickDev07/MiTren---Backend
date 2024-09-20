@@ -33,6 +33,43 @@ function BaseResource<A, E>() {
         return resource.item()
       })
     }
+
+    static paged(paginatedResult: PaginationResult<A>): PaginationResult<E> | undefined {
+      if (!paginatedResult || !paginatedResult.docs) {
+        return
+      }
+
+      const {
+        docs,
+        totalDocs,
+        limit,
+        totalPages,
+        page,
+        hasPrevPage,
+        hasNextPage,
+        prevPage,
+        nextPage,
+      } = paginatedResult
+
+      // Convertir los docs (items paginados) usando el método item()
+      const paginatedDocs = docs.map(instance => {
+        const resource = new this(instance)
+        return resource.item()
+      })
+
+      // Retornar la estructura de paginación con los items transformados
+      return {
+        docs: paginatedDocs,
+        totalDocs,
+        limit,
+        totalPages,
+        page,
+        hasPrevPage,
+        hasNextPage,
+        prevPage,
+        nextPage,
+      }
+    }
   }
 }
 

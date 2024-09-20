@@ -37,9 +37,11 @@ export default new Proxy(envManager, {
         return false
       }
 
-      if (envVariable && !isNaN(parseInt(envVariable, 10))) {
+      // Check if the value is fully numeric before converting to number
+      if (envVariable && /^[0-9]+$/.test(envVariable)) {
         envVariable = parseInt(envVariable, 10)
       }
+
       return envVariable || defaultValue
     }
   },

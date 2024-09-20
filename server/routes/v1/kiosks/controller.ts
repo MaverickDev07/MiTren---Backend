@@ -19,6 +19,16 @@ export const listKiosks = async (req: Request, res: Response, next: NextFunction
   }
 }
 
+export const getStationByKioskId = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const repository = new KioskRepository()
+    const kioskResource = new KioskResource(await repository.getStationByKioskId(req.params.id))
+    res.status(200).json({ kiosk: kioskResource.item() })
+  } catch (error: any) {
+    next(error)
+  }
+}
+
 export const getKiosk = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const repository = new KioskRepository()

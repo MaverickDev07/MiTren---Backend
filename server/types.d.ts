@@ -67,3 +67,21 @@ interface VerifyQrStatusResponse {
   } | null
   Mensaje: string
 }
+
+interface PagedStationsParams {
+  id: string | Types.ObjectId
+  limit?: number
+  page?: number
+}
+
+interface PaginationResult<T> {
+  docs: T[]
+  totalDocs: number
+  limit: number
+  totalPages: number
+  page: number
+  hasPrevPage: boolean
+  hasNextPage: boolean
+  prevPage: number | null
+  nextPage: number | null
+}

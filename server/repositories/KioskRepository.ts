@@ -1,3 +1,4 @@
+import { Types } from 'mongoose'
 import Kiosk, { KioskAttributes } from '../database/models/Kiosk'
 import BaseRepository from './BaseRepository'
 
@@ -7,5 +8,9 @@ export default class KioskRepository extends BaseRepository<KioskAttributes> {
 
   constructor() {
     super(Kiosk)
+  }
+
+  async getStationByKioskId(id: string | Types.ObjectId): Promise<KioskAttributes | null> {
+    return this.model.findById(id).populate('station_id').lean().exec()
   }
 }

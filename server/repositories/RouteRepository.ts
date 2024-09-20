@@ -1,8 +1,5 @@
-import { QueryOptions, Types } from 'mongoose'
 import Route, { RouteAttributes } from '../database/models/Route'
 import BaseRepository from './BaseRepository'
-/*import Station from '../database/models/Station'
-import ApiError from '../errors/ApiError'*/
 
 export default class RouteRepository extends BaseRepository<RouteAttributes> {
   protected allowedSortByFields = ['createdAt', 'updatedAt']
@@ -12,12 +9,35 @@ export default class RouteRepository extends BaseRepository<RouteAttributes> {
     super(Route)
   }
 
-  async getPagedStationsByLine(
-    id: string | Types.ObjectId,
-    options: QueryOptions = {},
-  ): Promise<any | null> {
-    const stations = await Route.findByOne({ line_id: id }, { stations: 1 }).exec()
-    console.log(stations)
+  async getPagedStationsByLine(params: PagedStationsParams): Promise<PaginationResult<any> | null> {
+    const { id, limit, page } = params
+    const route = await Route.findOne({ line_id: id }, { stations: 1 }).exec()
+
+    // Realizar la paginación manualmente
+    const totalDocs = route.stations.length
+    const startIndex = (page - 1) * limit
+    const endIndex = page * limit
+    const hasPrevPage = page > 1
+    const hasNextPage = endIndex < totalDocs
+    const prevPage = hasPrevPage ? page - 1 : null
+    const nextPage = hasNextPage ? page + 1 : null
+
+    const paginated = route.stations.slice(startIndex, endIndex)
+
+    // Devolver paginación
+    const paginacion = {
+      docs: paginated,
+      totalDocs,
+      limit,
+      totalPages: Math.ceil(totalDocs / limit),
+      page,
+      hasPrevPage,
+      hasNextPage,
+      prevPage,
+      nextPage,
+    }
+
+    return paginacion
   }
 
   /*async createByStationRange(body: Record<string, any>) {
