@@ -239,21 +239,21 @@ export const updateUserSchema = Joi.object({
 
 // Price
 export const createPriceSchema = Joi.object({
-  base_price: Joi.number().min(1).required(),
+  base_price: Joi.number().min(0.5).required(),
   customer_type: Joi.string().min(3).max(15).required(),
   customer_type_id: Joi.string().alphanum().hex().length(24).required(),
-  start_stations: Joi.object({
+  start_station: Joi.object({
     station_id: Joi.string().alphanum().hex().length(24).required(),
     station_name: Joi.string().min(3).max(50).required(),
   }),
-  end_stations: Joi.object({
+  end_station: Joi.object({
     station_id: Joi.string().alphanum().hex().length(24).required(),
     station_name: Joi.string().min(3).max(50).required(),
   }),
 })
 
 export const updatePriceSchema = Joi.object({
-  base_price: Joi.number().min(1),
+  base_price: Joi.number().min(0.5),
   customer_type: Joi.string().min(3).max(15),
   customer_type_id: Joi.string().alphanum().hex().length(24),
   start_stations: Joi.object({

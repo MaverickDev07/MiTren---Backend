@@ -17,6 +17,19 @@ export const listPrices = async (req: Request, res: Response, next: NextFunction
   }
 }
 
+export const listPricesByStationPair = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { start_station_id, end_station_id } = req.params
+    const repository = new PriceRepository()
+    const prices = PriceResource.collection(
+      await repository.getPricesByStationPair(start_station_id as string, end_station_id as string),
+    )
+    res.status(200).json({ prices })
+  } catch (error: any) {
+    next(error)
+  }
+}
+
 export const getPrice = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const repository = new PriceRepository()
