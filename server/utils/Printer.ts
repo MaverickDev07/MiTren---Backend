@@ -1,4 +1,4 @@
-import { PrinterTypes, printer as ThermalPrinter, Printer } from 'node-thermal-printer'
+/*import { PrinterTypes, printer as ThermalPrinter, Printer } from 'node-thermal-printer'
 
 // Interfaz para los datos del ticket
 interface TicketData {
@@ -63,3 +63,4 @@ class TicketPrinter {
 }
 
 export default TicketPrinter
+*/
