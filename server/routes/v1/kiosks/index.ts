@@ -11,13 +11,20 @@ import {
 import validateRequest from '../../../middlewares/validateRequest'
 import { createKioskSchema, updateKioskSchema } from '../../../middlewares/requestSchemas'
 import EnvManager from '../../../config/EnvManager'
+import ApiError from '../../../errors/ApiError'
 
 const kiosks: Router = express.Router()
 
 const getKioskIdByEnv = (req: Request, res: Response, next: NextFunction) => {
   try {
     const kioskId = EnvManager.getKioskId()
-    if (!kioskId) throw new Error('KioskId not found')
+    if (!kioskId)
+      throw new ApiError({
+        name: 'NOT_FOUND_ERROR',
+        message: 'KioskId not found',
+        status: 404,
+        code: 'ERR_NF',
+      })
     req.params.id = EnvManager.kioskId()
 
     next()
