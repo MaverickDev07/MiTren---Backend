@@ -271,12 +271,13 @@ export const createTicketSchema = Joi.object({
   start_station: Joi.string().min(3).max(50).required(),
   end_station: Joi.string().min(3).max(50).required(),
   kiosk_id: Joi.string().alphanum().hex().length(24).required(),
-  method_name: Joi.string().min(3).max(30).required(),
-  transfer: Joi.boolean().required(),
-  promotion_title: Joi.string().min(3).max(30).required(),
-  total_price: Joi.number().min(0).required(),
+  method_name: Joi.string().min(2).max(15).required(),
+  id_qr: Joi.string().min(2).max(20),
+  is_transfer: Joi.boolean(),
+  promotion_title: Joi.string().min(3).max(30),
+  total_price: Joi.number().min(0.1).required(),
   route: Joi.object({
-    route_id: Joi.string().alphanum().hex().length(24).required(),
+    line_name: Joi.string().min(3).max(30).required(),
     stations: Joi.array().min(2).items(Joi.string().min(3).max(50)).required(),
     prices: Joi.array()
       .min(1)
@@ -292,16 +293,15 @@ export const createTicketSchema = Joi.object({
 })
 
 export const updateTicketSchema = Joi.object({
-  date_time: Joi.date(),
   start_station: Joi.string().min(3).max(50),
   end_station: Joi.string().min(3).max(50),
   kiosk_id: Joi.string().alphanum().hex().length(24),
   method_name: Joi.string().min(3).max(30),
-  transfer: Joi.boolean(),
+  id_qr: Joi.string().min(2).max(20),
+  is_transfer: Joi.boolean(),
   promotion_title: Joi.string().min(3).max(30),
-  total_price: Joi.number().min(0),
   route: Joi.object({
-    route_id: Joi.string().alphanum().hex().length(24),
+    line_name: Joi.string().min(3).max(30).required(),
     stations: Joi.array().min(2).items(Joi.string().min(3).max(50)),
     prices: Joi.array()
       .min(1)

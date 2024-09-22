@@ -22,7 +22,7 @@ const getKioskIdByEnv = (req: Request, res: Response, next: NextFunction) => {
       throw new ApiError({
         name: 'NOT_FOUND_ERROR',
         message: 'KioskId not found',
-        status: 404,
+        status: 400,
         code: 'ERR_NF',
       })
     req.params.id = EnvManager.kioskId()

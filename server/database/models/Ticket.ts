@@ -7,22 +7,21 @@ type Price = {
 }
 
 type Route = {
-  route_id: Schema.Types.ObjectId
+  line_name: string
   stations: Array<string>
   prices: Array<Price>
 }
 
 export type TicketEntity = {
   id?: string | any
-  qr_code: string
-  date_time: Date
   start_station: string
   end_station: string
   kiosk_id: Schema.Types.ObjectId
   method_name: string
-  transfer: boolean
-  promotion_title: string
-  total_price: number
+  id_qr?: string | null
+  is_transfer?: boolean
+  promotion_title?: string
+  total_price?: number
   route: Route
 }
 
@@ -30,17 +29,6 @@ export interface TicketAttributes extends TicketEntity, Document {}
 
 const TicketSchema = new Schema<TicketAttributes>(
   {
-    qr_code: {
-      type: String,
-      uppercase: true,
-      trim: true,
-      unique: true,
-      required: true,
-    },
-    date_time: {
-      type: Date,
-      required: true,
-    },
     start_station: {
       type: String,
       uppercase: true,
@@ -64,7 +52,12 @@ const TicketSchema = new Schema<TicketAttributes>(
       trim: true,
       required: true,
     },
-    transfer: {
+    id_qr: {
+      type: String,
+      trim: true,
+      // unique: true,
+    },
+    is_transfer: {
       type: Boolean,
       default: false,
     },
@@ -72,17 +65,18 @@ const TicketSchema = new Schema<TicketAttributes>(
       type: String,
       uppercase: true,
       trim: true,
-      required: true,
+      default: 'SIN PROMOCIÓN',
     },
     total_price: {
       type: Number,
-      min: 0,
+      min: 0.1,
       required: true,
     },
     route: {
-      route_id: {
-        type: Schema.Types.ObjectId,
-        ref: 'Route',
+      line_name: {
+        type: String,
+        uppercase: true,
+        trim: true,
         required: true,
       },
       stations: {
