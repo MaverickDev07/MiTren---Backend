@@ -10,7 +10,7 @@ export type WalletEntity = {
   status?: string
 }
 
-export interface WalletAttributes extends WalletEntity, Document {}
+export interface WalletAttributes extends WalletEntity, Document { }
 
 const WalletSchema = new Schema<WalletAttributes>(
   {
@@ -21,7 +21,7 @@ const WalletSchema = new Schema<WalletAttributes>(
     currency: {
       type: String,
       emun: ['BOB'],
-      required: true,
+      default: 'BOB',
     },
     amount_paid: {
       type: Number,
@@ -29,11 +29,10 @@ const WalletSchema = new Schema<WalletAttributes>(
     },
     cash_back: {
       type: Number,
-      required: true,
     },
     summary: {
       type: String,
-      required: true,
+      default: '',
     },
     status: {
       type: String,

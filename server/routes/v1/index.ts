@@ -13,6 +13,7 @@ import promotions from './promotions'
 import users from './users'
 import prices from './prices'
 import tickets from './tickets'
+import wallets from './wallets'
 
 const v1: Router = express.Router()
 
@@ -30,5 +31,6 @@ v1.use('/promotions', promotions)
 v1.use('/users', users)
 v1.use('/prices', prices)
 v1.use('/tickets', tickets)
+v1.use('/wallets', wallets)
 
 export default v1
