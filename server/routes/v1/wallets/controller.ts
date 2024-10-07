@@ -17,6 +17,26 @@ export const listWallets = async (req: Request, res: Response, next: NextFunctio
   }
 }
 
+const generarNumeroAleatorio = (min: number, max: number): number => {
+  return Math.floor(Math.random() * (max - min + 1)) + min
+}
+
+export const getPriceTicket = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const data = {
+      id: '670442658d66328c26fc9010',
+      price: generarNumeroAleatorio(11, 49),
+      currency: 'BOB',
+      payment_methods: 'EFECTIVO',
+      createdAt: new Date()
+    }
+
+    res.status(200).json(data)
+  } catch (error: any) {
+    next(error)
+  }
+}
+
 export const getWallet = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const repository = new WalletRepository()
