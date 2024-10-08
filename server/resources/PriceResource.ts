@@ -10,6 +10,9 @@ class PriceResource extends BaseResource<PriceAttributes, PriceEntity>() {
       customer_type_id: this.instance.customer_type_id,
       start_station: this.instance.start_station,
       end_station: this.instance.end_station,
+      status: this.instance.status,
+      createdAt: this.instance.createdAt,
+      updatedAt: this.instance.updatedAt,
     }
 
     return priceResource

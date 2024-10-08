@@ -24,6 +24,8 @@ export type NfcCardEntity = {
   status?: string
   user: User
   customer: Customer
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 export interface NfcCardAttributes extends NfcCardEntity, Document {}

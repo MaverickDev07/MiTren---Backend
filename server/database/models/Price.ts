@@ -12,6 +12,9 @@ export type PriceEntity = {
   customer_type_id: Schema.Types.ObjectId
   start_station: Station
   end_station: Station
+  status?: string
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 export interface PriceAttributes extends PriceEntity, Document {}
@@ -64,6 +67,13 @@ const PriceSchema = new Schema<PriceAttributes>(
         },
       },
       required: true,
+    },
+    status: {
+      type: String,
+      enum: ['ACTIVE', 'INACTIVE'],
+      uppercase: true,
+      trim: true,
+      default: 'ACTIVE',
     },
   },
   {

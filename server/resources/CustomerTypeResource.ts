@@ -6,6 +6,9 @@ class CustomerTypeResource extends BaseResource<CustomerTypeAttributes, Customer
     const customerTypeResource: CustomerTypeEntity = {
       id: this.instance.id,
       customer_type: this.instance.customer_type,
+      status: this.instance.status,
+      createdAt: this.instance.createdAt,
+      updatedAt: this.instance.updatedAt,
     }
 
     return customerTypeResource

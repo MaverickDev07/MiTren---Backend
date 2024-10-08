@@ -6,6 +6,7 @@ export default class TicketRepository extends BaseRepository<TicketAttributes> {
     'method_name',
     'promotion_title',
     'route.line_name',
+    'status',
     'createdAt',
     'updatedAt',
   ]

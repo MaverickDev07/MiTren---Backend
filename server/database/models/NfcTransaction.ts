@@ -12,6 +12,9 @@ export type NfcTransactionEntity = {
   date_time: Date
   card_id: Schema.Types.ObjectId
   method: Method
+  status?: string
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 export interface NfcTransactionAttributes extends NfcTransactionEntity, Document {}
@@ -53,6 +56,13 @@ const NfcTransactionSchema = new Schema<NfcTransactionAttributes>(
         },
       },
       required: true,
+    },
+    status: {
+      type: String,
+      enum: ['ACTIVE', 'INACTIVE'],
+      uppercase: true,
+      trim: true,
+      default: 'ACTIVE',
     },
   },
   {

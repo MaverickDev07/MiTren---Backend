@@ -14,6 +14,8 @@ export type CustomerEntity = {
   doc_number: string
   status?: string
   type: CustomerType
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 export interface CustomerAttributes extends CustomerEntity, Document {}

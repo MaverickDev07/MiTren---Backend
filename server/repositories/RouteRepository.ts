@@ -2,7 +2,7 @@ import Route, { RouteAttributes } from '../database/models/Route'
 import BaseRepository from './BaseRepository'
 
 export default class RouteRepository extends BaseRepository<RouteAttributes> {
-  protected allowedSortByFields = ['createdAt', 'updatedAt']
+  protected allowedSortByFields = ['status', 'createdAt', 'updatedAt']
   protected allowedFilterByFields = ['line_id', 'stations']
 
   constructor() {

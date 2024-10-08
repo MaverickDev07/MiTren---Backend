@@ -23,6 +23,9 @@ export type TicketEntity = {
   promotion_title?: string
   total_price?: number
   route: Route
+  status?: string
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 export interface TicketAttributes extends TicketEntity, Document {}
@@ -107,6 +110,13 @@ const TicketSchema = new Schema<TicketAttributes>(
         ],
         required: true,
       },
+    },
+    status: {
+      type: String,
+      enum: ['ACTIVE', 'INACTIVE'],
+      uppercase: true,
+      trim: true,
+      default: 'ACTIVE',
     },
   },
   {

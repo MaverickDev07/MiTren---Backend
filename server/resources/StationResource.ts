@@ -9,6 +9,8 @@ class StationResource extends BaseResource<StationAttributes, StationEntity>() {
       location: this.instance.location,
       status: this.instance.status,
       line_id: this.instance.line_id,
+      createdAt: this.instance.createdAt,
+      updatedAt: this.instance.updatedAt,
     }
 
     return stationResource

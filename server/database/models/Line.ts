@@ -3,7 +3,9 @@ import { Schema, model, Document } from 'mongoose'
 export type LineEntity = {
   id?: string | any
   line_name: string
-  // status: string
+  status?: string
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 export interface LineAttributes extends LineEntity, Document {}
@@ -17,13 +19,13 @@ const LineSchema = new Schema<LineAttributes>(
       unique: true,
       required: true,
     },
-    /*status: {
+    status: {
       type: String,
       enum: ['ACTIVE', 'INACTIVE'],
       uppercase: true,
       trim: true,
       default: 'ACTIVE',
-    },*/
+    },
   },
   {
     timestamps: true,

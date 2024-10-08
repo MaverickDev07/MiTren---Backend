@@ -6,6 +6,9 @@ class MethodResource extends BaseResource<MethodAttributes, MethodEntity>() {
     const methodResource: MethodEntity = {
       id: this.instance.id,
       method_name: this.instance.method_name,
+      status: this.instance.status,
+      createdAt: this.instance.createdAt,
+      updatedAt: this.instance.updatedAt,
     }
 
     return methodResource

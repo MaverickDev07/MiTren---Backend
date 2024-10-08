@@ -5,6 +5,8 @@ export type KioskEntity = {
   kiosk_code: string
   status?: string
   station_id: Schema.Types.ObjectId
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 export interface KioskAttributes extends KioskEntity, Document {}

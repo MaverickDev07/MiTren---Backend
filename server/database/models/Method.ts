@@ -3,6 +3,9 @@ import { Schema, model, Document } from 'mongoose'
 export type MethodEntity = {
   id?: string | any
   method_name: string
+  status?: string
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 export interface MethodAttributes extends MethodEntity, Document {}

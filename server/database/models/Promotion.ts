@@ -8,6 +8,9 @@ export type PromotionEntity = {
   start_date: Date
   end_date: Date
   active: boolean
+  status?: string
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 export interface PromotionAttributes extends PromotionEntity, Document {}
@@ -43,6 +46,13 @@ const PromotionSchema = new Schema<PromotionAttributes>(
       type: Boolean,
       default: false,
       required: true,
+    },
+    status: {
+      type: String,
+      enum: ['ACTIVE', 'INACTIVE'],
+      uppercase: true,
+      trim: true,
+      default: 'ACTIVE',
     },
   },
   {

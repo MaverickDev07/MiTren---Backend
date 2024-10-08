@@ -11,6 +11,8 @@ class NfcCardResource extends BaseResource<NfcCardAttributes, NfcCardEntity>() {
       status: this.instance.status,
       user: this.instance.user,
       customer: this.instance.customer,
+      createdAt: this.instance.createdAt,
+      updatedAt: this.instance.updatedAt,
     }
 
     return nfcCardResource

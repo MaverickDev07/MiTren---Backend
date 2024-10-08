@@ -13,6 +13,9 @@ class NfcTransactionResource extends BaseResource<
       date_time: this.instance.date_time,
       card_id: this.instance.card_id,
       method: this.instance.method,
+      status: this.instance.status,
+      createdAt: this.instance.createdAt,
+      updatedAt: this.instance.updatedAt,
     }
 
     return nfcTransactionResource

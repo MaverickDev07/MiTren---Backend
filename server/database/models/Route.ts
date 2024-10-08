@@ -9,6 +9,9 @@ export type RouteEntity = {
   id?: string | any
   line_id: Schema.Types.ObjectId
   stations: Array<Station>
+  status?: string
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 export interface RouteAttributes extends RouteEntity, Document {}
@@ -45,6 +48,13 @@ const RouteSchema = new Schema<RouteAttributes>(
         },
         message: 'El array "stations" debe contener al menos dos ítems.',
       },
+    },
+    status: {
+      type: String,
+      enum: ['ACTIVE', 'INACTIVE'],
+      uppercase: true,
+      trim: true,
+      default: 'ACTIVE',
     },
   },
   {

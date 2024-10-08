@@ -11,6 +11,8 @@ export type StationEntity = {
   location: Location
   status: string
   line_id: Array<Schema.Types.ObjectId>
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 export interface StationAttributes extends StationEntity, Document {}

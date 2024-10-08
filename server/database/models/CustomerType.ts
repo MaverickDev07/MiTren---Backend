@@ -3,6 +3,9 @@ import { Schema, model, Document } from 'mongoose'
 export type CustomerTypeEntity = {
   id?: string | any
   customer_type: string
+  status?: string
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 export interface CustomerTypeAttributes extends CustomerTypeEntity, Document {}
@@ -15,6 +18,13 @@ const CustomerTypeSchema = new Schema<CustomerTypeAttributes>(
       trim: true,
       unique: true,
       required: true,
+    },
+    status: {
+      type: String,
+      enum: ['ACTIVE', 'INACTIVE'],
+      uppercase: true,
+      trim: true,
+      default: 'ACTIVE',
     },
   },
   {

@@ -5,7 +5,7 @@ import Route from '../database/models/Route'
 import BaseRepository from './BaseRepository'
 
 export default class PriceRepository extends BaseRepository<PriceAttributes> {
-  protected allowedSortByFields = ['customer_type']
+  protected allowedSortByFields = ['customer_type', 'status', 'createdAt', 'updatedAt']
   protected allowedFilterByFields = ['start_station', 'end_station']
 
   constructor() {

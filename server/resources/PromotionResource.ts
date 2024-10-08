@@ -11,6 +11,9 @@ class PromotionResource extends BaseResource<PromotionAttributes, PromotionEntit
       start_date: this.instance.start_date,
       end_date: this.instance.end_date,
       active: this.instance.active,
+      status: this.instance.status,
+      createdAt: this.instance.createdAt,
+      updatedAt: this.instance.updatedAt,
     }
 
     return promotionResource

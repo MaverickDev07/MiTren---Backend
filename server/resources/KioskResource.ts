@@ -7,6 +7,9 @@ class KioskResource extends BaseResource<KioskAttributes, KioskEntity>() {
       id: this.instance.id,
       kiosk_code: this.instance.kiosk_code,
       station_id: this.instance.station_id,
+      status: this.instance.status,
+      createdAt: this.instance.createdAt,
+      updatedAt: this.instance.updatedAt,
     }
 
     return kioskResource

@@ -12,6 +12,8 @@ class CustomerResource extends BaseResource<CustomerAttributes, CustomerEntity>(
       doc_number: this.instance.doc_number,
       status: this.instance.status,
       type: this.instance.type,
+      createdAt: this.instance.createdAt,
+      updatedAt: this.instance.updatedAt,
     }
 
     return customerResource
