@@ -24,6 +24,7 @@ type ValidationError = {
     code: ErrorCode
     errors: Array<{ message: string }>
   }
+  code_response: nubmer
 }
 
 // Interface for Veripagos

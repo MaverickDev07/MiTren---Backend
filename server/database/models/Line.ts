@@ -3,11 +3,11 @@ import { Schema, model, Document } from 'mongoose'
 export type LineEntity = {
   id?: string | any
   line_name: string
+  // status: string
 }
 
 export interface LineAttributes extends LineEntity, Document {}
 
-// Definición del esquema de Mongoose para el modelo Line
 const LineSchema = new Schema<LineAttributes>(
   {
     line_name: {
@@ -17,6 +17,13 @@ const LineSchema = new Schema<LineAttributes>(
       unique: true,
       required: true,
     },
+    /*status: {
+      type: String,
+      enum: ['ACTIVE', 'INACTIVE'],
+      uppercase: true,
+      trim: true,
+      default: 'ACTIVE',
+    },*/
   },
   {
     timestamps: true,
@@ -24,13 +31,6 @@ const LineSchema = new Schema<LineAttributes>(
   },
 )
 
-// Middleware para actualizar `updated_at` automáticamente en cada `save`
-/*LineSchema.pre('save', function (next) {
-  this.updated_at = new Date()
-  next()
-})*/
-
-// Creación y exportación del modelo
 const Line = model<LineAttributes>('Line', LineSchema)
 
 export default Line

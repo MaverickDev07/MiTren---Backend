@@ -1,6 +1,13 @@
 import express, { Router } from 'express'
 
-import { listWallets, getWallet, createWallet, updateWallet, deleteWallet, getPriceTicket } from './controller'
+import {
+  listWallets,
+  getWallet,
+  createWallet,
+  updateWallet,
+  deleteWallet,
+  getPriceTicket,
+} from './controller'
 import validateRequest from '../../../middlewares/validateRequest'
 import { createWalletSchema, updateWalletSchema } from '../../../middlewares/requestSchemas'
 

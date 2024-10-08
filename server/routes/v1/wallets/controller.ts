@@ -1,4 +1,6 @@
+import { Types } from 'mongoose'
 import { NextFunction, Request, Response } from 'express'
+
 import WalletResource from '../../../resources/WalletResource'
 import WalletRepository from '../../../repositories/WalletRepository'
 
@@ -24,11 +26,11 @@ const generarNumeroAleatorio = (min: number, max: number): number => {
 export const getPriceTicket = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const data = {
-      id: '670442658d66328c26fc9010',
+      id: new Types.ObjectId().toHexString(),
       price: generarNumeroAleatorio(11, 49),
       currency: 'BOB',
       payment_methods: 'EFECTIVO',
-      createdAt: new Date()
+      createdAt: new Date(),
     }
 
     res.status(200).json(data)
@@ -51,7 +53,11 @@ export const createWallet = async (req: Request, res: Response, next: NextFuncti
   try {
     const repository = new WalletRepository()
     const walletResource = new WalletResource(await repository.create(req.body))
-    res.status(201).json({ wallet: walletResource.item() })
+    const response = walletResource.item()
+      ? { id: walletResource.item().id, code_response: 1 }
+      : { code_response: 0 }
+
+    res.status(201).json(response)
   } catch (error) {
     next(error)
   }

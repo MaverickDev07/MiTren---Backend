@@ -23,6 +23,7 @@ export default function errorHandler(
           message: item.message,
         })),
       },
+      code_response: 0,
     }
     return res.status(423).json(validationError)
   }
@@ -33,6 +34,7 @@ export default function errorHandler(
         message: error.message,
         code: error.code,
       },
+      code_response: 0,
     })
   }
 
@@ -44,6 +46,7 @@ export default function errorHandler(
         message: error.message,
         stack: error.stack, // Incluye el stack trace para facilitar la depuración
       },
+      code_response: 0,
     })
   } else {
     if (process.env.NODE_ENV !== 'test') {
@@ -55,6 +58,7 @@ export default function errorHandler(
         code: 'ERR_UNKNOWN',
         message: error.message || 'An error occurred. Please view logs for more details',
       },
+      code_response: 0,
     })
   }
 }
