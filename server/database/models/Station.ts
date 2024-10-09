@@ -8,9 +8,10 @@ type Location = {
 export type StationEntity = {
   id?: string | any
   station_name: string
-  location: Location
-  status: string
   line_id: Array<Schema.Types.ObjectId>
+  is_transfer_stop?: boolean
+  location: Location
+  status?: string
   createdAt?: Date
   updatedAt?: Date
 }
@@ -25,6 +26,15 @@ const StationSchema = new Schema<StationAttributes>(
       trim: true,
       unique: true,
       required: true,
+    },
+    line_id: {
+      type: [Schema.Types.ObjectId],
+      ref: 'Line',
+      required: true,
+    },
+    is_transfer_stop: {
+      type: Boolean,
+      default: false,
     },
     location: {
       type: {
@@ -45,11 +55,6 @@ const StationSchema = new Schema<StationAttributes>(
       uppercase: true,
       trim: true,
       default: 'ACTIVE',
-    },
-    line_id: {
-      type: [Schema.Types.ObjectId],
-      ref: 'Line',
-      required: true,
     },
   },
   {

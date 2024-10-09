@@ -15,23 +15,25 @@ export const updateLineSchema = Joi.object({
 // Station
 export const createStationSchema = Joi.object({
   station_name: Joi.string().min(3).max(70).required(),
+  line_id: Joi.array().min(1).items(Joi.string().alphanum().hex().length(24)).required(),
+  is_transfer_stop: Joi.boolean(),
   location: Joi.object({
     latitude: Joi.number().required(),
     longitude: Joi.number().required(),
   }).required(),
   status: Joi.string().min(3).max(10),
-  line_id: Joi.array().min(1).items(Joi.string().alphanum().hex().length(24)).required(),
 })
 
 export const updateStationSchema = Joi.object({
   station_name: Joi.string().min(3).max(70),
+  line_id: Joi.array().min(1).items(Joi.string().alphanum().hex().length(24)),
+  is_transfer_stop: Joi.boolean(),
   location: Joi.object({
     latitude: Joi.number(),
     longitude: Joi.number(),
   }),
   status: Joi.string().min(3).max(10),
-  line_id: Joi.array().min(1).items(Joi.string().alphanum().hex().length(24)),
-}).or('station_name', 'location', 'status', 'line_id')
+}).or('station_name', 'line_id', 'is_transfer_stop', 'location', 'status')
 
 // Kiosk
 export const createKioskSchema = Joi.object({

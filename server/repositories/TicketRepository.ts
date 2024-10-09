@@ -3,19 +3,13 @@ import BaseRepository from './BaseRepository'
 
 export default class TicketRepository extends BaseRepository<TicketAttributes> {
   protected allowedSortByFields = [
-    'method_name',
+    'kiosk_code',
     'promotion_title',
-    'route.line_name',
     'status',
     'createdAt',
     'updatedAt',
   ]
-  protected allowedFilterByFields = [
-    'start_station',
-    'end_station',
-    'promotion_title',
-    'route.line_name',
-  ]
+  protected allowedFilterByFields = ['kiosk_code']
 
   constructor() {
     super(Ticket)

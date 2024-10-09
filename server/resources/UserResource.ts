@@ -14,6 +14,8 @@ class UserResource extends BaseResource<UserAttributes, UserEntity>() {
       address: this.instance.address,
       role_name: this.instance.role_name,
       status: this.instance.status,
+      createdAt: this.instance.createdAt,
+      updatedAt: this.instance.updatedAt,
     }
 
     return userResource

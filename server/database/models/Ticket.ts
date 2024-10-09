@@ -1,4 +1,25 @@
+/* eslint-disable max-lines */
 import { Schema, model, Document } from 'mongoose'
+
+type PaymentMethod = {
+  method_type: string
+  method_id: string
+}
+
+type StartStation = {
+  start_line: string
+  start_station: string
+}
+
+type EndStation = {
+  end_line: string
+  end_station: string
+}
+
+type TransferStation = {
+  is_transfer: boolean
+  transfer_station: string
+}
 
 type Price = {
   qty: number
@@ -7,21 +28,18 @@ type Price = {
 }
 
 type Route = {
-  line_name: string
-  stations: Array<string>
-  prices: Array<Price>
+  start_point: StartStation
+  end_point: EndStation
+  transfer_point: TransferStation
 }
 
 export type TicketEntity = {
   id?: string | any
-  start_station: string
-  end_station: string
-  kiosk_id: Schema.Types.ObjectId
-  method_name: string
-  id_qr?: string | null
-  is_transfer?: boolean
+  kiosk_code: string
   promotion_title?: string
-  total_price?: number
+  total_price: number
+  payment_method: PaymentMethod
+  prices: Array<Price>
   route: Route
   status?: string
   createdAt?: Date
@@ -32,37 +50,11 @@ export interface TicketAttributes extends TicketEntity, Document {}
 
 const TicketSchema = new Schema<TicketAttributes>(
   {
-    start_station: {
+    kiosk_code: {
       type: String,
       uppercase: true,
       trim: true,
       required: true,
-    },
-    end_station: {
-      type: String,
-      uppercase: true,
-      trim: true,
-      required: true,
-    },
-    kiosk_id: {
-      type: Schema.Types.ObjectId,
-      ref: 'Kiosk',
-      required: true,
-    },
-    method_name: {
-      type: String,
-      uppercase: true,
-      trim: true,
-      required: true,
-    },
-    id_qr: {
-      type: String,
-      trim: true,
-      // unique: true,
-    },
-    is_transfer: {
-      type: Boolean,
-      default: false,
     },
     promotion_title: {
       type: String,
@@ -75,48 +67,104 @@ const TicketSchema = new Schema<TicketAttributes>(
       min: 0.1,
       required: true,
     },
+    payment_method: {
+      type: {
+        method_type: {
+          type: String,
+          uppercase: true,
+          trim: true,
+          required: true,
+        },
+        method_id: {
+          type: String,
+          trim: true,
+          required: true,
+        },
+      },
+      required: true,
+    },
+    prices: {
+      type: [
+        {
+          qty: {
+            type: Number,
+            min: 1,
+            required: true,
+          },
+          customer_type: {
+            type: String,
+            uppercase: true,
+            trim: true,
+            required: true,
+          },
+          base_price: {
+            type: Number,
+            min: 0.1,
+            required: true,
+          },
+        },
+      ],
+      required: true,
+    },
     route: {
-      line_name: {
-        type: String,
-        uppercase: true,
-        trim: true,
-        required: true,
-      },
-      stations: {
-        type: [String],
-        min: 2,
-        required: true,
-      },
-      prices: {
-        type: [
-          {
-            qty: {
-              type: Number,
-              min: 1,
-              required: true,
-            },
-            customer_type: {
+      type: {
+        start_point: {
+          type: {
+            start_line: {
               type: String,
               uppercase: true,
               trim: true,
               required: true,
             },
-            base_price: {
-              type: Number,
-              min: 1,
+            start_station: {
+              type: String,
+              uppercase: true,
+              trim: true,
               required: true,
             },
           },
-        ],
-        required: true,
+          required: true,
+        },
+        end_point: {
+          type: {
+            end_line: {
+              type: String,
+              uppercase: true,
+              trim: true,
+              required: true,
+            },
+            end_station: {
+              type: String,
+              uppercase: true,
+              trim: true,
+              required: true,
+            },
+          },
+          required: true,
+        },
+        transfer_point: {
+          type: {
+            is_transfer: {
+              type: Boolean,
+              default: false,
+            },
+            transfer_station: {
+              type: String,
+              uppercase: true,
+              trim: true,
+            },
+          },
+          required: true,
+        },
       },
+      required: true,
     },
     status: {
       type: String,
-      enum: ['ACTIVE', 'INACTIVE'],
+      enum: ['PAID', 'ACTIVE', 'EXPIRED', 'CANCELLED', 'USED', 'REFUNDED'],
       uppercase: true,
       trim: true,
-      default: 'ACTIVE',
+      default: 'PAID',
     },
   },
   {

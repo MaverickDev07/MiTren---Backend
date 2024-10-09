@@ -9,8 +9,8 @@ export type WalletEntity = {
   cash_back: number
   payment_methods: string
   created_on: Date
-  status: string
   summary: string
+  status?: string
 }
 
 export interface WalletAttributes extends WalletEntity, Document {}
@@ -46,14 +46,14 @@ const WalletSchema = new Schema<WalletAttributes>(
       type: Date,
       default: new Date(),
     },
+    summary: {
+      type: String,
+      default: '',
+    },
     status: {
       type: String,
       // enum: ['PENDING', 'APPROVED', 'REJECTED'],
       default: 'PENDIENTE',
-    },
-    summary: {
-      type: String,
-      default: '',
     },
   },
   {

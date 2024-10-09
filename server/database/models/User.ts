@@ -10,7 +10,9 @@ export type UserEntity = {
   doc_number: string
   address: string
   role_name: string
-  status: string
+  status?: string
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 export interface UserAttributes extends UserEntity, Document {}
