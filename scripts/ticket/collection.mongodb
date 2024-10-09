@@ -4,7 +4,7 @@ db.createCollection('tickets', {
   validator: {
     $jsonSchema: {
       bsonType: 'object',
-      required: ['kiosk_code', 'total_price', 'total_price', 'payment_method', 'prices', 'route'],
+      required: ['kiosk_code', 'promotion_title', 'total_price', 'payment_method', 'prices', 'route'],
       properties: {
         kiosk_code: {
           bsonType: 'string',
@@ -107,3 +107,11 @@ db.createCollection('tickets', {
     }
   }
 })
+
+/*
+Del Flujo Ticket por cada paso obtener los siguientes campos:
+Paso 1:
+  Para el paso 2: Dependiendo si el Cliente escogió una línea guardar su `id` y su `line_name` de lines[n].id y lines[n].line_name. esto sirve para el paso 2.1
+  Para el Ticket: solo se necesita `line_name`
+Paso 2.1:
+*/
