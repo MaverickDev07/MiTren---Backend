@@ -1,8 +1,8 @@
 import { Types } from 'mongoose'
 import Price, { PriceAttributes } from '../database/models/Price'
 import Station from '../database/models/Station'
-import Route from '../database/models/Route'
 import BaseRepository from './BaseRepository'
+import Line from '../database/models/Line'
 
 export default class PriceRepository extends BaseRepository<PriceAttributes> {
   protected allowedSortByFields = ['customer_type', 'status', 'createdAt', 'updatedAt']
@@ -15,24 +15,41 @@ export default class PriceRepository extends BaseRepository<PriceAttributes> {
   async getPricesByStationPair(
     start_station_id: string | Types.ObjectId,
     end_station_id: string | Types.ObjectId,
-  ): Promise<Array<PriceAttributes>> {
-    const { line_id: start_lines_id } = await Station.findById(start_station_id)
-    const { line_id: end_lines_id } = await Station.findById(end_station_id)
+  ): Promise<any> {
+    const { station_name: start_station, line_id: start_lines_id } =
+      await Station.findById(start_station_id)
+    const { station_name: end_station, line_id: end_lines_id } =
+      await Station.findById(end_station_id)
     let is_transfer = true
+    let line_id = null
+    let start_line = null
+    let end_line = null
 
     for (const start_line of start_lines_id) {
       for (const end_line of end_lines_id) {
-        if (start_line === end_line) is_transfer = false
+        if (start_line === end_line) {
+          is_transfer = false
+          line_id = start_line
+        }
       }
     }
 
-    if (!is_transfer)
-      return Price.find({
+    if (!is_transfer) {
+      const prices = await Price.find({
         'start_station.station_id': start_station_id,
         'end_station.station_id': end_station_id,
       })
+        .select({ base_price: 1, customer_type: 1 })
         .sort({ base_price: -1 })
         .exec()
+      start_line = end_line = await Line.findById(line_id)
+
+      return {
+        prices,
+        start_point: { start_station, start_line },
+        end_point: { end_station, end_line },
+      }
+    }
 
     // const transfer_station = await Route.find
     //const routes = await Route.find({ line_id: { $in: start_lines_id } })
