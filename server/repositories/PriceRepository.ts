@@ -27,7 +27,7 @@ export default class PriceRepository extends BaseRepository<PriceAttributes> {
 
     for (const start_line of start_lines_id) {
       for (const end_line of end_lines_id) {
-        if (start_line === end_line) {
+        if (start_line.toString() === end_line.toString()) {
           is_transfer = false
           line_id = start_line
         }
@@ -42,31 +42,55 @@ export default class PriceRepository extends BaseRepository<PriceAttributes> {
         .select({ base_price: 1, customer_type: 1 })
         .sort({ base_price: -1 })
         .exec()
+      const { line_name } = await Line.findById(line_id)
+      start_line = end_line = line_name
+
+      return {
+        prices,
+        start_point: { start_station, start_line },
+        end_point: { end_station, end_line },
+        transfer_point: {
+          is_transfer,
+          transfer_station: '',
+        },
+      }
+    } else {
+      const prices = await Price.find({
+        'start_station.station_id': start_station_id,
+        'end_station.station_id': end_station_id,
+      })
+        .select({ base_price: 1, customer_type: 1 })
+        .sort({ base_price: -1 })
+        .exec()
       start_line = end_line = await Line.findById(line_id)
 
       return {
         prices,
         start_point: { start_station, start_line },
         end_point: { end_station, end_line },
+        transfer_point: {
+          is_transfer,
+          transfer_station: '',
+        },
       }
     }
 
     // const transfer_station = await Route.find
-    //const routes = await Route.find({ line_id: { $in: start_lines_id } })
-    //const transfer_station = routes.
+    // const routes = await Route.find({ line_id: { $in: start_lines_id } })
+    // const transfer_station = routes.
 
     /*for (const route of routes) {
       const transfer_station = await route.stations.find(station => {
         return station.line_id === end_lines_id[0]
       })
       console.log()
-    }*/
+    }
 
     return Price.find({
       'start_station.station_id': start_station_id,
       'end_station.station_id': end_station_id,
     })
       .sort({ base_price: -1 })
-      .exec()
+      .exec()*/
   }
 }

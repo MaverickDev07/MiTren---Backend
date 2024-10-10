@@ -21,10 +21,10 @@ export const listPricesByStationPair = async (req: Request, res: Response, next:
   try {
     const { start_station_id, end_station_id } = req.params
     const repository = new PriceRepository()
-    const prices = PriceResource.collection(
+    const prices = new PriceResource(
       await repository.getPricesByStationPair(start_station_id as string, end_station_id as string),
     )
-    res.status(200).json({ prices })
+    res.status(200).json(prices)
   } catch (error: any) {
     next(error)
   }
