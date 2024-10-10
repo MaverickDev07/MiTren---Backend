@@ -16,6 +16,16 @@ class StationResource extends BaseResource<StationAttributes, StationEntity>() {
 
     return stationResource
   }
+
+  itemReduce() {
+    const stationResource: StationEntity = {
+      id: this.instance.id,
+      station_name: this.instance.station_name,
+      line_id: this.instance.line_id,
+      location: this.instance.location,
+    }
+    return stationResource
+  }
 }
 
 export default StationResource

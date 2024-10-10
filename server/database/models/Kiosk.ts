@@ -1,10 +1,12 @@
 import { Schema, model, Document } from 'mongoose'
+import { StationEntity } from './Station'
 
 export type KioskEntity = {
   id?: string | any
   kiosk_code: string
   status?: string
-  station_id: Schema.Types.ObjectId
+  station_id?: Schema.Types.ObjectId
+  station?: StationEntity
   createdAt?: Date
   updatedAt?: Date
 }

@@ -23,7 +23,7 @@ export const getStationByKioskId = async (req: Request, res: Response, next: Nex
   try {
     const repository = new KioskRepository()
     const kioskResource = new KioskResource(await repository.getStationByKioskId(req.params.id))
-    res.status(200).json({ kiosk: kioskResource.item() })
+    res.status(200).json({ kiosk: kioskResource.itemPopulate() })
   } catch (error: any) {
     next(error)
   }
