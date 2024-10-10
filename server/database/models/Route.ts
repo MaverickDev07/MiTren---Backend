@@ -24,7 +24,6 @@ const RouteSchema = new Schema<RouteAttributes>(
       required: true,
       unique: true,
     },
-
     stations: {
       type: [
         {

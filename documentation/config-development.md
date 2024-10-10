@@ -52,7 +52,7 @@ docker compose exec mongo bash
 rm -R backup # del contenedor docker
 exit # Salirse del contenedor
 docker exec -t [container_name] mongodump -u mgary -p '[PASSWORD]' --db mitren_db --host localhost:27017 --out /backup/ # desde module-db/documentation
-docker cp module_mongo:/backup backup
+docker cp mitren_db:/backup backup
 ```
 
 Realizar restore

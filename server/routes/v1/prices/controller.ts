@@ -24,7 +24,7 @@ export const listPricesByStationPair = async (req: Request, res: Response, next:
     const prices = new PriceResource(
       await repository.getPricesByStationPair(start_station_id as string, end_station_id as string),
     )
-    res.status(200).json(prices)
+    res.status(200).json({ prices })
   } catch (error: any) {
     next(error)
   }

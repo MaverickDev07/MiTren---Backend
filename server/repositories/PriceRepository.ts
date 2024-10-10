@@ -62,7 +62,10 @@ export default class PriceRepository extends BaseRepository<PriceAttributes> {
         .select({ base_price: 1, customer_type: 1 })
         .sort({ base_price: -1 })
         .exec()
-      start_line = end_line = await Line.findById(line_id)
+      start_line = await Line.findById(start_lines_id[0])
+      end_line = await Line.findById(end_lines_id[0])
+      start_line = start_line.line_name
+      end_line = end_line.line_name
 
       return {
         prices,
