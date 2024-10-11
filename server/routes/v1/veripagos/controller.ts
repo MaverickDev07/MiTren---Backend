@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import VeripagosService from '../../../utils/VeripagosService'
 import EnvManager from '../../../config/EnvManager'
-import ApiError from '../../../errors/ApiError'
 
 const veripagosService = new VeripagosService(
   'https://veripagos.com/api',
