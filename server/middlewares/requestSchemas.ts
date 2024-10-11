@@ -321,7 +321,7 @@ export const updateTicketSchema = Joi.object({
 
 // Wallet
 export const createWalletSchema = Joi.object({
-  code: Joi.string().min(3).max(15).required(),
+  code: Joi.string().alphanum().hex().length(24),
   price: Joi.number().min(0.5).required(),
   currency: Joi.string().min(2).max(3).required(),
   amount_paid: Joi.number().min(1).required(),

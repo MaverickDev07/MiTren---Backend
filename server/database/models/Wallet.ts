@@ -2,7 +2,7 @@ import { Schema, model, Document } from 'mongoose'
 
 export type WalletEntity = {
   id?: string | any
-  code: string
+  code: Schema.Types.ObjectId
   price: number
   currency: string
   amount_paid: number
@@ -18,7 +18,7 @@ export interface WalletAttributes extends WalletEntity, Document {}
 const WalletSchema = new Schema<WalletAttributes>(
   {
     code: {
-      type: String,
+      type: Schema.Types.ObjectId,
       required: true,
     },
     price: {
