@@ -3,6 +3,7 @@ import Price, { PriceAttributes } from '../database/models/Price'
 import Station from '../database/models/Station'
 import BaseRepository from './BaseRepository'
 import Line from '../database/models/Line'
+import Route from '../database/models/Route'
 
 export default class PriceRepository extends BaseRepository<PriceAttributes> {
   protected allowedSortByFields = ['customer_type', 'status', 'createdAt', 'updatedAt']
@@ -55,6 +56,8 @@ export default class PriceRepository extends BaseRepository<PriceAttributes> {
         },
       }
     } else {
+      // Encontrar la ruta de la estación Inicial
+      // const start_route = await Route.find({ line_id: { $in: start_lines_id } })
       const prices = await Price.find({
         'start_station.station_id': start_station_id,
         'end_station.station_id': end_station_id,
