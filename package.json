@@ -45,7 +45,8 @@
     "node-thermal-printer": "^4.4.3",
     "sequelize": "^6.37.3",
     "sequelize-typescript": "^2.1.6",
-    "tedious": "^18.3.0"
+    "tedious": "^18.3.0",
+    "tinyqueue": "^1.2.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.8.0",
