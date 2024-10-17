@@ -32,6 +32,9 @@ dependencies:
   joi:
     specifier: ^17.13.3
     version: 17.13.3
+  js-priority-queue:
+    specifier: ^0.1.5
+    version: 0.1.5
   liqe:
     specifier: ^3.8.0
     version: 3.8.0
@@ -2032,6 +2035,10 @@ packages:
 
   /js-md4@0.3.2:
     resolution: {integrity: sha512-/GDnfQYsltsjRswQhN9fhv3EMw2sCpUdrdxyWDOUK7eyD++r3gRhzgiQgc/x4MAv2i1iuQ4lxO5mvqM3vj4bwA==}
+    dev: false
+
+  /js-priority-queue@0.1.5:
+    resolution: {integrity: sha512-2dPmJT4GbXUpob7AZDR1wFMKz3Biy6oW69mwt5PTtdeoOgDin1i0p5gUV9k0LFeUxDpwkfr+JGMZDpcprjiY5w==}
     dev: false
 
   /js-tokens@4.0.0:

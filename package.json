@@ -37,6 +37,7 @@
     "express": "^4.19.2",
     "helmet": "^7.1.0",
     "joi": "^17.13.3",
+    "js-priority-queue": "^0.1.5",
     "liqe": "^3.8.0",
     "mongoose": "^8.5.2",
     "morgan": "^1.10.0",
