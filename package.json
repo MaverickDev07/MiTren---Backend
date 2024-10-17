@@ -29,6 +29,7 @@
   "homepage": "https://mitren.com",
   "dependencies": {
     "@sequelize/mssql": "7.0.0-alpha.41",
+    "@types/js-priority-queue": "^0.0.9",
     "axios": "^1.7.3",
     "boom": "^7.3.0",
     "cors": "^2.8.5",
