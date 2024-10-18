@@ -120,28 +120,27 @@ export default class PriceRepository extends BaseRepository<PriceAttributes> {
     start_station_id: string,
     end_station_id: string,
   ): Promise<any> {
+    // Encontrar estaciones de trasbordo que estén en las líneas de inicio y fin
     const transferStations = await Station.find({
       is_transfer_stop: true, // Debe ser una estación de trasbordo
       $and: [
-        { line_id: { $in: start_lines_id } }, // Debe pertenecer a una de las líneas de inicio
-        { line_id: { $in: end_lines_id } }, // También debe estar conectada a una de las líneas de destino
+        { line_id: { $in: start_lines_id } }, // Debe estar en las líneas de inicio
+        { line_id: { $in: end_lines_id } }, // También en las líneas de destino
       ],
     }).exec()
 
     if (transferStations.length === 0) {
-      /*throw new ApiError({
-        name: 'NO_TRANSFER_FOUND',
-        message: 'No se encontró una estación de trasbordo válida.',
-        status: 400,
-        code: 'ERR_NO_TRANSFER',
-      })*/
       throw new Error('No se encontró una estación de trasbordo válida.')
     }
 
     let bestTransferStation: { station: any; totalStops: number } | null = null
+    let minTotalStops = Infinity
 
-    for (const current of transferStations) {
-      // Obtener las rutas que conectan la estación de inicio y la estación de trasbordo actual
+    for (const transferStation of transferStations) {
+      let startToTransfer = Infinity
+      let transferToEnd = Infinity
+
+      // Obtener las rutas que conectan la estación de inicio y la estación de trasbordo
       const routeToTransfer = await Route.findOne({
         line_id: { $in: start_lines_id }, // Ruta en una de las líneas de inicio
         stations: { $elemMatch: { station_id: start_station_id } }, // Estación de inicio
@@ -158,55 +157,60 @@ export default class PriceRepository extends BaseRepository<PriceAttributes> {
         continue
       }
 
-      // Calcular la cantidad de paradas en cada ruta
-      const stopsToTransfer = this.getNumberOfStops(
-        routeToTransfer.stations,
-        start_station_id,
-        current._id.toString(),
+      // Usamos Math.min y Math.abs para calcular la cantidad de paradas en cada ruta,
+      // independientemente de la dirección (ida o vuelta)
+      startToTransfer = Math.min(
+        startToTransfer,
+        this.getNumberOfStops(
+          routeToTransfer.stations,
+          start_station_id,
+          transferStation._id.toString(),
+        ),
       )
-      const stopsFromTransfer = this.getNumberOfStops(
-        routeFromTransfer.stations,
-        current._id.toString(),
-        end_station_id,
+
+      transferToEnd = Math.min(
+        transferToEnd,
+        this.getNumberOfStops(
+          routeFromTransfer.stations,
+          transferStation._id.toString(),
+          end_station_id,
+        ),
       )
 
       // Calcular el total de estaciones (paradas)
-      const totalStops = stopsToTransfer + stopsFromTransfer
+      const totalStops = startToTransfer + transferToEnd
 
       // Comparar la cantidad de estaciones (paradas) con la mejor opción actual
-      if (!bestTransferStation || totalStops < bestTransferStation.totalStops) {
+      if (totalStops < minTotalStops) {
+        minTotalStops = totalStops
         bestTransferStation = {
-          station: current,
+          station: transferStation,
           totalStops,
         }
       }
     }
 
     if (!bestTransferStation) {
-      /*throw new ApiError({
-        name: 'NO_TRANSFER_FOUND',
-        message: 'No se encontró una estación de trasbordo válida con rutas completas.',
-        status: 400,
-        code: 'ERR_NO_TRANSFER',
-      })*/
       throw new Error('No se encontró una estación de trasbordo válida con rutas completas.')
     }
 
     return bestTransferStation.station
   }
 
+  // Función auxiliar para contar el número de paradas entre dos estaciones
   private getNumberOfStops(stations: any[], startStationId: string, endStationId: string): number {
     const startIndex = stations.findIndex(
       station => station.station_id.toString() === startStationId,
     )
     const endIndex = stations.findIndex(station => station.station_id.toString() === endStationId)
 
-    if (startIndex === -1 || endIndex === -1 || startIndex > endIndex) {
-      throw new Error('Rutas no válidas para calcular el número de paradas.')
+    if (startIndex === -1 || endIndex === -1) {
+      // Si no se encuentran las estaciones o están mal definidas
+      return Infinity
     }
 
-    // La cantidad de paradas es la diferencia entre el índice de la estación final e inicial
-    return endIndex - startIndex
+    // Calculamos el número de paradas con Math.abs para no tener en cuenta la dirección
+    return Math.abs(endIndex - startIndex)
   }
 
   private sumarPrecios(prices1: any[], prices2: any[]): any[] {
