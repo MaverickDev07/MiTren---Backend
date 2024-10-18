@@ -1,6 +1,6 @@
 /* eslint-disable max-lines */
 import { Schema } from 'mongoose'
-import TinyQueue from 'tinyqueue'
+import PriorityQueue from 'priorityqueuejs'
 import Price, { PriceAttributes } from '../database/models/Price'
 import BaseRepository from './BaseRepository'
 import Line from '../database/models/Line'
@@ -8,39 +8,26 @@ import Station from '../database/models/Station'
 import Route from '../database/models/Route'
 import ApiError from '../errors/ApiError'
 
-/**
- * Repositorio para manejar precios de viajes.
- */
-export default class PriceRepository extends BaseRepository<PriceAttributes> {
-  /**
-   * Campos permitidos para ordenar resultados.
-   */
-  protected allowedSortByFields = ['customer_type', 'status', 'createdAt', 'updatedAt']
+class QueueElement {
+  node: string
+  priority: number
 
-  /**
-   * Campos permitidos para filtrar resultados.
-   */
+  constructor(node: string, priority: number) {
+    this.node = node
+    this.priority = priority
+  }
+}
+
+export default class PriceRepository extends BaseRepository<PriceAttributes> {
+  protected allowedSortByFields = ['customer_type', 'status', 'createdAt', 'updatedAt']
   protected allowedFilterByFields = ['start_station', 'end_station']
 
-  /**
-   * Constructor.
-   */
   constructor() {
     super(Price)
   }
 
-  /**
-   * Obtiene precios de viajes por par de estaciones.
-   *
-   * @param {string} _start_station_id - ID de la estación de inicio.
-   * @param {string} _end_station_id - ID de la estación de fin.
-   * @returns {Promise<any>} Precios de viajes y información de estaciones.
-   */
-  async getPricesByStationPair(_start_station_id: string, _end_station_id: string): Promise<any> {
+  async getPricesByStationPair(start_station_id: string, end_station_id: string): Promise<any> {
     try {
-      const start_station_id = new Schema.Types.ObjectId(_start_station_id)
-      const end_station_id = new Schema.Types.ObjectId(_end_station_id)
-
       const startStation = await Station.findById(start_station_id)
       const endStation = await Station.findById(end_station_id)
 
@@ -59,9 +46,9 @@ export default class PriceRepository extends BaseRepository<PriceAttributes> {
       const end_lines_id = endStation.line_id
 
       let is_transfer = true
-      let line_id = null
-      let start_line = null
-      let end_line = null
+      let line_id: any = null
+      let start_line: any = null
+      let end_line: any = null
 
       // Verificar si hay una línea en común entre las estaciones de inicio y fin
       for (const startLine of start_lines_id) {
@@ -84,7 +71,9 @@ export default class PriceRepository extends BaseRepository<PriceAttributes> {
           .sort({ base_price: -1 })
           .exec()
 
-        const { line_name } = await Line.findById(line_id)
+        const line_direct = await Line.findById(line_id)
+        if (!line_direct) throw new Error('No se encontró la línea directa entre las estaciones.')
+        const line_name = line_direct.line_name
         start_line = end_line = line_name
 
         return {
@@ -96,13 +85,14 @@ export default class PriceRepository extends BaseRepository<PriceAttributes> {
       } else {
         // Si no hay ruta directa, encontrar la mejor ruta con transbordo
         const transferStation = await this.findTransferStation(start_lines_id, end_lines_id)
+        console.log(transferStation)
 
         if (!transferStation) {
           throw new Error('No se encontró un punto de transbordo válido.')
         }
 
-        const caminoLinea1 = await this.dijkstra(start_station_id, transferStation._id)
-        const caminoLinea2 = await this.dijkstra(transferStation._id, end_station_id)
+        const caminoLinea1 = await this.dijkstra(start_station_id, transferStation._id.toString())
+        const caminoLinea2 = await this.dijkstra(transferStation._id.toString(), end_station_id)
 
         if (!caminoLinea1 || !caminoLinea2) {
           throw new Error('No se encontró un camino entre las estaciones.')
@@ -132,17 +122,10 @@ export default class PriceRepository extends BaseRepository<PriceAttributes> {
         }
       }
     } catch (error) {
-      throw new Error(error)
+      console.log(error)
     }
   }
 
-  /**
-   * Encuentra una estación de transferencia válida.
-   *
-   * @param {Array<Schema.Types.ObjectId>} start_lines - Líneas de la estación de inicio.
-   * @param {Array<Schema.Types.ObjectId>} end_lines - Líneas de la estación de fin.
-   * @returns {Promise<any>} Estación de transferencia.
-   */
   private async findTransferStation(
     start_lines: Array<Schema.Types.ObjectId>,
     end_lines: Array<Schema.Types.ObjectId>,
@@ -161,24 +144,11 @@ export default class PriceRepository extends BaseRepository<PriceAttributes> {
     return null
   }
 
-  /**
-   * Obtiene el nombre de una línea por su ID.
-   *
-   * @param {Schema.Types.ObjectId} line_id - ID de la línea.
-   * @returns {Promise<string>} Nombre de la línea.
-   */
   private async getLineNameById(line_id: Schema.Types.ObjectId): Promise<string> {
     const line = await Line.findById(line_id)
     return line ? line.line_name : ''
   }
 
-  /**
-   * Suma precios de viajes por 'customer_type' coincidentes.
-   *
-   * @param {any[]} prices1 - Precios de viajes 1.
-   * @param {any[]} prices2 - Precios de viajes 2.
-   * @returns {any[]} Precios sumados.
-   */
   private sumarPrecios(prices1: any[], prices2: any[]): any[] {
     const priceMap = new Map()
     prices1.forEach(price => {
@@ -198,34 +168,25 @@ export default class PriceRepository extends BaseRepository<PriceAttributes> {
     }))
   }
 
-  /**
-   * Implementación del algoritmo de Dijkstra.
-   *
-   * @param {Schema.Types.ObjectId} start_station_id - ID de la estación de inicio.
-   * @param {Schema.Types.ObjectId} end_station_id - ID de la estación de fin.
-   * @returns {Promise<any>} Camino más corto.
-   */
-  private async dijkstra(
-    start_station_id: Schema.Types.ObjectId,
-    end_station_id: Schema.Types.ObjectId,
-  ): Promise<any> {
+  private async dijkstra(start_station_id: string, end_station_id: string): Promise<any> {
     const distances: Record<string, number> = {}
-    const previous: Record<string, Schema.Types.ObjectId | null> = {}
-    const pq = new TinyQueue<{ node: Schema.Types.ObjectId; priority: number }>(
-      [],
-      (a, b) => a.priority - b.priority,
+    const previous: Record<string, string | null> = {}
+    const pq = new PriorityQueue<{ node: string; priority: number }>(
+      (a, b) => b.priority - a.priority,
     )
 
-    pq.push({ node: start_station_id, priority: 0 })
+    pq.enq(new QueueElement(start_station_id, 0))
     distances[start_station_id.toString()] = 0
     previous[start_station_id.toString()] = null
 
-    while (pq.length) {
-      const { node: currentId } = pq.pop()
+    const routes = await Route.find()
+
+    while (pq.size()) {
+      const { node: currentId } = pq.deq()
 
       if (currentId.toString() === end_station_id.toString()) {
-        const path: Schema.Types.ObjectId[] = []
-        let current: Schema.Types.ObjectId | null = currentId
+        const path: string[] = []
+        let current: string | null = currentId
 
         while (current !== null) {
           path.push(current)
@@ -237,60 +198,35 @@ export default class PriceRepository extends BaseRepository<PriceAttributes> {
         return { station_id: currentId, distance: distances[currentId.toString()], path }
       }
 
-      const neighbors = await this.getNeighbors(currentId)
+      for (const route of routes) {
+        const stationIndex = route.stations.findIndex(
+          station => station.station_id.toString() === currentId.toString(),
+        )
 
-      for (const neighbor of neighbors) {
-        const alt = distances[currentId.toString()] + neighbor.weight
+        // Agregar vecino anterior si existe
+        if (stationIndex > 0) {
+          const prevStation = route.stations[stationIndex - 1]
+          console.log(prevStation)
+          const alt = distances[currentId.toString()] + 1 // Ajustar el peso según la lógica de distancia
+          if (alt < (distances[prevStation.station_id.toString()] || Infinity)) {
+            distances[prevStation.station_id.toString()] = alt
+            previous[prevStation.station_id.toString()] = currentId
+            pq.enq(new QueueElement(prevStation.station_id.toString(), alt))
+          }
+        }
 
-        if (alt < (distances[neighbor.station_id.toString()] || Infinity)) {
-          distances[neighbor.station_id.toString()] = alt
-          previous[neighbor.station_id.toString()] = currentId
-          pq.push({ node: new Schema.Types.ObjectId(neighbor.station_id), priority: alt })
+        // Agregar vecino siguiente si existe
+        if (stationIndex < route.stations.length - 1) {
+          const nextStation = route.stations[stationIndex + 1]
+          const alt = distances[currentId.toString()] + 1 // Ajustar el peso según la lógica de distancia
+          if (alt < (distances[nextStation.station_id.toString()] || Infinity)) {
+            distances[nextStation.station_id.toString()] = alt
+            previous[nextStation.station_id.toString()] = currentId
+            pq.enq(new QueueElement(nextStation.station_id.toString(), alt))
+          }
         }
       }
     }
-
     return null
-  }
-
-  /**
-   * Obtiene los vecinos de una estación.
-   *
-   * @param {Schema.Types.ObjectId} station_id - ID de la estación.
-   * @returns {Promise<any[]>} Vecinos de la estación.
-   */
-  private async getNeighbors(station_id: Schema.Types.ObjectId): Promise<any[]> {
-    const routes = await Route.find({
-      'stations.station_id': station_id,
-    })
-
-    const neighbors = []
-
-    for (const route of routes) {
-      // Buscamos la estación en la ruta
-      const stationIndex = route.stations.findIndex(
-        station => station.station_id.toString() === station_id.toString(),
-      )
-
-      // Agregamos el vecino anterior si existe
-      if (stationIndex > 0) {
-        const previousStation = route.stations[stationIndex - 1]
-        neighbors.push({
-          station_id: previousStation.station_id,
-          weight: 1, // Ajustar el peso según la lógica de distancia que utilices
-        })
-      }
-
-      // Agregamos el vecino siguiente si existe
-      if (stationIndex < route.stations.length - 1) {
-        const nextStation = route.stations[stationIndex + 1]
-        neighbors.push({
-          station_id: nextStation.station_id,
-          weight: 1, // Ajustar el peso según la lógica de distancia que utilices
-        })
-      }
-    }
-
-    return neighbors
   }
 }

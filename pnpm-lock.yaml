@@ -11,9 +11,6 @@ importers:
       '@sequelize/mssql':
         specifier: 7.0.0-alpha.41
         version: 7.0.0-alpha.41
-      '@types/js-priority-queue':
-        specifier: ^0.0.9
-        version: 0.0.9
       axios:
         specifier: ^1.7.3
         version: 1.7.7(debug@4.3.7)
@@ -38,9 +35,6 @@ importers:
       joi:
         specifier: ^17.13.3
         version: 17.13.3
-      js-priority-queue:
-        specifier: ^0.1.5
-        version: 0.1.5
       liqe:
         specifier: ^3.8.0
         version: 3.8.0
@@ -53,18 +47,15 @@ importers:
       node-thermal-printer:
         specifier: ^4.4.3
         version: 4.4.3
+      priorityqueuejs:
+        specifier: ^2.0.0
+        version: 2.0.0
       sequelize:
         specifier: ^6.37.3
-        version: 6.37.3(tedious@18.6.1)
+        version: 6.37.3
       sequelize-typescript:
         specifier: ^2.1.6
         version: 2.1.6(@types/node@20.16.5)(@types/validator@13.12.2)(reflect-metadata@0.2.2)(sequelize@6.37.3)
-      tedious:
-        specifier: ^18.3.0
-        version: 18.6.1
-      tinyqueue:
-        specifier: ^1.2.3
-        version: 1.2.3
     devDependencies:
       '@eslint/js':
         specifier: ^9.8.0
@@ -96,6 +87,9 @@ importers:
       '@types/node':
         specifier: ^20.14.12
         version: 20.16.5
+      '@types/priorityqueuejs':
+        specifier: ^1.0.4
+        version: 1.0.4
       dotenv-cli:
         specifier: ^7.4.2
         version: 7.4.2
@@ -107,7 +101,7 @@ importers:
         version: 9.1.0(eslint@9.11.0)
       eslint-plugin-prettier:
         specifier: ^5.2.1
-        version: 5.2.1(eslint-config-prettier@9.1.0)(eslint@9.11.0)(prettier@3.3.3)
+        version: 5.2.1(eslint-config-prettier@9.1.0(eslint@9.11.0))(eslint@9.11.0)(prettier@3.3.3)
       globals:
         specifier: ^15.9.0
         version: 15.9.0
@@ -122,7 +116,7 @@ importers:
         version: 16.9.0(typescript@5.6.2)
       stylelint-config-standard:
         specifier: ^36.0.1
-        version: 36.0.1(stylelint@16.9.0)
+        version: 36.0.1(stylelint@16.9.0(typescript@5.6.2))
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@types/node@20.16.5)(typescript@5.6.2)
@@ -381,9 +375,6 @@ packages:
   '@types/http-errors@2.0.4':
     resolution: {integrity: sha512-D0CFMMtydbJAegzOyHjtiKPLlvnm3iTZyZRSZoLq2mRhDdmLfIWOCYPfQJ4cu2erKghU++QvjcUjp/5h7hESpA==}
 
-  '@types/js-priority-queue@0.0.9':
-    resolution: {integrity: sha512-BoAVfDZPOCu6Ue91b0BeMQ6NRWEt4nvC7yG74ZH6jhmUJULF8wRIUsuHfmAaJz9trptzVTt30/i+iiNJqCKrYQ==}
-
   '@types/lodash@4.17.7':
     resolution: {integrity: sha512-8wTvZawATi/lsmNu10/j2hk1KEP0IvjubqPE3cu1Xz7xfXXt5oCq3SNUz4fMIP4XGF9Ky+Ue2tBA3hcS7LSBlA==}
 
@@ -402,6 +393,9 @@ packages:
 
   '@types/node@20.16.5':
     resolution: {integrity: sha512-VwYCweNo3ERajwy0IUlqqcyZ8/A7Zwa9ZP3MnENWcB11AejO+tLy3pu850goUW2FC/IJMdZUfKpX/yxL1gymCA==}
+
+  '@types/priorityqueuejs@1.0.4':
+    resolution: {integrity: sha512-LqAAiGnUqQvBZW0hTGl0pIaL+UeN7KvcxkLyt8+H++WBA1hucdu463mVfGCXmXvJ+uGyW3SyCyW0D6ANNcmB6g==}
 
   '@types/qs@6.9.16':
     resolution: {integrity: sha512-7i+zxXdPD0T4cKDuxCUXJ4wHcsJLwENa6Z3dCu8cfCK743OGy5Nu1RmAGqDPsoTDINVEcdXKRvR/zre+P2Ku1A==}
@@ -1183,9 +1177,6 @@ packages:
   js-md4@0.3.2:
     resolution: {integrity: sha512-/GDnfQYsltsjRswQhN9fhv3EMw2sCpUdrdxyWDOUK7eyD++r3gRhzgiQgc/x4MAv2i1iuQ4lxO5mvqM3vj4bwA==}
 
-  js-priority-queue@0.1.5:
-    resolution: {integrity: sha512-2dPmJT4GbXUpob7AZDR1wFMKz3Biy6oW69mwt5PTtdeoOgDin1i0p5gUV9k0LFeUxDpwkfr+JGMZDpcprjiY5w==}
-
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
@@ -1550,6 +1541,9 @@ packages:
     engines: {node: '>=14'}
     hasBin: true
 
+  priorityqueuejs@2.0.0:
+    resolution: {integrity: sha512-19BMarhgpq3x4ccvVi8k2QpJZcymo/iFUcrhPd4V96kYGovOdTsWwy7fxChYi4QY+m2EnGBWSX9Buakz+tWNQQ==}
+
   process@0.11.10:
     resolution: {integrity: sha512-cdGef/drWFoydD1JsMzuFf8100nZl+GT+yacc2bEced5f9Rjk4z+WtFUTBu9PhOi9j/jfmBPu0mMEY4wIdAF8A==}
     engines: {node: '>= 0.6.0'}
@@ -1820,9 +1814,6 @@ packages:
 
   text-table@0.2.0:
     resolution: {integrity: sha512-N+8UisAXDGk8PFXP4HAzVR9nbfmVJ3zYLAWiTIoqC5v5isinhr+r5uaO8+7r3BMfuNIufIsA7RdpVgacC2cSpw==}
-
-  tinyqueue@1.2.3:
-    resolution: {integrity: sha512-Qz9RgWuO9l8lT+Y9xvbzhPT2efIUIFd69N7eF7tJ9lnQl0iLj1M7peK7IoUGZL9DJHw9XftqLreccfxcQgYLxA==}
 
   to-regex-range@5.0.1:
     resolution: {integrity: sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==}
@@ -2124,7 +2115,7 @@ snapshots:
 
   '@csstools/css-tokenizer@3.0.1': {}
 
-  '@csstools/media-query-list-parser@3.0.1(@csstools/css-parser-algorithms@3.0.1)(@csstools/css-tokenizer@3.0.1)':
+  '@csstools/media-query-list-parser@3.0.1(@csstools/css-parser-algorithms@3.0.1(@csstools/css-tokenizer@3.0.1))(@csstools/css-tokenizer@3.0.1)':
     dependencies:
       '@csstools/css-parser-algorithms': 3.0.1(@csstools/css-tokenizer@3.0.1)
       '@csstools/css-tokenizer': 3.0.1
@@ -2308,8 +2299,6 @@ snapshots:
 
   '@types/http-errors@2.0.4': {}
 
-  '@types/js-priority-queue@0.0.9': {}
-
   '@types/lodash@4.17.7': {}
 
   '@types/mime@1.3.5': {}
@@ -2336,6 +2325,8 @@ snapshots:
   '@types/node@20.16.5':
     dependencies:
       undici-types: 6.19.8
+
+  '@types/priorityqueuejs@1.0.4': {}
 
   '@types/qs@6.9.16': {}
 
@@ -2365,7 +2356,7 @@ snapshots:
     dependencies:
       '@types/webidl-conversions': 7.0.3
 
-  '@typescript-eslint/eslint-plugin@8.6.0(@typescript-eslint/parser@8.6.0)(eslint@9.11.0)(typescript@5.6.2)':
+  '@typescript-eslint/eslint-plugin@8.6.0(@typescript-eslint/parser@8.6.0(eslint@9.11.0)(typescript@5.6.2))(eslint@9.11.0)(typescript@5.6.2)':
     dependencies:
       '@eslint-community/regexpp': 4.11.1
       '@typescript-eslint/parser': 8.6.0(eslint@9.11.0)(typescript@5.6.2)
@@ -2378,6 +2369,7 @@ snapshots:
       ignore: 5.3.2
       natural-compare: 1.4.0
       ts-api-utils: 1.3.0(typescript@5.6.2)
+    optionalDependencies:
       typescript: 5.6.2
     transitivePeerDependencies:
       - supports-color
@@ -2390,6 +2382,7 @@ snapshots:
       '@typescript-eslint/visitor-keys': 8.6.0
       debug: 4.3.7(supports-color@5.5.0)
       eslint: 9.11.0
+    optionalDependencies:
       typescript: 5.6.2
     transitivePeerDependencies:
       - supports-color
@@ -2405,6 +2398,7 @@ snapshots:
       '@typescript-eslint/utils': 8.6.0(eslint@9.11.0)(typescript@5.6.2)
       debug: 4.3.7(supports-color@5.5.0)
       ts-api-utils: 1.3.0(typescript@5.6.2)
+    optionalDependencies:
       typescript: 5.6.2
     transitivePeerDependencies:
       - eslint
@@ -2422,6 +2416,7 @@ snapshots:
       minimatch: 9.0.5
       semver: 7.6.3
       ts-api-utils: 1.3.0(typescript@5.6.2)
+    optionalDependencies:
       typescript: 5.6.2
     transitivePeerDependencies:
       - supports-color
@@ -2660,6 +2655,7 @@ snapshots:
       import-fresh: 3.3.0
       js-yaml: 4.1.0
       parse-json: 5.2.0
+    optionalDependencies:
       typescript: 5.6.2
 
   create-require@1.1.1: {}
@@ -2690,6 +2686,7 @@ snapshots:
   debug@4.3.7(supports-color@5.5.0):
     dependencies:
       ms: 2.1.3
+    optionalDependencies:
       supports-color: 5.5.0
 
   deep-is@0.1.4: {}
@@ -2763,13 +2760,14 @@ snapshots:
     dependencies:
       eslint: 9.11.0
 
-  eslint-plugin-prettier@5.2.1(eslint-config-prettier@9.1.0)(eslint@9.11.0)(prettier@3.3.3):
+  eslint-plugin-prettier@5.2.1(eslint-config-prettier@9.1.0(eslint@9.11.0))(eslint@9.11.0)(prettier@3.3.3):
     dependencies:
       eslint: 9.11.0
-      eslint-config-prettier: 9.1.0(eslint@9.11.0)
       prettier: 3.3.3
       prettier-linter-helpers: 1.0.0
       synckit: 0.9.1
+    optionalDependencies:
+      eslint-config-prettier: 9.1.0(eslint@9.11.0)
 
   eslint-scope@8.0.2:
     dependencies:
@@ -2945,7 +2943,7 @@ snapshots:
   flatted@3.3.1: {}
 
   follow-redirects@1.15.9(debug@4.3.7):
-    dependencies:
+    optionalDependencies:
       debug: 4.3.7(supports-color@5.5.0)
 
   form-data@4.0.0:
@@ -3142,8 +3140,6 @@ snapshots:
       '@sideway/pinpoint': 2.0.0
 
   js-md4@0.3.2: {}
-
-  js-priority-queue@0.1.5: {}
 
   js-tokens@4.0.0: {}
 
@@ -3479,6 +3475,8 @@ snapshots:
 
   prettier@3.3.3: {}
 
+  priorityqueuejs@2.0.0: {}
+
   process@0.11.10: {}
 
   proxy-addr@2.0.7:
@@ -3580,9 +3578,9 @@ snapshots:
       '@types/validator': 13.12.2
       glob: 7.2.0
       reflect-metadata: 0.2.2
-      sequelize: 6.37.3(tedious@18.6.1)
+      sequelize: 6.37.3
 
-  sequelize@6.37.3(tedious@18.6.1):
+  sequelize@6.37.3:
     dependencies:
       '@types/debug': 4.1.12
       '@types/validator': 13.12.2
@@ -3596,7 +3594,6 @@ snapshots:
       retry-as-promised: 7.0.4
       semver: 7.6.3
       sequelize-pool: 7.1.0
-      tedious: 18.6.1
       toposort-class: 1.0.1
       uuid: 8.3.2
       validator: 13.12.0
@@ -3685,20 +3682,20 @@ snapshots:
 
   strip-json-comments@3.1.1: {}
 
-  stylelint-config-recommended@14.0.1(stylelint@16.9.0):
+  stylelint-config-recommended@14.0.1(stylelint@16.9.0(typescript@5.6.2)):
     dependencies:
       stylelint: 16.9.0(typescript@5.6.2)
 
-  stylelint-config-standard@36.0.1(stylelint@16.9.0):
+  stylelint-config-standard@36.0.1(stylelint@16.9.0(typescript@5.6.2)):
     dependencies:
       stylelint: 16.9.0(typescript@5.6.2)
-      stylelint-config-recommended: 14.0.1(stylelint@16.9.0)
+      stylelint-config-recommended: 14.0.1(stylelint@16.9.0(typescript@5.6.2))
 
   stylelint@16.9.0(typescript@5.6.2):
     dependencies:
       '@csstools/css-parser-algorithms': 3.0.1(@csstools/css-tokenizer@3.0.1)
       '@csstools/css-tokenizer': 3.0.1
-      '@csstools/media-query-list-parser': 3.0.1(@csstools/css-parser-algorithms@3.0.1)(@csstools/css-tokenizer@3.0.1)
+      '@csstools/media-query-list-parser': 3.0.1(@csstools/css-parser-algorithms@3.0.1(@csstools/css-tokenizer@3.0.1))(@csstools/css-tokenizer@3.0.1)
       '@csstools/selector-specificity': 4.0.0(postcss-selector-parser@6.1.2)
       '@dual-bundle/import-meta-resolve': 4.1.0
       balanced-match: 2.0.0
@@ -3784,8 +3781,6 @@ snapshots:
 
   text-table@0.2.0: {}
 
-  tinyqueue@1.2.3: {}
-
   to-regex-range@5.0.1:
     dependencies:
       is-number: 7.0.0
@@ -3839,9 +3834,10 @@ snapshots:
 
   typescript-eslint@8.6.0(eslint@9.11.0)(typescript@5.6.2):
     dependencies:
-      '@typescript-eslint/eslint-plugin': 8.6.0(@typescript-eslint/parser@8.6.0)(eslint@9.11.0)(typescript@5.6.2)
+      '@typescript-eslint/eslint-plugin': 8.6.0(@typescript-eslint/parser@8.6.0(eslint@9.11.0)(typescript@5.6.2))(eslint@9.11.0)(typescript@5.6.2)
       '@typescript-eslint/parser': 8.6.0(eslint@9.11.0)(typescript@5.6.2)
       '@typescript-eslint/utils': 8.6.0(eslint@9.11.0)(typescript@5.6.2)
+    optionalDependencies:
       typescript: 5.6.2
     transitivePeerDependencies:
       - eslint

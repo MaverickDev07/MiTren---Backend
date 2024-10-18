@@ -29,7 +29,6 @@
   "homepage": "https://mitren.com",
   "dependencies": {
     "@sequelize/mssql": "7.0.0-alpha.41",
-    "@types/js-priority-queue": "^0.0.9",
     "axios": "^1.7.3",
     "boom": "^7.3.0",
     "cors": "^2.8.5",
@@ -38,15 +37,13 @@
     "express": "^4.19.2",
     "helmet": "^7.1.0",
     "joi": "^17.13.3",
-    "js-priority-queue": "^0.1.5",
     "liqe": "^3.8.0",
     "mongoose": "^8.5.2",
     "morgan": "^1.10.0",
     "node-thermal-printer": "^4.4.3",
+    "priorityqueuejs": "^2.0.0",
     "sequelize": "^6.37.3",
-    "sequelize-typescript": "^2.1.6",
-    "tedious": "^18.3.0",
-    "tinyqueue": "^1.2.3"
+    "sequelize-typescript": "^2.1.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.8.0",
@@ -59,6 +56,7 @@
     "@types/mongoose": "^5.11.97",
     "@types/morgan": "^1.9.9",
     "@types/node": "^20.14.12",
+    "@types/priorityqueuejs": "^1.0.4",
     "dotenv-cli": "^7.4.2",
     "eslint": "^9.8.0",
     "eslint-config-prettier": "^9.1.0",
