@@ -1,22 +1,11 @@
 /* eslint-disable max-lines */
 import { Schema } from 'mongoose'
-import PriorityQueue from 'priorityqueuejs'
 import Price, { PriceAttributes } from '../database/models/Price'
 import BaseRepository from './BaseRepository'
 import Line from '../database/models/Line'
 import Station from '../database/models/Station'
 import Route from '../database/models/Route'
 import ApiError from '../errors/ApiError'
-
-class QueueElement {
-  node: string
-  priority: number
-
-  constructor(node: string, priority: number) {
-    this.node = node
-    this.priority = priority
-  }
-}
 
 export default class PriceRepository extends BaseRepository<PriceAttributes> {
   protected allowedSortByFields = ['customer_type', 'status', 'createdAt', 'updatedAt']
@@ -83,20 +72,13 @@ export default class PriceRepository extends BaseRepository<PriceAttributes> {
           transfer_point: { is_transfer, transfer_station: '' },
         }
       } else {
-        // Si no hay ruta directa, encontrar la mejor ruta con transbordo
-        const transferStation = await this.findTransferStation(start_lines_id, end_lines_id)
-        console.log(transferStation)
-
-        if (!transferStation) {
-          throw new Error('No se encontró un punto de transbordo válido.')
-        }
-
-        const caminoLinea1 = await this.dijkstra(start_station_id, transferStation._id.toString())
-        const caminoLinea2 = await this.dijkstra(transferStation._id.toString(), end_station_id)
-
-        if (!caminoLinea1 || !caminoLinea2) {
-          throw new Error('No se encontró un camino entre las estaciones.')
-        }
+        // Encontrar la mejor estación de trasbordo
+        const transferStation = await this.findBestTransferStation(
+          start_lines_id,
+          end_lines_id,
+          start_station_id,
+          end_station_id,
+        )
 
         const prices1 = await Price.find({
           'start_station.station_id': start_station_id,
@@ -111,8 +93,8 @@ export default class PriceRepository extends BaseRepository<PriceAttributes> {
         // Combinar y sumar precios por 'customer_type' coincidentes
         const totalPrices = this.sumarPrecios(prices1, prices2)
 
-        start_line = await this.getLineNameById(caminoLinea1.path[0])
-        end_line = await this.getLineNameById(caminoLinea2.path[0])
+        start_line = startStation.station_name
+        end_line = endStation.station_name
 
         return {
           prices: totalPrices,
@@ -126,27 +108,74 @@ export default class PriceRepository extends BaseRepository<PriceAttributes> {
     }
   }
 
-  private async findTransferStation(
-    start_lines: Array<Schema.Types.ObjectId>,
-    end_lines: Array<Schema.Types.ObjectId>,
+  // Reemplazamos el uso de reduce con un bucle for...of para manejar las promesas correctamente
+  private async findBestTransferStation(
+    start_lines_id: Schema.Types.ObjectId[],
+    end_lines_id: Schema.Types.ObjectId[],
+    start_station_id: string,
+    end_station_id: string,
   ): Promise<any> {
     const transferStations = await Station.find({
-      line_id: { $in: start_lines },
-      is_transfer_stop: true,
-    })
+      is_transfer_stop: true, // Debe ser una estación de trasbordo
+      $and: [
+        { line_id: { $in: start_lines_id } }, // Debe pertenecer a una de las líneas de inicio
+        { line_id: { $in: end_lines_id } }, // También debe estar conectada a una de las líneas de destino
+      ],
+    }).exec()
 
-    for (const station of transferStations) {
-      if (station.line_id.some(lineId => end_lines.includes(lineId))) {
-        return station
+    if (transferStations.length === 0) {
+      /*throw new ApiError({
+        name: 'NO_TRANSFER_FOUND',
+        message: 'No se encontró una estación de trasbordo válida.',
+        status: 400,
+        code: 'ERR_NO_TRANSFER',
+      })*/
+      throw new Error('No se encontró una estación de trasbordo válida.')
+    }
+
+    let bestTransferStation: { station: any; totalStops: number } | null = null
+
+    for (const current of transferStations) {
+      // Obtener la ruta desde la estación de inicio a la estación de trasbordo actual
+      const routeToTransfer = await Route.findOne({
+        'start_station.station_id': start_station_id,
+        'end_station.station_id': current._id,
+      }).exec()
+
+      // Obtener la ruta desde la estación de trasbordo actual a la estación de destino
+      const routeFromTransfer = await Route.findOne({
+        'start_station.station_id': current._id,
+        'end_station.station_id': end_station_id,
+      }).exec()
+
+      if (!routeToTransfer || !routeFromTransfer) {
+        // Si alguna de las rutas no existe, descartar esta estación de trasbordo
+        continue
+      }
+
+      // Calcular el total de estaciones (paradas) entre la estación de partida y la estación de destino, pasando por la estación de trasbordo
+      const totalStops = routeToTransfer.stations.length + routeFromTransfer.stations.length
+
+      // Comparar la cantidad de estaciones (paradas) con la mejor opción actual
+      if (!bestTransferStation || totalStops < bestTransferStation.totalStops) {
+        bestTransferStation = {
+          station: current,
+          totalStops,
+        }
       }
     }
 
-    return null
-  }
+    if (!bestTransferStation) {
+      /*throw new ApiError({
+        name: 'NO_TRANSFER_FOUND',
+        message: 'No se encontró una estación de trasbordo válida con rutas completas.',
+        status: 400,
+        code: 'ERR_NO_TRANSFER',
+      })*/
+      throw new Error('No se encontró una estación de trasbordo válida con rutas completas.')
+    }
 
-  private async getLineNameById(line_id: Schema.Types.ObjectId): Promise<string> {
-    const line = await Line.findById(line_id)
-    return line ? line.line_name : ''
+    return bestTransferStation.station
   }
 
   private sumarPrecios(prices1: any[], prices2: any[]): any[] {
@@ -166,67 +195,5 @@ export default class PriceRepository extends BaseRepository<PriceAttributes> {
       customer_type,
       base_price,
     }))
-  }
-
-  private async dijkstra(start_station_id: string, end_station_id: string): Promise<any> {
-    const distances: Record<string, number> = {}
-    const previous: Record<string, string | null> = {}
-    const pq = new PriorityQueue<{ node: string; priority: number }>(
-      (a, b) => b.priority - a.priority,
-    )
-
-    pq.enq(new QueueElement(start_station_id, 0))
-    distances[start_station_id.toString()] = 0
-    previous[start_station_id.toString()] = null
-
-    const routes = await Route.find()
-
-    while (pq.size()) {
-      const { node: currentId } = pq.deq()
-
-      if (currentId.toString() === end_station_id.toString()) {
-        const path: string[] = []
-        let current: string | null = currentId
-
-        while (current !== null) {
-          path.push(current)
-          current = previous[current.toString()]
-        }
-
-        path.reverse()
-
-        return { station_id: currentId, distance: distances[currentId.toString()], path }
-      }
-
-      for (const route of routes) {
-        const stationIndex = route.stations.findIndex(
-          station => station.station_id.toString() === currentId.toString(),
-        )
-
-        // Agregar vecino anterior si existe
-        if (stationIndex > 0) {
-          const prevStation = route.stations[stationIndex - 1]
-          console.log(prevStation)
-          const alt = distances[currentId.toString()] + 1 // Ajustar el peso según la lógica de distancia
-          if (alt < (distances[prevStation.station_id.toString()] || Infinity)) {
-            distances[prevStation.station_id.toString()] = alt
-            previous[prevStation.station_id.toString()] = currentId
-            pq.enq(new QueueElement(prevStation.station_id.toString(), alt))
-          }
-        }
-
-        // Agregar vecino siguiente si existe
-        if (stationIndex < route.stations.length - 1) {
-          const nextStation = route.stations[stationIndex + 1]
-          const alt = distances[currentId.toString()] + 1 // Ajustar el peso según la lógica de distancia
-          if (alt < (distances[nextStation.station_id.toString()] || Infinity)) {
-            distances[nextStation.station_id.toString()] = alt
-            previous[nextStation.station_id.toString()] = currentId
-            pq.enq(new QueueElement(nextStation.station_id.toString(), alt))
-          }
-        }
-      }
-    }
-    return null
   }
 }
