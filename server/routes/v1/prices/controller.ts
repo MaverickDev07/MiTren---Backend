@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import PriceResource from '../../../resources/PriceResource'
+import PriceResource, { StationPairPricesResource } from '../../../resources/PriceResource'
 import PriceRepository from '../../../repositories/PriceRepository'
 
 export const listPrices = async (req: Request, res: Response, next: NextFunction) => {
@@ -21,10 +21,10 @@ export const listPricesByStationPair = async (req: Request, res: Response, next:
   try {
     const { start_station_id, end_station_id } = req.params
     const repository = new PriceRepository()
-    const priceResource = new PriceResource(
+    const priceResource = new StationPairPricesResource(
       await repository.getPricesByStationPair(start_station_id as string, end_station_id as string),
     )
-    res.status(200).json({ prices: priceResource.stationItemPrices() })
+    res.status(200).json(priceResource.stationItemPrices())
   } catch (error: any) {
     next(error)
   }
