@@ -29,15 +29,17 @@ export default class PriceRepository extends BaseRepository<PriceAttributes> {
         })
       }
 
+      // Estación inicial y sus lineas
       const start_station = startStation.station_name
       const start_lines_id = startStation.line_id
+      // Estación final y sus lineas
       const end_station = endStation.station_name
       const end_lines_id = endStation.line_id
 
-      let is_transfer = true
-      let line_id: any = null
-      let start_line: any = null
-      let end_line: any = null
+      let is_transfer: boolean = true
+      let line_id: Schema.Types.ObjectId | null = null
+      let start_line: string = ''
+      let end_line: string = ''
 
       // Verificar si hay una línea en común entre las estaciones de inicio y fin
       for (const startLine of start_lines_id) {
@@ -62,7 +64,7 @@ export default class PriceRepository extends BaseRepository<PriceAttributes> {
 
         const line_direct = await Line.findById(line_id)
         if (!line_direct) throw new Error('No se encontró la línea directa entre las estaciones.')
-        const line_name = line_direct.line_name
+        const line_name: string = line_direct.line_name
         start_line = end_line = line_name
 
         return {
@@ -93,8 +95,10 @@ export default class PriceRepository extends BaseRepository<PriceAttributes> {
         // Combinar y sumar precios por 'customer_type' coincidentes
         const totalPrices = this.sumarPrecios(prices1, prices2)
 
-        start_line = startStation.station_name
-        end_line = endStation.station_name
+        const { start_line, end_line } = await this.getStationLineNames(
+          start_lines_id,
+          end_lines_id,
+        )
 
         return {
           prices: totalPrices,
@@ -109,6 +113,7 @@ export default class PriceRepository extends BaseRepository<PriceAttributes> {
   }
 
   // Reemplazamos el uso de reduce con un bucle for...of para manejar las promesas correctamente
+  /* eslint-disable-next-line max-params */
   private async findBestTransferStation(
     start_lines_id: Schema.Types.ObjectId[],
     end_lines_id: Schema.Types.ObjectId[],
@@ -136,16 +141,16 @@ export default class PriceRepository extends BaseRepository<PriceAttributes> {
     let bestTransferStation: { station: any; totalStops: number } | null = null
 
     for (const current of transferStations) {
-      // Obtener la ruta desde la estación de inicio a la estación de trasbordo actual
+      // Obtener las rutas que conectan la estación de inicio y la estación de trasbordo actual
       const routeToTransfer = await Route.findOne({
-        'start_station.station_id': start_station_id,
-        'end_station.station_id': current._id,
+        line_id: { $in: start_lines_id }, // Ruta en una de las líneas de inicio
+        stations: { $elemMatch: { station_id: start_station_id } }, // Estación de inicio
       }).exec()
 
-      // Obtener la ruta desde la estación de trasbordo actual a la estación de destino
+      // Obtener las rutas que conectan la estación de trasbordo y la estación final
       const routeFromTransfer = await Route.findOne({
-        'start_station.station_id': current._id,
-        'end_station.station_id': end_station_id,
+        line_id: { $in: end_lines_id }, // Ruta en una de las líneas de fin
+        stations: { $elemMatch: { station_id: end_station_id } }, // Estación de fin
       }).exec()
 
       if (!routeToTransfer || !routeFromTransfer) {
@@ -153,8 +158,20 @@ export default class PriceRepository extends BaseRepository<PriceAttributes> {
         continue
       }
 
-      // Calcular el total de estaciones (paradas) entre la estación de partida y la estación de destino, pasando por la estación de trasbordo
-      const totalStops = routeToTransfer.stations.length + routeFromTransfer.stations.length
+      // Calcular la cantidad de paradas en cada ruta
+      const stopsToTransfer = this.getNumberOfStops(
+        routeToTransfer.stations,
+        start_station_id,
+        current._id.toString(),
+      )
+      const stopsFromTransfer = this.getNumberOfStops(
+        routeFromTransfer.stations,
+        current._id.toString(),
+        end_station_id,
+      )
+
+      // Calcular el total de estaciones (paradas)
+      const totalStops = stopsToTransfer + stopsFromTransfer
 
       // Comparar la cantidad de estaciones (paradas) con la mejor opción actual
       if (!bestTransferStation || totalStops < bestTransferStation.totalStops) {
@@ -178,6 +195,20 @@ export default class PriceRepository extends BaseRepository<PriceAttributes> {
     return bestTransferStation.station
   }
 
+  private getNumberOfStops(stations: any[], startStationId: string, endStationId: string): number {
+    const startIndex = stations.findIndex(
+      station => station.station_id.toString() === startStationId,
+    )
+    const endIndex = stations.findIndex(station => station.station_id.toString() === endStationId)
+
+    if (startIndex === -1 || endIndex === -1 || startIndex > endIndex) {
+      throw new Error('Rutas no válidas para calcular el número de paradas.')
+    }
+
+    // La cantidad de paradas es la diferencia entre el índice de la estación final e inicial
+    return endIndex - startIndex
+  }
+
   private sumarPrecios(prices1: any[], prices2: any[]): any[] {
     const priceMap = new Map()
     prices1.forEach(price => {
@@ -195,5 +226,33 @@ export default class PriceRepository extends BaseRepository<PriceAttributes> {
       customer_type,
       base_price,
     }))
+  }
+
+  private async getStationLineNames(
+    start_lines_id: Schema.Types.ObjectId[],
+    end_lines_id: Schema.Types.ObjectId[],
+  ): Promise<{ start_line: string; end_line: string }> {
+    // Obtener la estación de partida
+    const startLine = await Line.findOne({ _id: { $in: start_lines_id } }).exec()
+    if (!startLine) {
+      throw new Error('No se encontró la línea de la estación de partida.')
+    }
+    const start_line = startLine.line_name
+
+    // Obtener el line_name de la estación de destino, asegurándose de que sea diferente de la estación de partida
+    const endLineIds = end_lines_id.filter(lineId => !start_lines_id.includes(lineId)) // Excluir líneas comunes
+    if (endLineIds.length === 0) {
+      throw new Error(
+        'No se encontró una línea de destino válida que sea diferente de la línea de partida.',
+      )
+    }
+    const endLine = await Line.findOne({ _id: { $in: endLineIds } }).exec()
+    if (!endLine) {
+      throw new Error('No se encontró la línea de la estación de destino.')
+    }
+    const end_line = endLine.line_name
+
+    // Retornar los nombres de las líneas
+    return { start_line, end_line }
   }
 }
