@@ -6,6 +6,7 @@ import Line from '../database/models/Line'
 import Station from '../database/models/Station'
 import Route from '../database/models/Route'
 import ApiError from '../errors/ApiError'
+import { StationPairPricesAttributes, StationPairPricesResource } from '../resources/PriceResource'
 
 export default class PriceRepository extends BaseRepository<PriceAttributes> {
   protected allowedSortByFields = ['customer_type', 'status', 'createdAt', 'updatedAt']
@@ -15,7 +16,10 @@ export default class PriceRepository extends BaseRepository<PriceAttributes> {
     super(Price)
   }
 
-  async getPricesByStationPair(start_station_id: string, end_station_id: string): Promise<any> {
+  async getPricesByStationPair(
+    start_station_id: string,
+    end_station_id: string,
+  ): Promise<any | null> {
     try {
       const startStation = await Station.findById(start_station_id)
       const endStation = await Station.findById(end_station_id)

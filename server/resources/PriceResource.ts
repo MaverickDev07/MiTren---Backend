@@ -19,19 +19,46 @@ type TransferPoint = {
   transfer_station: string
 }
 
-type StationPairPrices = {
+export type StationPairPrices = {
   prices: Array<Price>
   start_point: StartPoint
   end_point: EndPoint
   transfer_point: TransferPoint
 }
 
-interface StationPairPricesAttributes extends StationPairPrices, Document {}
+export interface StationPairPricesAttributes extends StationPairPrices, Document {}
 
 export class StationPairPricesResource extends BaseResource<
   StationPairPricesAttributes,
   StationPairPrices
 >() {
+  /* eslint-disable-next-line max-params */
+  buildStationPairPrices(
+    prices: Price[],
+    start_station: string,
+    start_line: string,
+    end_station: string,
+    end_line: string,
+    is_transfer: boolean,
+    transfer_station: string,
+  ): StationPairPrices {
+    return {
+      prices,
+      start_point: {
+        start_station,
+        start_line,
+      },
+      end_point: {
+        end_station,
+        end_line,
+      },
+      transfer_point: {
+        is_transfer,
+        transfer_station,
+      },
+    }
+  }
+
   stationItemPrices() {
     const stationPairPricesResource: StationPairPrices = {
       prices: this.instance.prices,
