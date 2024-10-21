@@ -1,4 +1,4 @@
-import { Schema, model, Document } from 'mongoose'
+import { Schema, model, Document, Types } from 'mongoose'
 
 type Location = {
   latitude: number
@@ -8,7 +8,7 @@ type Location = {
 export type StationEntity = {
   id?: string | any
   station_name: string
-  line_id: Array<Schema.Types.ObjectId>
+  line_id: Array<Types.ObjectId>
   is_transfer_stop?: boolean
   location: Location
   status?: string
@@ -28,7 +28,7 @@ const StationSchema = new Schema<StationAttributes>(
       required: true,
     },
     line_id: {
-      type: [Schema.Types.ObjectId],
+      type: [Types.ObjectId],
       ref: 'Line',
       required: true,
     },

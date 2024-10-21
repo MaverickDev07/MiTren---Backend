@@ -4,13 +4,15 @@ import Joi from 'joi'
 // Line
 export const createLineSchema = Joi.object({
   line_name: Joi.string().min(3).max(30).required(),
+  color: Joi.string().min(3).max(9).required(),
   status: Joi.string().min(3).max(10),
 })
 
 export const updateLineSchema = Joi.object({
   line_name: Joi.string().min(3).max(30),
+  color: Joi.string().min(3).max(9),
   status: Joi.string().min(3).max(10),
-}).or('line_name', 'status')
+}).or('line_name', 'color', 'status')
 
 // Station
 export const createStationSchema = Joi.object({
