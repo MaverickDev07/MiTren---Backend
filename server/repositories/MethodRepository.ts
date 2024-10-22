@@ -8,4 +8,8 @@ export default class MethodRepository extends BaseRepository<MethodAttributes> {
   constructor() {
     super(Method)
   }
+
+  async getAllByActive(): Promise<Array<MethodAttributes>> {
+    return this.model.find({ status: 'ACTIVE' }, { method_name: 1 }).sort({ createdAt: 1 }).exec()
+  }
 }

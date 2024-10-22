@@ -92,11 +92,13 @@ export const createRouteStationRangeSchema = Joi.object({
 // Method
 export const createMethodSchema = Joi.object({
   method_name: Joi.string().min(3).max(30).required(),
+  status: Joi.string().min(3).max(10),
 })
 
 export const updateMethodSchema = Joi.object({
   method_name: Joi.string().min(3).max(30),
-}).or('method_name')
+  status: Joi.string().min(3).max(10),
+}).or('method_name', 'status')
 
 // CustomerType
 export const createCustomerTypeSchema = Joi.object({

@@ -9,6 +9,8 @@ import StationResource from '../../../resources/StationResource'
 import KioskRepository from '../../../repositories/KioskRepository'
 import KioskResource from '../../../resources/KioskResource'
 import EnvManager from '../../../config/EnvManager'
+import MethodRepository from '../../../repositories/MethodRepository'
+import MethodResource from '../../../resources/MethodResource'
 
 // Middlewares
 export const getKioskIdByEnv = (req: Request, res: Response, next: NextFunction) => {
@@ -90,6 +92,16 @@ export const listPricesByStationPair = async (req: Request, res: Response, next:
       await repository.getPricesByStationPair(start_station_id as string, end_station_id as string),
     )
     res.status(200).json(priceResource.getPrices())
+  } catch (error: any) {
+    next(error)
+  }
+}
+
+export const listMethodsByActivate = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const repository = new MethodRepository()
+    const methods = MethodResource.collection(await repository.getAllByActive())
+    res.status(200).json({ methods })
   } catch (error: any) {
     next(error)
   }

@@ -19,6 +19,13 @@ const MethodSchema = new Schema<MethodAttributes>(
       unique: true,
       required: true,
     },
+    status: {
+      type: String,
+      enum: ['ACTIVE', 'INACTIVE'],
+      uppercase: true,
+      trim: true,
+      default: 'ACTIVE',
+    },
   },
   {
     timestamps: true,
