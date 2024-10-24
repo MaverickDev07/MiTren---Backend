@@ -47,6 +47,24 @@ export const updatePrice = async (req: Request, res: Response, next: NextFunctio
   }
 }
 
+export const createOrUpdatePriceByRange = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { start_station_id, end_station_id } = req.params
+    const repository = new PriceRepository()
+    const result = await repository.createOrUpdatePrices(
+      start_station_id as string,
+      end_station_id as string,
+    )
+    res.status(200).json(result)
+  } catch (error: any) {
+    next(error)
+  }
+}
+
 export const deletePrice = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const repository = new PriceRepository()
