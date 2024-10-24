@@ -264,15 +264,15 @@ export const updatePriceSchema = Joi.object({
   base_price: Joi.number().min(0.1),
   customer_type: Joi.string().min(3).max(15),
   customer_type_id: Joi.string().alphanum().hex().length(24),
-  start_stations: Joi.object({
+  start_station: Joi.object({
     station_id: Joi.string().alphanum().hex().length(24),
     station_name: Joi.string().min(3).max(50),
   }),
-  end_stations: Joi.object({
+  end_station: Joi.object({
     station_id: Joi.string().alphanum().hex().length(24),
     station_name: Joi.string().min(3).max(50),
   }),
-})
+}).or('base_price', 'customer_type', 'customer_type_id', 'start_station', 'end_station')
 
 // Ticket
 export const createTicketSchema = Joi.object({
