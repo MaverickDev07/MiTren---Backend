@@ -7,6 +7,7 @@ type ErrorName =
   | 'FILTER_BY_ERROR'
   | 'REFERENCE_ERROR'
   | 'INVALID_DATA_ERROR'
+  | 'STATIONS_NOT_IN_ROUTE'
 
 type ErrorCode =
   | 'ERR_MNF'
@@ -17,6 +18,7 @@ type ErrorCode =
   | 'ERR_FTB'
   | 'ERR_REF'
   | 'ERR_ID'
+  | 'ERR_SNR'
 
 type ValidationError = {
   error: {

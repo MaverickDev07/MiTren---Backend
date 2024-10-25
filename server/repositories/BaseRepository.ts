@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import mongoose, { Model, Document, FilterQuery, UpdateQuery, QueryOptions, Types } from 'mongoose'
 import { parse } from 'liqe'
 
@@ -19,9 +20,13 @@ export default abstract class BaseRepository<T extends Document> {
     options.sort = orderBy
 
     if (options.filterBy) {
-      const filterBy = this.getFilterBy(options.filterBy)
+      const filterConditions = Array.isArray(options.filterBy)
+        ? options.filterBy.map((filter: string) => this.getFilterBy(filter))
+        : [this.getFilterBy(options.filterBy)]
+
+      // Combinar los filtros usando `$and`
+      options.where = { $and: filterConditions }
       delete options.filterBy
-      options.where = filterBy
     }
 
     return this.model
