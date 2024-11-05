@@ -2,7 +2,7 @@
 import { Schema, model, Document } from 'mongoose'
 
 type PaymentMethod = {
-  method_type: string
+  method_name: string
   method_id: string
 }
 
@@ -47,6 +47,109 @@ export type TicketEntity = {
 }
 
 export interface TicketAttributes extends TicketEntity, Document {}
+interface PaymentMethodAttributes extends PaymentMethod, Document {}
+interface PriceAttributes extends Price, Document {}
+interface RouteAttributes extends Route, Document {}
+
+const PriceSchema = new Schema<PriceAttributes>(
+  {
+    qty: {
+      type: Number,
+      min: 1,
+      required: true,
+    },
+    customer_type: {
+      type: String,
+      uppercase: true,
+      trim: true,
+      required: true,
+    },
+    base_price: {
+      type: Number,
+      min: 0.1,
+      required: true,
+    },
+  },
+  {
+    timestamps: false,
+    versionKey: false,
+  },
+)
+const RouteSchema = new Schema<RouteAttributes>(
+  {
+    start_point: {
+      type: {
+        start_line: {
+          type: String,
+          uppercase: true,
+          trim: true,
+          required: true,
+        },
+        start_station: {
+          type: String,
+          uppercase: true,
+          trim: true,
+          required: true,
+        },
+      },
+      required: true,
+    },
+    end_point: {
+      type: {
+        end_line: {
+          type: String,
+          uppercase: true,
+          trim: true,
+          required: true,
+        },
+        end_station: {
+          type: String,
+          uppercase: true,
+          trim: true,
+          required: true,
+        },
+      },
+      required: true,
+    },
+    transfer_point: {
+      type: {
+        is_transfer: {
+          type: Boolean,
+          default: false,
+        },
+        transfer_station: {
+          type: String,
+          uppercase: true,
+          trim: true,
+        },
+      },
+      required: true,
+    },
+  },
+  {
+    timestamps: false,
+    versionKey: false,
+  },
+)
+const PaymentMethodSchema = new Schema<PaymentMethodAttributes>(
+  {
+    method_name: {
+      type: String,
+      uppercase: true,
+      trim: true,
+      required: true,
+    },
+    method_id: {
+      type: String,
+      trim: true,
+      required: true,
+    },
+  },
+  {
+    timestamps: false,
+    versionKey: false,
+  },
+)
 
 const TicketSchema = new Schema<TicketAttributes>(
   {
@@ -68,95 +171,15 @@ const TicketSchema = new Schema<TicketAttributes>(
       required: true,
     },
     payment_method: {
-      type: {
-        method_type: {
-          type: String,
-          uppercase: true,
-          trim: true,
-          required: true,
-        },
-        method_id: {
-          type: String,
-          trim: true,
-          required: true,
-        },
-      },
+      type: PaymentMethodSchema,
       required: true,
     },
     prices: {
-      type: [
-        {
-          qty: {
-            type: Number,
-            min: 1,
-            required: true,
-          },
-          customer_type: {
-            type: String,
-            uppercase: true,
-            trim: true,
-            required: true,
-          },
-          base_price: {
-            type: Number,
-            min: 0.1,
-            required: true,
-          },
-        },
-      ],
+      type: [PriceSchema],
       required: true,
     },
     route: {
-      type: {
-        start_point: {
-          type: {
-            start_line: {
-              type: String,
-              uppercase: true,
-              trim: true,
-              required: true,
-            },
-            start_station: {
-              type: String,
-              uppercase: true,
-              trim: true,
-              required: true,
-            },
-          },
-          required: true,
-        },
-        end_point: {
-          type: {
-            end_line: {
-              type: String,
-              uppercase: true,
-              trim: true,
-              required: true,
-            },
-            end_station: {
-              type: String,
-              uppercase: true,
-              trim: true,
-              required: true,
-            },
-          },
-          required: true,
-        },
-        transfer_point: {
-          type: {
-            is_transfer: {
-              type: Boolean,
-              default: false,
-            },
-            transfer_station: {
-              type: String,
-              uppercase: true,
-              trim: true,
-            },
-          },
-          required: true,
-        },
-      },
+      type: RouteSchema,
       required: true,
     },
     status: {

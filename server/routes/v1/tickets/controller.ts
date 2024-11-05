@@ -27,16 +27,6 @@ export const getTicket = async (req: Request, res: Response, next: NextFunction)
   }
 }
 
-export const createTicket = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const repository = new TicketRepository()
-    const ticketResource = new TicketResource(await repository.create(req.body))
-    res.status(201).json({ ticket: ticketResource.item() })
-  } catch (error) {
-    next(error)
-  }
-}
-
 export const updateTicket = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const repository = new TicketRepository()
