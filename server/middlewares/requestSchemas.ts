@@ -276,52 +276,70 @@ export const updatePriceSchema = Joi.object({
 
 // Ticket
 export const createTicketSchema = Joi.object({
-  start_station: Joi.string().min(3).max(50).required(),
-  end_station: Joi.string().min(3).max(50).required(),
-  kiosk_id: Joi.string().alphanum().hex().length(24).required(),
-  method_name: Joi.string().min(2).max(15).required(),
-  id_qr: Joi.string().min(2).max(20),
-  is_transfer: Joi.boolean(),
-  promotion_title: Joi.string().min(3).max(30),
+  kiosk_code: Joi.string().min(3).max(10).required(),
   total_price: Joi.number().min(0.1).required(),
-  route: Joi.object({
-    line_name: Joi.string().min(3).max(30).required(),
-    stations: Joi.array().min(2).items(Joi.string().min(3).max(50)).required(),
-    prices: Joi.array()
-      .min(1)
-      .items(
-        Joi.object({
-          qty: Joi.number().min(1).required(),
-          customer_type: Joi.string().min(3).max(15).required(),
-          base_price: Joi.number().min(1).required(),
-        }),
-      )
-      .required(),
+  payment_method: Joi.object({
+    method_name: Joi.string().min(3).max(30).required(),
+    method_id: Joi.string().min(3).max(24).required(),
   }).required(),
+  prices: Joi.array()
+    .min(1)
+    .items(
+      Joi.object({
+        qty: Joi.number().min(1).required(),
+        customer_type: Joi.string().min(3).max(15).required(),
+        base_price: Joi.number().min(0.1).required(),
+      }),
+    )
+    .required(),
+  route: Joi.object({
+    start_point: Joi.object({
+      start_station: Joi.string().min(3).max(50).required(),
+      start_line: Joi.string().min(3).max(30).required(),
+    }).required(),
+    end_point: Joi.object({
+      end_station: Joi.string().min(3).max(50).required(),
+      end_line: Joi.string().min(3).max(30).required(),
+    }).required(),
+    transfer_point: Joi.object({
+      is_transfer: Joi.boolean().required(),
+      transfer_station: Joi.string().min(3).max(50).required(),
+    }).required(),
+  }).required(),
+  status: Joi.string().min(3).max(15),
 })
 
 export const updateTicketSchema = Joi.object({
-  start_station: Joi.string().min(3).max(50),
-  end_station: Joi.string().min(3).max(50),
-  kiosk_id: Joi.string().alphanum().hex().length(24),
-  method_name: Joi.string().min(3).max(30),
-  id_qr: Joi.string().min(2).max(20),
-  is_transfer: Joi.boolean(),
   promotion_title: Joi.string().min(3).max(30),
-  route: Joi.object({
-    line_name: Joi.string().min(3).max(30).required(),
-    stations: Joi.array().min(2).items(Joi.string().min(3).max(50)),
-    prices: Joi.array()
-      .min(1)
-      .items(
-        Joi.object({
-          qty: Joi.number().min(1),
-          customer_type: Joi.string().min(3).max(15),
-          base_price: Joi.number().min(1),
-        }),
-      ),
+  payment_method: Joi.object({
+    method_name: Joi.string().min(3).max(30),
+    method_id: Joi.string().min(3).max(24),
   }),
-})
+  prices: Joi.array()
+    .min(1)
+    .items(
+      Joi.object({
+        qty: Joi.number().min(1),
+        customer_type: Joi.string().min(3).max(15),
+        base_price: Joi.number().min(1),
+      }),
+    ),
+  route: Joi.object({
+    start_point: Joi.object({
+      start_station: Joi.string().min(3).max(50),
+      start_line: Joi.string().min(3).max(30),
+    }),
+    end_point: Joi.object({
+      end_station: Joi.string().min(3).max(50),
+      end_line: Joi.string().min(3).max(30),
+    }),
+    transfer_point: Joi.object({
+      is_transfer: Joi.boolean(),
+      transfer_station: Joi.string().min(3).max(50),
+    }),
+  }),
+  status: Joi.string().min(3).max(15),
+}).or('promotion_title', 'payment_method', 'prices', 'route', 'status')
 
 // Wallet
 export const createWalletSchema = Joi.object({

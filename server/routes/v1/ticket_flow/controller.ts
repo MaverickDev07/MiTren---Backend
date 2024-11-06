@@ -15,6 +15,7 @@ import MethodResource from '../../../resources/MethodResource'
 import VeripagosService from '../../../utils/VeripagosService'
 import TicketRepository from '../../../repositories/TicketRepository'
 import TicketResource from '../../../resources/TicketResource'
+import Kiosk from '../../../database/models/Kiosk'
 
 const veripagosService = new VeripagosService(
   'https://veripagos.com/api',
@@ -89,7 +90,7 @@ export const preloadVeripagosData = (req: Request, res: Response, next: NextFunc
 }
 export const computeTotalPrice = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { route } = req.body
+    const { prices } = req.body
     const kioskId = EnvManager.getKioskId()
     if (!kioskId)
       throw new ApiError({
@@ -98,12 +99,19 @@ export const computeTotalPrice = async (req: Request, res: Response, next: NextF
         status: 400,
         code: 'ERR_NF',
       })
-    const totalPrice = route.prices.reduce((acc: number, price: any) => {
+    const kiosk = await Kiosk.findById(kioskId)
+    if (!kiosk)
+      throw new ApiError({
+        name: 'MODEL_NOT_FOUND_ERROR',
+        message: 'Kiosk not found',
+        status: 400,
+        code: 'ERR_MNF',
+      })
+    const totalPrice = prices.reduce((acc: number, price: any) => {
       return acc + price.qty * price.base_price
     }, 0)
-    console.log(totalPrice)
 
-    req.body.kiosk_id = EnvManager.kioskId()
+    req.body.kiosk_code = kiosk.kiosk_code
     req.body.total_price = totalPrice
 
     next()

@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36" version="24.7.16">
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36" version="24.8.4">
   <diagram id="gbshuBLs4zCMI27IBp8d" name="Página-1">
     <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="1920" pageHeight="1200" background="none" math="0" shadow="0">
       <root>
@@ -2841,7 +2841,7 @@
         <mxCell id="zTmV0ZuWO6pedmiTcRDS-477" value="base_price: &amp;lt;number&amp;gt;" style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" vertex="1" parent="zTmV0ZuWO6pedmiTcRDS-474">
           <mxGeometry y="110" width="190" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="NbkqeFI8wlqo6a76gqSh-465" value="promotion_title: &amp;lt;string&amp;gt;" style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" vertex="1" parent="niNB6jOvBqoAUZZCG5RD-463">
+        <mxCell id="NbkqeFI8wlqo6a76gqSh-465" value="promotion_title?: &amp;lt;string&amp;gt;" style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" vertex="1" parent="niNB6jOvBqoAUZZCG5RD-463">
           <mxGeometry y="112" width="240" height="30" as="geometry" />
         </mxCell>
         <mxCell id="FKWV19OnQoIe7YLGog_J-451" value="start_point" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=50;horizontalStack=0;rounded=1;fontSize=14;fontStyle=0;strokeWidth=2;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;arcSize=4;whiteSpace=wrap;html=1;fillColor=#bac8d3;strokeColor=#23445d;" vertex="1" parent="niNB6jOvBqoAUZZCG5RD-463">

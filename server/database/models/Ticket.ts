@@ -7,13 +7,13 @@ type PaymentMethod = {
 }
 
 type StartStation = {
-  start_line: string
   start_station: string
+  start_line: string
 }
 
 type EndStation = {
-  end_line: string
   end_station: string
+  end_line: string
 }
 
 type TransferStation = {
