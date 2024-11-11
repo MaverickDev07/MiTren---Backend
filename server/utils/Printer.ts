@@ -1,4 +1,4 @@
-/*import { PrinterTypes, printer as ThermalPrinter, Printer } from 'node-thermal-printer'
+/*import { printer, PrinterTypes, printer as ThermalPrinter } from 'node-thermal-printer'
 
 // Interfaz para los datos del ticket
 interface TicketData {
@@ -18,7 +18,7 @@ const getPrinterConfig = () => ({
 })
 
 class TicketPrinter {
-  private printer: Printer
+  private printer: printer
 
   constructor() {
     this.printer = new ThermalPrinter(getPrinterConfig())
