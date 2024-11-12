@@ -119,10 +119,34 @@ export const computeTotalPrice = async (req: Request, res: Response, next: NextF
     next(error)
   }
 }
-export const validatePrices = (req: Request, res: Response, next: NextFunction) => {
+export const validatePrices = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const totalPrice = req.body.total_price
-    console.log(totalPrice)
+    const { total_price, payment_method } = req.body
+    console.log(total_price, payment_method)
+    if (payment_method?.method_name === 'PQR') {
+      const { method_id } = payment_method
+
+      const response = await veripagosService.verifyQrStatus({
+        secret_key: EnvManager.getQrKey(),
+        movimiento_id: method_id,
+      })
+
+      if (response?.Codigo === 1 || response?.Data?.estado !== 'Completado')
+        throw new ApiError({
+          name: 'INVALID_DATA_ERROR',
+          message: 'Código QR error id',
+          status: 400,
+          code: 'ERR_VALID',
+        })
+
+      if (response?.Data?.monto !== total_price)
+        throw new ApiError({
+          name: 'INVALID_DATA_ERROR',
+          message: 'El pago por QR no coincide con el precio total del ticket',
+          status: 500,
+          code: 'ERR_VALID',
+        })
+    }
 
     next()
   } catch (error: any) {
