@@ -41,6 +41,7 @@
     "mongoose": "^8.5.2",
     "morgan": "^1.10.0",
     "node-thermal-printer": "^4.4.3",
+    "pdfmake": "^0.2.15",
     "priorityqueuejs": "^2.0.0",
     "sequelize": "^6.37.3",
     "sequelize-typescript": "^2.1.6"
@@ -56,6 +57,7 @@
     "@types/mongoose": "^5.11.97",
     "@types/morgan": "^1.9.9",
     "@types/node": "^20.14.12",
+    "@types/pdfmake": "^0.2.9",
     "@types/priorityqueuejs": "^1.0.4",
     "dotenv-cli": "^7.4.2",
     "eslint": "^9.8.0",

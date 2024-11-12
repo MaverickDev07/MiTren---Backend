@@ -119,6 +119,16 @@ export const computeTotalPrice = async (req: Request, res: Response, next: NextF
     next(error)
   }
 }
+export const validatePrices = (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const totalPrice = req.body.total_price
+    console.log(totalPrice)
+
+    next()
+  } catch (error: any) {
+    next(error)
+  }
+}
 // End of middlewares
 
 export const listLinesByActive = async (req: Request, res: Response, next: NextFunction) => {

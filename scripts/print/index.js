@@ -2,7 +2,7 @@ const { ThermalPrinter, PrinterTypes, CharacterSet, BreakLine } = require('node-
 
 let printer = new ThermalPrinter({
   type: PrinterTypes.EPSON, // Printer type: 'star' or 'epson'
-  interface: 'serial', // Printer interface
+  interface: '/COM1', // Printer interface
   characterSet: CharacterSet.PC852_LATIN2, // Printer character set
   removeSpecialCharacters: false, // Removes special characters - default: false
   lineCharacter: '=', // Set character for lines - default: "-"
@@ -19,7 +19,6 @@ let printer = new ThermalPrinter({
     xoff: false,
     xany: false,
   },
-  device: '/dev/ttyS0',
 })
 
 // Función para imprimir
