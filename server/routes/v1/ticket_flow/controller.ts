@@ -265,7 +265,9 @@ export const createTicket = async (req: Request, res: Response, next: NextFuncti
   try {
     const repository = new TicketRepository()
     const ticketResource = new TicketResource(await repository.create(req.body))
-    res.status(201).json({ ticket: ticketResource.item() })
+    const ticket = ticketResource.item()
+
+    res.status(201).json({ ticket })
   } catch (error) {
     next(error)
   }
