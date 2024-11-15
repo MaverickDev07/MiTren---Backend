@@ -16,6 +16,7 @@ import VeripagosService from '../../../utils/VeripagosService'
 import TicketRepository from '../../../repositories/TicketRepository'
 import TicketResource from '../../../resources/TicketResource'
 import Kiosk from '../../../database/models/Kiosk'
+import { createPdfBinary } from '../../../utils/LibPdf'
 
 const veripagosService = new VeripagosService(
   'https://veripagos.com/api',
@@ -122,7 +123,6 @@ export const computeTotalPrice = async (req: Request, res: Response, next: NextF
 export const validatePrices = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { total_price, payment_method } = req.body
-    console.log(total_price, payment_method)
     if (payment_method?.method_name === 'PQR') {
       const { method_id } = payment_method
 
@@ -266,8 +266,72 @@ export const createTicket = async (req: Request, res: Response, next: NextFuncti
     const repository = new TicketRepository()
     const ticketResource = new TicketResource(await repository.create(req.body))
     const ticket = ticketResource.item()
+    const docDefinition = {
+      pageSize: { width: 226, height: 'auto' },
+      pageMargins: [15, 15, 15, 15],
+      content: [
+        {
+          text: 'COMPRA TICKET "MI TREN"\n\n',
+          style: 'header',
+          alignment: 'center',
+        },
+        { qr: 'Texto o valor aquí', fit: 100 },
+        {
+          text: [
+            'Conste por el presente contrato de prestación de servicios educativos, que reconocido tendrá el valor de documento público que le asignan los Art. 519 y 1.297 del Código Civil, suscrito según las cláusulas siguientes:\n',
+            {
+              text: '\nPRIMERA.- PARTES CONTRATANTES.- ',
+              bold: true,
+            },
+            'Intervienen en el presente contrato de una parte Sociedad Salesiana – Unidad Educativa Técnica Humanística Don Bosco de la ciudad de Sucre, Autorizado por la Resolución Administrativa U.A.J. N°55-A/2018 SIE N° 80480218, representado legalmente por su Director General el Reverendo Padre Lic. Antonio Gonzalo Tórrez Luque con C.I. 3775284 Cbba. facultado mediante poder N° 666/2021 otorgado ante Notaria Zhenia Jheney Calis Arambulo N° 25, para fines del presente documento en adelante se denominará la UNIDAD EDUCATIVA.\n',
+          ],
+          style: 'content',
+        },
+        {
+          columns: [
+            {
+              text: [
+                {
+                  text: 'LA UNIDAD EDUCATIVA\n',
+                  bold: true,
+                },
+                'R.P. Lic. Antonio Gonzalo Tórrez Luque\n',
+                'C.I.  3775284 Cbba.',
+              ],
+              alignment: 'center',
+            },
+            {
+              text: [
+                {
+                  text: 'EL RESPONSABLE\n',
+                  bold: true,
+                },
+                `Sr./Sra. ${'editable'}\n`,
+                `C.I. ${'editable'}\n`,
+              ],
+              alignment: 'center',
+            },
+          ],
+        },
+      ],
+      styles: {
+        header: {
+          fontSize: 9,
+          alignment: 'center',
+          bold: true,
+        },
+        content: {
+          fontSize: 9,
+          alignment: 'justify',
+        },
+      },
+    }
 
-    res.status(201).json({ ticket })
+    createPdfBinary(docDefinition, function (binary) {
+      res.contentType('application/pdf')
+      res.setHeader('Content-Disposition', 'attachment; filename=ticket.pdf')
+      res.send(Buffer.from(binary, 'base64'))
+    })
   } catch (error) {
     next(error)
   }

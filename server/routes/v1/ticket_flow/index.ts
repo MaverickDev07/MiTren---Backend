@@ -31,7 +31,7 @@ ticketFlow.post('/step-4/pqr/verify', verifyQrStatus)
 // Save TICKET
 ticketFlow.post(
   '/step-6/ticket',
-  [computeTotalPrice, validateRequest(createTicketSchema), validatePrices],
+  [computeTotalPrice, validateRequest(createTicketSchema)], // validatePrices
   createTicket,
 )
 
