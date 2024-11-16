@@ -275,15 +275,35 @@ export const createTicket = async (req: Request, res: Response, next: NextFuncti
           style: 'header',
           alignment: 'center',
         },
-        { qr: 'Texto o valor aquí', fit: 100 },
+        { qr: ticket?.id, fit: 100, alignment: 'center' },
         {
           text: [
-            'Conste por el presente contrato de prestación de servicios educativos, que reconocido tendrá el valor de documento público que le asignan los Art. 519 y 1.297 del Código Civil, suscrito según las cláusulas siguientes:\n',
             {
-              text: '\nPRIMERA.- PARTES CONTRATANTES.- ',
+              text: `\nMÉTODO DE PAGO: `,
+              bold: true,
+              alignment: 'center',
+            },
+            `${ticket?.payment_method?.method_name}\n`,
+            {
+              text: `\nPROMOCiÓN: `,
               bold: true,
             },
-            'Intervienen en el presente contrato de una parte Sociedad Salesiana – Unidad Educativa Técnica Humanística Don Bosco de la ciudad de Sucre, Autorizado por la Resolución Administrativa U.A.J. N°55-A/2018 SIE N° 80480218, representado legalmente por su Director General el Reverendo Padre Lic. Antonio Gonzalo Tórrez Luque con C.I. 3775284 Cbba. facultado mediante poder N° 666/2021 otorgado ante Notaria Zhenia Jheney Calis Arambulo N° 25, para fines del presente documento en adelante se denominará la UNIDAD EDUCATIVA.\n',
+            `${ticket?.promotion_title}\n`,
+            ...ticket.prices.map(price => {
+              return `\nCliente: ${price.customer_type}\nPrecio Unitario: ${price.base_price}Bs.-\nCantidad: ${price.qty}\n`
+            }),
+            {
+              text: `\nPRECIO TOTAL\n`,
+              bold: true,
+              alignment: 'center',
+              style: 'price_name',
+            },
+            {
+              text: `${ticket?.total_price}Bs.-\n\n`,
+              bold: true,
+              alignment: 'center',
+              style: 'price_total',
+            },
           ],
           style: 'content',
         },
@@ -291,27 +311,41 @@ export const createTicket = async (req: Request, res: Response, next: NextFuncti
           columns: [
             {
               text: [
+                `${ticket?.route?.start_point?.start_station}\n`,
                 {
-                  text: 'LA UNIDAD EDUCATIVA\n',
+                  text: `${ticket?.route?.start_point?.start_line}\n`,
                   bold: true,
+                  alignment: 'center',
                 },
-                'R.P. Lic. Antonio Gonzalo Tórrez Luque\n',
-                'C.I.  3775284 Cbba.',
               ],
-              alignment: 'center',
             },
             {
               text: [
+                `${ticket?.route?.end_point?.end_station}\n`,
                 {
-                  text: 'EL RESPONSABLE\n',
+                  text: `${ticket?.route?.end_point?.end_line}\n`,
                   bold: true,
+                  alignment: 'center',
                 },
-                `Sr./Sra. ${'editable'}\n`,
-                `C.I. ${'editable'}\n`,
               ],
+              style: 'content',
+            },
+          ],
+          style: 'content',
+        },
+        {
+          text: [
+            {
+              text: `${ticket?.route?.transfer_point?.is_transfer && '\nTRASBORDO'}\n`,
+              bold: true,
+              alignment: 'center',
+            },
+            {
+              text: `${ticket?.route?.transfer_point?.is_transfer && ticket?.route?.transfer_point?.transfer_station}\n`,
               alignment: 'center',
             },
           ],
+          style: 'content',
         },
       ],
       styles: {
@@ -322,7 +356,13 @@ export const createTicket = async (req: Request, res: Response, next: NextFuncti
         },
         content: {
           fontSize: 9,
-          alignment: 'justify',
+          // alignment: 'justify',
+        },
+        price_name: {
+          fontSize: 11,
+        },
+        price_total: {
+          fontSize: 18,
         },
       },
     }
