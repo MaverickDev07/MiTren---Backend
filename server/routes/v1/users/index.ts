@@ -4,12 +4,12 @@ import { listUsers, getUser, createUser, updateUser, deleteUser } from './contro
 import validateRequest from '../../../middlewares/validateRequest'
 import { createUserSchema, updateUserSchema } from '../../../middlewares/requestSchemas'
 
-const users: Router = express.Router()
+const lines: Router = express.Router()
 
-users.get('/', listUsers)
-users.get('/:id', getUser)
-users.post('/', validateRequest(createUserSchema), createUser)
-users.put('/:id', validateRequest(updateUserSchema), updateUser)
-users.delete('/:id', deleteUser)
+lines.get('/', listUsers)
+lines.get('/:id', getUser)
+lines.post('/', validateRequest(createUserSchema), createUser)
+lines.put('/:id', validateRequest(updateUserSchema), updateUser)
+lines.delete('/:id', deleteUser)
 
-export default users
+export default lines
