@@ -15,6 +15,7 @@ import prices from './prices'
 import tickets from './tickets'
 import wallets from './wallets'
 import ticketFlow from './ticket_flow'
+import auth from './auth'
 
 const v1: Router = express.Router()
 
@@ -34,5 +35,6 @@ v1.use('/prices', prices)
 v1.use('/tickets', tickets)
 v1.use('/wallets', wallets)
 v1.use('/ticket_flow', ticketFlow)
+v1.use('/auth', auth)
 
 export default v1

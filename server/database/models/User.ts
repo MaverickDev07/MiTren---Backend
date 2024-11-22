@@ -3,7 +3,7 @@ import { Schema, model, Document } from 'mongoose'
 export type UserEntity = {
   id?: string | any
   email: string
-  password: string
+  password?: string
   name: string
   lastname: string
   doc_type: string
@@ -17,64 +17,70 @@ export type UserEntity = {
 
 export interface UserAttributes extends UserEntity, Document {}
 
-const UserSchema = new Schema<UserAttributes>({
-  email: {
-    type: String,
-    uppercase: true,
-    trim: true,
-    unique: true,
-    required: true,
+const UserSchema = new Schema<UserAttributes>(
+  {
+    email: {
+      type: String,
+      lowercase: true,
+      trim: true,
+      unique: true,
+      required: true,
+    },
+    password: {
+      type: String,
+      trim: true,
+    },
+    name: {
+      type: String,
+      uppercase: true,
+      trim: true,
+      required: true,
+    },
+    lastname: {
+      type: String,
+      uppercase: true,
+      trim: true,
+      required: true,
+    },
+    doc_type: {
+      type: String,
+      enum: ['CI', 'PASAPORTE', 'NIT'],
+      uppercase: true,
+      trim: true,
+      required: true,
+    },
+    doc_number: {
+      type: String,
+      trim: true,
+      unique: true,
+      required: true,
+    },
+    role_name: {
+      type: String,
+      enum: ['ROOT', 'ADMIN', 'BOLETERIA'],
+      uppercase: true,
+      trim: true,
+      required: true,
+    },
+    address: {
+      type: String,
+      uppercase: true,
+      trim: true,
+      required: true,
+    },
+    status: {
+      type: String,
+      enum: ['ACTIVE', 'INACTIVE'],
+      uppercase: true,
+      trim: true,
+      default: 'ACTIVE',
+    },
   },
-  password: {
-    type: String,
-    required: true,
+  {
+    timestamps: true,
+    versionKey: false,
   },
-  name: {
-    type: String,
-    uppercase: true,
-    trim: true,
-    required: true,
-  },
-  lastname: {
-    type: String,
-    uppercase: true,
-    trim: true,
-    required: true,
-  },
-  doc_type: {
-    type: String,
-    enum: ['Carnet Identidad', 'Pasaporte', 'NIT'],
-    uppercase: true,
-    trim: true,
-    required: true,
-  },
-  doc_number: {
-    type: String,
-    trim: true,
-    unique: true,
-    required: true,
-  },
-  role_name: {
-    type: String,
-    enum: ['ROOT', 'ADMIN', 'BOLETERIA'],
-    uppercase: true,
-    trim: true,
-    required: true,
-  },
-  address: {
-    type: String,
-    uppercase: true,
-    trim: true,
-    required: true,
-  },
-  status: {
-    type: String,
-    enum: ['ACTIVE', 'INACTIVE'],
-    uppercase: true,
-    trim: true,
-    default: 'ACTIVE',
-  },
-})
+)
 
 const User = model<UserAttributes>('User', UserSchema)
 export default User

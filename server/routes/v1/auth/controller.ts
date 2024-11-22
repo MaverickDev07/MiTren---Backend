@@ -3,13 +3,14 @@ import passport from 'passport'
 import jwt from 'jsonwebtoken'
 
 export const authUser = async (req: Request, res: Response, next: NextFunction) => {
-  passport.authenticate('local', (error, user) => {
+  passport.authenticate('local', (error: any, user: any) => {
     if (error) return next(error)
 
     req.login(user, { session: false }, async error => {
       if (error) return next(error)
+      const data = { message: 'test' }
 
-      const payload = {
+      /*const payload = {
         _id: user['_id'],
         username: user['username'],
         email: user['email'],
@@ -27,7 +28,7 @@ export const authUser = async (req: Request, res: Response, next: NextFunction) 
         niveles: user['niveles'],
       }
 
-      res.setHeader('Authorization', `Bearer ${token}`)
+      res.setHeader('Authorization', `Bearer ${token}`)*/
       return res.status(200).json({
         message: 'signin successfully',
         data,

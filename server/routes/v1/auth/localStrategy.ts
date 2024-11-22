@@ -1,7 +1,6 @@
 import { Strategy } from 'passport-local'
 import boom from 'boom'
 
-import UserResource from '../../../resources/UserResource'
 import UserRepository from '../../../repositories/UserRepository'
 
 const localStrategy = new Strategy(
@@ -10,8 +9,9 @@ const localStrategy = new Strategy(
   },
   async function (username, password, done) {
     try {
+      console.log(username, password)
       const repository = new UserRepository()
-      const userFound = repository.getUserByEmail(username)
+      const userFound = await repository.getUserByEmail(username)
 
       if (!userFound) return done(boom.unauthorized('Usuario o Contraseña Incorrecto.'), false)
 

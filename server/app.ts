@@ -9,6 +9,8 @@ import './database/connection'
 import EnvManager from './config/EnvManager'
 import errorHandler from './middlewares/errorHandler'
 import v1 from './routes/v1'
+import passport from 'passport'
+import localStrategy from './routes/v1/auth/localStrategy'
 
 // App
 const app: Application = express()
@@ -25,6 +27,8 @@ app.use(json())
 app.use(urlencoded({ extended: true }))
 app.use(helmet({ crossOriginResourcePolicy: false }))
 app.use(morgan('dev'))
+app.use(passport.initialize())
+passport.use(localStrategy)
 
 // Security
 const whitelist: string[] = ['http://localhost:5173', 'http://localhost:3000']

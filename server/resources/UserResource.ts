@@ -6,7 +6,6 @@ class UserResource extends BaseResource<UserAttributes, UserEntity>() {
     const userResource: UserEntity = {
       id: this.instance.id,
       email: this.instance.email,
-      password: this.instance.password,
       name: this.instance.name,
       lastname: this.instance.lastname,
       doc_type: this.instance.doc_type,
