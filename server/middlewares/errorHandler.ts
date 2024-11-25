@@ -17,6 +17,7 @@ export default function errorHandler(
   if (Joi.isError(error)) {
     const validationError: ValidationError = {
       error: {
+        name: 'VALIDATION_ERROR',
         message: 'Validation error',
         code: 'ERR_VALID',
         errors: error.details.map(item => ({
@@ -31,6 +32,7 @@ export default function errorHandler(
   if (error instanceof ApiError) {
     return res.status(error.status).json({
       error: {
+        name: error.name,
         message: error.message,
         code: error.code,
       },

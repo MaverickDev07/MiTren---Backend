@@ -1,7 +1,8 @@
 import { Strategy } from 'passport-local'
-import boom from 'boom'
 
 import UserRepository from '../../../repositories/UserRepository'
+import UserResource from '../../../resources/UserResource'
+import ApiError from '../../../errors/ApiError'
 
 const localStrategy = new Strategy(
   {
@@ -9,17 +10,30 @@ const localStrategy = new Strategy(
   },
   async function (username, password, done) {
     try {
-      console.log(username, password)
       const repository = new UserRepository()
-      const userFound = await repository.getUserByEmail(username)
+      const userFound = await repository.getAuthUserByEmail(username)
 
-      if (!userFound) return done(boom.unauthorized('Usuario o Contraseña Incorrecto.'), false)
+      if (!userFound)
+        throw new ApiError({
+          name: 'UNAUTHORIZED_ERROR',
+          message: 'Usuario o Contraseña Incorrecto.',
+          status: 401,
+          code: 'ERR_UNAUTH',
+        })
 
       const matchPassword = await repository.comparePassword(password, userFound?.password)
 
-      if (!matchPassword) return done(boom.unauthorized('Usuario o Contraseña Incorrecto.'), false)
+      if (!matchPassword)
+        throw new ApiError({
+          name: 'UNAUTHORIZED_ERROR',
+          message: 'Usuario o Contraseña Incorrecto.',
+          status: 401,
+          code: 'ERR_UNAUTH',
+        })
 
-      return done(null, userFound)
+      const userResource = new UserResource(userFound)
+
+      return done(null, userResource.item())
     } catch (error) {
       return done(error)
     }

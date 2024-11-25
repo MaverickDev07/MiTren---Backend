@@ -136,16 +136,16 @@ export const validatePrices = async (req: Request, res: Response, next: NextFunc
         throw new ApiError({
           name: 'INVALID_DATA_ERROR',
           message: 'Código QR error id',
-          status: 400,
-          code: 'ERR_VALID',
+          status: 422,
+          code: 'ERR_INV',
         })
 
       if (response?.Data?.monto !== total_price)
         throw new ApiError({
           name: 'INVALID_DATA_ERROR',
           message: 'El pago por QR no coincide con el precio total del ticket',
-          status: 500,
-          code: 'ERR_VALID',
+          status: 422,
+          code: 'ERR_INV',
         })
     }
 
@@ -179,8 +179,8 @@ export const listPagedStationsByLine = async (req: Request, res: Response, next:
       throw new ApiError({
         name: 'INVALID_DATA_ERROR',
         message: 'Los parámetros de paginación deben ser números enteros',
-        status: 400,
-        code: 'ERR_VALID',
+        status: 422,
+        code: 'ERR_INV',
       })
     }
 

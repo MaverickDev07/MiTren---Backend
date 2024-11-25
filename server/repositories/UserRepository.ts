@@ -28,16 +28,7 @@ export default class UserRepository extends BaseRepository<UserAttributes> {
     return this.model.findByIdAndUpdate(userId, data, { new: true }).exec()
   }
 
-  async getUserByEmail(email: string): Promise<UserAttributes | null> {
-    const user = await this.model.findOne({ email }).exec()
-    if (!user) {
-      throw new ApiError({
-        name: 'MODEL_NOT_FOUND_ERROR',
-        message: 'No se encontró el Ususario',
-        status: 400,
-        code: 'ERR_MNF',
-      })
-    }
-    return user
+  getAuthUserByEmail(email: string): Promise<UserAttributes | null> {
+    return this.model.findOne({ email }).exec()
   }
 }

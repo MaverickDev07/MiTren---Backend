@@ -6,22 +6,26 @@ type ErrorName =
   | 'METHOD_NOT_IMPLEMENTED'
   | 'FILTER_BY_ERROR'
   | 'REFERENCE_ERROR'
+  | 'VALIDATION_ERROR'
   | 'INVALID_DATA_ERROR'
   | 'STATIONS_NOT_IN_ROUTE'
+  | 'UNAUTHORIZED_ERROR'
 
 type ErrorCode =
   | 'ERR_MNF'
   | 'ERR_NF'
   | 'ERR_REMOTE'
   | 'NOT_IMPL'
-  | 'ERR_VALID'
   | 'ERR_FTB'
   | 'ERR_REF'
-  | 'ERR_ID'
+  | 'ERR_VALID'
+  | 'ERR_INV'
   | 'ERR_SNR'
+  | 'ERR_UNAUTH'
 
 type ValidationError = {
   error: {
+    name: string
     message: string
     code: ErrorCode
     errors: Array<{ message: string }>

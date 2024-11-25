@@ -1,34 +1,37 @@
 import { NextFunction, Request, Response } from 'express'
 import passport from 'passport'
 import jwt from 'jsonwebtoken'
+import { UserAttributes } from '../../../database/models/User'
+import EnvManager from '../../../config/EnvManager'
 
 export const authUser = async (req: Request, res: Response, next: NextFunction) => {
-  passport.authenticate('local', (error: any, user: any) => {
+  passport.authenticate('local', (error: Error, user: UserAttributes) => {
     if (error) return next(error)
 
     req.login(user, { session: false }, async error => {
       if (error) return next(error)
-      const data = { message: 'test' }
 
-      /*const payload = {
-        _id: user['_id'],
-        username: user['username'],
-        email: user['email'],
+      const payload = {
+        id: user.id,
+        full_name: `${user.lastname} ${user.name}`,
+        email: user.email,
+        role: user.role_name,
       }
-      const token = jwt.sign(payload, config.authJwtSecret, {
-        expiresIn: config.authJwtTime,
+      const authJwtSecret = EnvManager.getAuthJwtSecret()
+      const authJwtTime = EnvManager.getAuthJwtTime()
+      const token = jwt.sign(payload, authJwtSecret, {
+        expiresIn: authJwtTime,
       })
-      const roles = user['roles'].map(el => el.name)
       const data = {
-        _id: user['_id'],
-        username: user['username'],
-        email: user['email'],
-        carnet: user['carnet'],
-        roles,
-        niveles: user['niveles'],
+        id: user.id,
+        name: user.name,
+        latname: user.lastname,
+        email: user.email,
+        role_name: user.role_name,
       }
 
-      res.setHeader('Authorization', `Bearer ${token}`)*/
+      res.setHeader('Authorization', `Bearer ${token}`)
+
       return res.status(200).json({
         message: 'signin successfully',
         data,
