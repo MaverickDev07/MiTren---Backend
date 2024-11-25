@@ -23,7 +23,7 @@ const PhraseSchema = new Schema<PhraseAttributes>(
       enum: ['ACTIVE', 'INACTIVE'],
       uppercase: true,
       trim: true,
-      default: 'ACTIVE',
+      default: 'INACTIVE',
     },
   },
   {
