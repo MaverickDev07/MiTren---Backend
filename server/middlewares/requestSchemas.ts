@@ -155,13 +155,6 @@ export const createNfcCardSchema = Joi.object({
   balance: Joi.number().min(1).required(),
   issue_date: Joi.date(),
   status: Joi.string().min(3).max(10),
-  user: Joi.object({
-    user_id: Joi.string().alphanum().hex().length(24).required(),
-    name: Joi.string().min(3).max(50).required(),
-    lastname: Joi.string().min(3).max(50).required(),
-    doc_type: Joi.string().min(3).max(20).required(),
-    doc_number: Joi.string().min(6).max(15).required(),
-  }).required(),
   customer: Joi.object({
     customer_id: Joi.string().alphanum().hex().length(24).required(),
     name: Joi.string().min(3).max(50).required(),
