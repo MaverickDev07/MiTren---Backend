@@ -35,6 +35,53 @@ export default abstract class BaseRepository<T extends Document> {
       .exec()
   }
 
+  async getPaged(params: PagedParams): Promise<PaginationResult<any> | null> {
+    const { limit, page, sortBy, filterBy } = params
+    const orderBy = this.getOrderBy(sortBy)
+    const options: Record<string, any> = { sort: orderBy, filterBy }
+
+    if (options.filterBy) {
+      const filterConditions = Array.isArray(options.filterBy)
+        ? options.filterBy.map((filter: string) => this.getFilterBy(filter))
+        : [this.getFilterBy(options.filterBy)]
+
+      // Combinar los filtros usando `$and`
+      options.where = { $and: filterConditions }
+      delete options.filterBy
+    }
+
+    const docs: Array<T> = await this.model
+      .find(options.where || {})
+      .sort(options.sort)
+      .exec()
+
+    // Realizar la paginación manualmente
+    const totalDocs = docs.length
+    const startIndex = (page - 1) * limit
+    const endIndex = page * limit
+    const hasPrevPage = page > 1
+    const hasNextPage = endIndex < totalDocs
+    const prevPage = hasPrevPage ? page - 1 : null
+    const nextPage = hasNextPage ? page + 1 : null
+
+    const paginated = docs.slice(startIndex, endIndex)
+
+    // Devolver paginación
+    const paginacion = {
+      docs: paginated,
+      totalDocs,
+      limit,
+      totalPages: Math.ceil(totalDocs / limit),
+      page,
+      hasPrevPage,
+      hasNextPage,
+      prevPage,
+      nextPage,
+    }
+
+    return paginacion
+  }
+
   async getById(id: string | Types.ObjectId, options: QueryOptions = {}): Promise<T | null> {
     return this.model.findById(id, options).exec()
   }

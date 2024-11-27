@@ -75,6 +75,13 @@ interface VerifyQrStatusResponse {
   Mensaje: string
 }
 
+interface PagedParams {
+  limit?: number
+  page?: number
+  sortBy?: string
+  filterBy?: string
+}
+
 interface PagedStationsParams {
   id: string | Types.ObjectId
   limit?: number

@@ -138,6 +138,17 @@ export const updateCustomerSchema = Joi.object({
   }),
 })
 
+// Phrases
+export const createPhraseSchema = Joi.object({
+  content: Joi.string().min(3).max(80).required(),
+  status: Joi.string().min(3).max(10),
+})
+
+export const updatePhraseSchema = Joi.object({
+  content: Joi.string().min(3).max(80),
+  status: Joi.string().min(3).max(10),
+}).or('content', 'status')
+
 // Card NFC
 export const createNfcCardSchema = Joi.object({
   card_code: Joi.string().min(3).max(10).required(),

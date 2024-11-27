@@ -16,6 +16,7 @@ import tickets from './tickets'
 import wallets from './wallets'
 import ticketFlow from './ticket_flow'
 import auth from './auth'
+import phrases from './phrases'
 
 const v1: Router = express.Router()
 
@@ -27,6 +28,7 @@ v1.use('/kiosks', kiosks)
 v1.use('/methods', methods)
 v1.use('/customer_types', customerTypes)
 v1.use('/customers', customers)
+v1.use('/phrases', phrases)
 v1.use('/nfc_cards', nfcCards)
 v1.use('/nfc_transactions', nfcTransactions)
 v1.use('/promotions', promotions)
