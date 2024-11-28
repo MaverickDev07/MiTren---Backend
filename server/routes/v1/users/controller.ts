@@ -64,7 +64,9 @@ export const deleteUser = async (req: Request, res: Response, next: NextFunction
     const repository = new UserRepository()
     await repository.delete(req.params.id)
 
-    res.status(204).send()
+    res.status(204).send({
+      message: 'Resource deleted successfully',
+    })
   } catch (error) {
     next(error)
   }

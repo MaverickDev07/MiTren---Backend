@@ -101,7 +101,7 @@ export default abstract class BaseRepository<T extends Document> {
     if (!instance) {
       throw new ApiError({
         name: 'NOT_FOUND_ERROR',
-        message: 'Entity not found',
+        message: 'Resource not found',
         status: 404,
         code: 'ERR_NF',
       })

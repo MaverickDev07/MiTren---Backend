@@ -3,6 +3,7 @@ import passport from 'passport'
 import jwt from 'jsonwebtoken'
 import { UserAttributes } from '../../../database/models/User'
 import EnvManager from '../../../config/EnvManager'
+import ApiError from '../../../errors/ApiError'
 
 export const authUser = async (req: Request, res: Response, next: NextFunction) => {
   passport.authenticate('local', (error: Error, user: UserAttributes) => {
@@ -13,28 +14,30 @@ export const authUser = async (req: Request, res: Response, next: NextFunction) 
 
       const payload = {
         id: user.id,
-        full_name: `${user.lastname} ${user.name}`,
-        email: user.email,
-        role: user.role_name,
+        full_name: user.fullname,
+        doc_number: user.doc_number,
+        role_name: user.role_name,
       }
       const authJwtSecret = EnvManager.getAuthJwtSecret()
       const authJwtTime = EnvManager.getAuthJwtTime()
+      if (!authJwtSecret || !authJwtTime)
+        throw new ApiError({
+          name: 'CONFIGURATION_ERROR',
+          message:
+            'Required environment variables "authJwtSecret" and/or "authJwtTime" are missing',
+          status: 500,
+          code: 'ERR_CFG',
+        })
+
       const token = jwt.sign(payload, authJwtSecret, {
         expiresIn: authJwtTime,
       })
-      const data = {
-        id: user.id,
-        name: user.name,
-        latname: user.lastname,
-        email: user.email,
-        role_name: user.role_name,
-      }
 
       res.setHeader('Authorization', `Bearer ${token}`)
 
       return res.status(200).json({
         message: 'signin successfully',
-        data,
+        data: payload,
       })
     })
   })(req, res, next)

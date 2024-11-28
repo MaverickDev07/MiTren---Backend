@@ -11,7 +11,7 @@ const localStrategy = new Strategy(
   async function (username, password, done) {
     try {
       const repository = new UserRepository()
-      const userFound = await repository.getAuthUserByEmail(username)
+      const userFound = await repository.getAuthByDocNumber(username)
 
       if (!userFound)
         throw new ApiError({

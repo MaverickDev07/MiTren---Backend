@@ -1,5 +1,6 @@
 // Types for Errors
 type ErrorName =
+  | 'CONFIGURATION_ERROR'
   | 'MODEL_NOT_FOUND_ERROR'
   | 'NOT_FOUND_ERROR'
   | 'CONNECTION_ERROR'
@@ -12,6 +13,7 @@ type ErrorName =
   | 'UNAUTHORIZED_ERROR'
 
 type ErrorCode =
+  | 'ERR_CFG'
   | 'ERR_MNF'
   | 'ERR_NF'
   | 'ERR_REMOTE'

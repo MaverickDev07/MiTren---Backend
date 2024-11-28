@@ -30,10 +30,10 @@ export const getKioskIdByEnv = (req: Request, res: Response, next: NextFunction)
     const kioskId = EnvManager.getKioskId()
     if (!kioskId)
       throw new ApiError({
-        name: 'NOT_FOUND_ERROR',
-        message: 'KioskId not found',
-        status: 400,
-        code: 'ERR_NF',
+        name: 'CONFIGURATION_ERROR',
+        message: 'Required environment variable "kiosId" is missing or not defined',
+        status: 500,
+        code: 'ERR_CFG',
       })
     req.params.id = EnvManager.kioskId()
 

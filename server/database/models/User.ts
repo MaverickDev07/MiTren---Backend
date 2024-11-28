@@ -2,7 +2,14 @@ import { Schema, model, Document } from 'mongoose'
 
 export type UserEntity = {
   id?: string | any
-  email: string
+  fullname: string
+  doc_number: string
+  role_name: string
+  password?: string
+  status?: string
+  createdAt?: Date
+  updatedAt?: Date
+  /*email: string
   password?: string
   name: string
   lastname: string
@@ -12,39 +19,15 @@ export type UserEntity = {
   role_name: string
   status?: string
   createdAt?: Date
-  updatedAt?: Date
+  updatedAt?: Date*/
 }
 
 export interface UserAttributes extends UserEntity, Document {}
 
 const UserSchema = new Schema<UserAttributes>(
   {
-    email: {
+    fullname: {
       type: String,
-      lowercase: true,
-      trim: true,
-      unique: true,
-      required: true,
-    },
-    password: {
-      type: String,
-      trim: true,
-    },
-    name: {
-      type: String,
-      uppercase: true,
-      trim: true,
-      required: true,
-    },
-    lastname: {
-      type: String,
-      uppercase: true,
-      trim: true,
-      required: true,
-    },
-    doc_type: {
-      type: String,
-      enum: ['CI', 'PASAPORTE', 'NIT'],
       uppercase: true,
       trim: true,
       required: true,
@@ -62,11 +45,9 @@ const UserSchema = new Schema<UserAttributes>(
       trim: true,
       required: true,
     },
-    address: {
+    password: {
       type: String,
-      uppercase: true,
       trim: true,
-      required: true,
     },
     status: {
       type: String,
