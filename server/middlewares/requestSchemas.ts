@@ -116,7 +116,7 @@ export const createCustomerSchema = Joi.object({
     .required(),
   name: Joi.string().min(3).max(50).required(),
   lastname: Joi.string().min(3).max(50).required(),
-  doc_type: Joi.string().min(3).max(20).required(),
+  doc_type: Joi.string().min(2).max(6).required(),
   doc_number: Joi.string().min(6).max(15).required(),
   status: Joi.string().min(3).max(10),
   type: Joi.object({
@@ -152,15 +152,17 @@ export const updatePhraseSchema = Joi.object({
 // Card NFC
 export const createNfcCardSchema = Joi.object({
   card_code: Joi.string().min(3).max(10).required(),
-  balance: Joi.number().min(1).required(),
-  issue_date: Joi.date(),
+  balance: Joi.number().min(0).required(),
   status: Joi.string().min(3).max(10),
+  // add user by middleware
+  user: Joi.object({
+    user_id: Joi.string().alphanum().hex().length(24),
+    fullname: Joi.string().min(3).max(50).required(),
+  }).required(),
   customer: Joi.object({
-    customer_id: Joi.string().alphanum().hex().length(24).required(),
-    name: Joi.string().min(3).max(50).required(),
-    lastname: Joi.string().min(3).max(50).required(),
-    doc_type: Joi.string().min(3).max(20).required(),
+    fullname: Joi.string().min(3).max(50).required(),
     doc_number: Joi.string().min(6).max(15).required(),
+    cell_phone: Joi.number().min(0).required(),
   }).required(),
 })
 

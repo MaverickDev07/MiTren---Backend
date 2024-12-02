@@ -1,21 +1,22 @@
 import jwt from 'jsonwebtoken'
 import { NextFunction, Request, Response } from 'express'
 import EnvManager from '../config/EnvManager'
+import ApiError from '../errors/ApiError'
 
 export const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
   const token = req.headers['authorization']?.split(' ')[1]
 
   try {
-    if (!token || token === 'null') throw new Error('No token provided')
+    if (!token || token === 'null')
+      throw new ApiError({
+        name: 'NO_TOKEN_PROVIDED',
+        message: 'Authorization token is required.',
+        code: 'ERR_NT',
+        status: 401,
+      })
 
     const decoded = jwt.verify(token, EnvManager.getAuthJwtSecret())
-    console.log(decoded)
-    /* req.userId = decoded?._id
-    req.decoded = decoded
-
-    const user = await userServiceDB.findById(req.userId)
-    if (!user) throw new Error('No user found')
-    req.user = user*/
+    req.user = decoded
 
     next()
   } catch (error) {

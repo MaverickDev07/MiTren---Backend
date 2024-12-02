@@ -7,7 +7,6 @@ class NfcCardResource extends BaseResource<NfcCardAttributes, NfcCardEntity>() {
       id: this.instance.id,
       card_code: this.instance.card_code,
       balance: this.instance.balance,
-      issue_date: this.instance.issue_date,
       status: this.instance.status,
       user: this.instance.user,
       customer: this.instance.customer,

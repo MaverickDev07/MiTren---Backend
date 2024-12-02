@@ -2,16 +2,12 @@ import { NextFunction, Request, Response } from 'express'
 import NfcCardResource from '../../../resources/NfcCardResource'
 import NfcCardRepository from '../../../repositories/NfcCardRepository'
 
-export const addCreatedByUser = async (req: Request, res: Response, next: NextFunction) => {
+export const addCreatedByUser = async (req: any, res: Response, next: NextFunction) => {
   try {
-    /*req.body.user = {
-      user_id,
-      name,
-      lastname,
-      doc_type,
-      doc_number,
-    }*/
-    console.log('middleware add user')
+    req.body.user = {
+      user_id: req.user.id,
+      fullname: req.user.fullname,
+    }
 
     next()
   } catch (error) {

@@ -43,7 +43,7 @@ const CustomerSchema = new Schema<CustomerAttributes>(
     },
     doc_type: {
       type: String,
-      enum: ['Carnet Identidad', 'Pasaporte', 'NIT'],
+      enum: ['CI', 'PP', 'NIT'],
       uppercase: true,
       trim: true,
       required: true,

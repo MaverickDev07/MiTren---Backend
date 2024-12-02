@@ -14,7 +14,7 @@ export const authUser = async (req: Request, res: Response, next: NextFunction) 
 
       const payload = {
         id: user.id,
-        full_name: user.fullname,
+        fullname: user.fullname,
         doc_number: user.doc_number,
         role_name: user.role_name,
       }

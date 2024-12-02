@@ -2,25 +2,19 @@ import { Schema, model, Document } from 'mongoose'
 
 type User = {
   user_id: Schema.Types.ObjectId
-  name: string
-  lastname: string
-  doc_type: string
-  doc_number: string
+  fullname: string
 }
 
 type Customer = {
-  cusomer_id: Schema.Types.ObjectId
-  name: string
-  lastname: string
-  doc_type: string
+  fullname: string
   doc_number: string
+  cell_phone: number
 }
 
 export type NfcCardEntity = {
   id?: string | any
   card_code: string
   balance: number
-  issue_date: Date
   status?: string
   user: User
   customer: Customer
@@ -43,10 +37,6 @@ const NfcCardSchema = new Schema<NfcCardAttributes>(
       type: Number,
       required: true,
     },
-    issue_date: {
-      type: Date,
-      default: Date.now,
-    },
     status: {
       type: String,
       enum: ['ACTIVE', 'INACTIVE', 'BLOCKED'],
@@ -60,52 +50,16 @@ const NfcCardSchema = new Schema<NfcCardAttributes>(
         ref: 'User',
         required: true,
       },
-      name: {
+      fullname: {
         type: String,
         uppercase: true,
-        trim: true,
-        required: true,
-      },
-      lastname: {
-        type: String,
-        uppercase: true,
-        trim: true,
-        required: true,
-      },
-      doc_type: {
-        type: String,
-        enum: ['Carnet Identidad', 'Pasaporte', 'NIT'],
-        uppercase: true,
-        trim: true,
-        required: true,
-      },
-      doc_number: {
-        type: String,
         trim: true,
         required: true,
       },
     },
     customer: {
-      customer_id: {
-        type: Schema.Types.ObjectId,
-        ref: 'Customer',
-        required: true,
-      },
-      name: {
+      fullname: {
         type: String,
-        uppercase: true,
-        trim: true,
-        required: true,
-      },
-      lastname: {
-        type: String,
-        uppercase: true,
-        trim: true,
-        required: true,
-      },
-      doc_type: {
-        type: String,
-        enum: ['Carnet Identidad', 'Pasaporte', 'NIT'],
         uppercase: true,
         trim: true,
         required: true,
@@ -113,6 +67,10 @@ const NfcCardSchema = new Schema<NfcCardAttributes>(
       doc_number: {
         type: String,
         trim: true,
+        required: true,
+      },
+      cell_phone: {
+        type: Number,
         required: true,
       },
     },

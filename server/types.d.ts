@@ -11,6 +11,8 @@ type ErrorName =
   | 'INVALID_DATA_ERROR'
   | 'STATIONS_NOT_IN_ROUTE'
   | 'UNAUTHORIZED_ERROR'
+  | 'NO_TOKEN_PROVIDED'
+  | 'TOKEN_EXPIRED_ERROR'
 
 type ErrorCode =
   | 'ERR_CFG'
@@ -24,6 +26,8 @@ type ErrorCode =
   | 'ERR_INV'
   | 'ERR_SNR'
   | 'ERR_UNAUTH'
+  | 'ERR_NT'
+  | 'ERR_TE'
 
 type ValidationError = {
   error: {

@@ -28,6 +28,14 @@ export default function errorHandler(
     }
     return res.status(423).json(validationError)
   }
+  if (error.name === 'TokenExpiredError') {
+    error = new ApiError({
+      name: 'TOKEN_EXPIRED_ERROR',
+      message: 'The authorization token has expired.',
+      code: 'ERR_TE',
+      status: 401,
+    })
+  }
 
   if (error instanceof ApiError) {
     return res.status(error.status).json({
