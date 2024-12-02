@@ -13,6 +13,7 @@ type ErrorName =
   | 'UNAUTHORIZED_ERROR'
   | 'NO_TOKEN_PROVIDED'
   | 'TOKEN_EXPIRED_ERROR'
+  | 'FORBIDDEN_ERROR'
 
 type ErrorCode =
   | 'ERR_CFG'
@@ -28,6 +29,7 @@ type ErrorCode =
   | 'ERR_UNAUTH'
   | 'ERR_NT'
   | 'ERR_TE'
+  | 'ERR_FORB'
 
 type ValidationError = {
   error: {

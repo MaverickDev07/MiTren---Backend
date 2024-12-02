@@ -168,24 +168,19 @@ export const createNfcCardSchema = Joi.object({
 
 export const updateNfcCardSchema = Joi.object({
   card_code: Joi.string().min(3).max(10),
-  balance: Joi.number().min(1),
-  issue_date: Joi.date(),
+  balance: Joi.number().min(0),
   status: Joi.string().min(3).max(10),
+  // add user by middleware
   user: Joi.object({
     user_id: Joi.string().alphanum().hex().length(24),
-    name: Joi.string().min(3).max(50),
-    lastname: Joi.string().min(3).max(50),
-    doc_type: Joi.string().min(3).max(20),
-    doc_number: Joi.string().min(6).max(15),
+    fullname: Joi.string().min(3).max(50),
   }),
   customer: Joi.object({
-    customer_id: Joi.string().alphanum().hex().length(24),
-    name: Joi.string().min(3).max(50),
-    lastname: Joi.string().min(3).max(50),
-    doc_type: Joi.string().min(3).max(20),
+    fullname: Joi.string().min(3).max(50),
     doc_number: Joi.string().min(6).max(15),
+    cell_phone: Joi.number().min(0).required(),
   }),
-})
+}).or('card_code', 'balance', 'status', 'user', 'customer')
 
 // Transaction NFC
 export const createNfcTransactionSchema = Joi.object({

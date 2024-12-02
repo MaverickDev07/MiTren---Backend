@@ -24,29 +24,21 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
   }
 }
 
-export const inRoles = (roles: [] = []) => {
-  return async (req: Request, res: Response, next: NextFunction) => {
+export const inRoles = (roles: string[] = []) => {
+  return async (req: any, res: Response, next: NextFunction) => {
     try {
-      /*req.body.user = {
-        user_id,
-        name,
-        lastname,
-        doc_type,
-        doc_number,
-      }*/
-      console.log('middleware add user', roles)
-      next()
+      const accede = roles.some(el => req.user.role_name === el)
 
-      /*const user = await userServiceDB.findById(req.userId)
-      const roles = await roleServiceDB.findByIds(user.roles)
-
-      const accede = _roles.some(el => roles.find(role => role.name === el))
-
-      if (accede) {
-        return next()
+      if (!accede) {
+        throw new ApiError({
+          name: 'FORBIDDEN_ERROR',
+          message: 'User does not have the necessary permissions',
+          code: 'ERR_FORB',
+          status: 403,
+        })
       }
 
-      throw new Error(`Require alguno de estos Roles: ${_roles.join(', ')}`)*/
+      return next()
     } catch (error) {
       return next(error)
     }

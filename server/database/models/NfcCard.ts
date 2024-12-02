@@ -67,6 +67,7 @@ const NfcCardSchema = new Schema<NfcCardAttributes>(
       doc_number: {
         type: String,
         trim: true,
+        unique: true,
         required: true,
       },
       cell_phone: {
