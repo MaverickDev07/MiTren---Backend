@@ -13,8 +13,8 @@ import { createPhraseSchema, updatePhraseSchema } from '../../../middlewares/req
 
 const phrases: Router = express.Router()
 
-phrases.get('/', listPhrases)
-phrases.get('/list/paged', listPagedPhrases)
+phrases.get('/find/all', listPhrases)
+phrases.get('/', listPagedPhrases)
 phrases.get('/:id', getPhrase)
 phrases.post('/', validateRequest(createPhraseSchema), createPhrase)
 phrases.put('/:id', validateRequest(updatePhraseSchema), updatePhrase)
