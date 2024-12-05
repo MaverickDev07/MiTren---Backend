@@ -207,18 +207,18 @@ export const updateNfcTransactionSchema = Joi.object({
 export const createPromotionSchema = Joi.object({
   title: Joi.string().min(3).max(30).required(),
   description: Joi.string().min(3).max(150).required(),
-  discount: Joi.number().min(10).required(),
-  start_date: Joi.date().required(),
-  end_date: Joi.date().required(),
+  price: Joi.number().min(1).required(),
+  line_id: Joi.array().min(1).items(Joi.string().alphanum().hex().length(24)).required(),
+  status: Joi.string().min(3).max(10),
 })
 
 export const updatePromotionSchema = Joi.object({
   title: Joi.string().min(3).max(30),
   description: Joi.string().min(3).max(150),
-  discount: Joi.number().min(10),
-  start_date: Joi.date(),
-  end_date: Joi.date(),
-})
+  price: Joi.number().min(1),
+  line_id: Joi.array().min(1).items(Joi.string().alphanum().hex().length(24)),
+  status: Joi.string().min(3).max(10),
+}).or('title', 'description', 'price', 'line_id', 'status')
 
 // User
 export const createUserSchema = Joi.object({

@@ -1,13 +1,13 @@
-import { Schema, model, Document } from 'mongoose'
+import { Schema, model, Document, Types } from 'mongoose'
 
 export type PromotionEntity = {
   id?: string | any
   title: string
   description: string
-  discount: number
-  start_date: Date
-  end_date: Date
-  active: boolean
+  price: number
+  /*start_date: Date
+  end_date: Date*/
+  line_id: Array<Types.ObjectId>
   status?: string
   createdAt?: Date
   updatedAt?: Date
@@ -30,21 +30,13 @@ const PromotionSchema = new Schema<PromotionAttributes>(
       trim: true,
       required: true,
     },
-    discount: {
+    price: {
       type: Number,
       required: true,
     },
-    start_date: {
-      type: Date,
-      required: true,
-    },
-    end_date: {
-      type: Date,
-      required: true,
-    },
-    active: {
-      type: Boolean,
-      default: false,
+    line_id: {
+      type: [Types.ObjectId],
+      ref: 'Line',
       required: true,
     },
     status: {
@@ -52,7 +44,7 @@ const PromotionSchema = new Schema<PromotionAttributes>(
       enum: ['ACTIVE', 'INACTIVE'],
       uppercase: true,
       trim: true,
-      default: 'ACTIVE',
+      default: 'INACTIVE',
     },
   },
   {

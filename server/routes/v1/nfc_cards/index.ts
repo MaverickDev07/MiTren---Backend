@@ -1,6 +1,13 @@
 import express, { Router } from 'express'
 
-import { listNfcCards, getNfcCard, createNfcCard, updateNfcCard, deleteNfcCard } from './controller'
+import {
+  listNfcCards,
+  getNfcCard,
+  createNfcCard,
+  updateNfcCard,
+  deleteNfcCard,
+  listPagedNfcCards,
+} from './controller'
 import validateRequest from '../../../middlewares/validateRequest'
 import { createNfcCardSchema, updateNfcCardSchema } from '../../../middlewares/requestSchemas'
 import { inRoles, verifyToken } from '../../../middlewares/authJwt'
@@ -9,6 +16,7 @@ import { addCreatedByUser } from './middleware'
 const nfcCards: Router = express.Router()
 
 nfcCards.get('/find/all', [verifyToken, inRoles(['ADMIN'])], listNfcCards)
+nfcCards.get('/', [verifyToken, inRoles(['ADMIN'])], listPagedNfcCards)
 nfcCards.get('/:id', [verifyToken, inRoles(['ADMIN'])], getNfcCard)
 nfcCards.post(
   '/',
