@@ -10,14 +10,23 @@ import {
 } from './controller'
 import validateRequest from '../../../middlewares/validateRequest'
 import { createPhraseSchema, updatePhraseSchema } from '../../../middlewares/requestSchemas'
+import { inRoles, verifyToken } from '../../../middlewares/authJwt'
 
 const phrases: Router = express.Router()
 
-phrases.get('/find/all', listPhrases)
-phrases.get('/', listPagedPhrases)
-phrases.get('/:id', getPhrase)
-phrases.post('/', validateRequest(createPhraseSchema), createPhrase)
-phrases.put('/:id', validateRequest(updatePhraseSchema), updatePhrase)
-phrases.delete('/:id', deletePhrase)
+phrases.get('/find/all', [verifyToken, inRoles(['ADMIN'])], listPhrases)
+phrases.get('/', [verifyToken, inRoles(['ADMIN'])], listPagedPhrases)
+phrases.get('/:id', [verifyToken, inRoles(['ADMIN'])], getPhrase)
+phrases.post(
+  '/',
+  [verifyToken, inRoles(['ADMIN']), validateRequest(createPhraseSchema)],
+  createPhrase,
+)
+phrases.put(
+  '/:id',
+  [verifyToken, inRoles(['ADMIN']), validateRequest(updatePhraseSchema)],
+  updatePhrase,
+)
+phrases.delete('/:id', [verifyToken, inRoles(['ADMIN'])], deletePhrase)
 
 export default phrases
