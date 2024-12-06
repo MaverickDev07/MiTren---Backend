@@ -103,11 +103,13 @@ export const updateMethodSchema = Joi.object({
 // CustomerType
 export const createCustomerTypeSchema = Joi.object({
   customer_type: Joi.string().min(3).max(30).required(),
+  description: Joi.string().min(3).max(150).required(),
 })
 
 export const updateCustomerTypeSchema = Joi.object({
   customer_type: Joi.string().min(3).max(30),
-}).or('customer_type')
+  description: Joi.string().min(3).max(150),
+}).or('customer_type', 'description')
 
 // Customer
 export const createCustomerSchema = Joi.object({

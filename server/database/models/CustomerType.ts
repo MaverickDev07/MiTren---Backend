@@ -3,6 +3,7 @@ import { Schema, model, Document } from 'mongoose'
 export type CustomerTypeEntity = {
   id?: string | any
   customer_type: string
+  description: string
   status?: string
   createdAt?: Date
   updatedAt?: Date
@@ -17,6 +18,12 @@ const CustomerTypeSchema = new Schema<CustomerTypeAttributes>(
       uppercase: true,
       trim: true,
       unique: true,
+      required: true,
+    },
+    description: {
+      type: String,
+      uppercase: true,
+      trim: true,
       required: true,
     },
     status: {

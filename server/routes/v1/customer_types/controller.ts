@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import CustomerTypeResource from '../../../resources/CustomerTypeResource'
 import CustomerTypeRepository from '../../../repositories/CustomerTypeRepository'
+import ApiError from '../../../errors/ApiError'
 
 export const listCustomerTypes = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -12,6 +13,39 @@ export const listCustomerTypes = async (req: Request, res: Response, next: NextF
       }),
     )
     res.status(200).json({ customerTypes })
+  } catch (error: any) {
+    next(error)
+  }
+}
+
+export const listPagedCustomerTypes = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const repository = new CustomerTypeRepository()
+
+    const limit = req.query.limit ? +req.query.limit : 10
+    const page = req.query.page ? +req.query.page : 1
+    const sortBy = req.query.sort_by as string
+    const filterBy = req.query.filter_by as string
+
+    if (isNaN(limit) || isNaN(page)) {
+      throw new ApiError({
+        name: 'INVALID_DATA_ERROR',
+        message: 'Los parámetros de paginación deben ser números enteros',
+        status: 422,
+        code: 'ERR_INV',
+      })
+    }
+
+    const customerTypePaged = CustomerTypeResource.paged(
+      await repository.getPaged({
+        limit,
+        page,
+        sortBy,
+        filterBy,
+      }),
+    )
+
+    res.status(200).json({ customerTypePaged })
   } catch (error: any) {
     next(error)
   }

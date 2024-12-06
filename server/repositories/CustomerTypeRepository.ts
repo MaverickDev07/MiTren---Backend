@@ -2,8 +2,8 @@ import CustomerType, { CustomerTypeAttributes } from '../database/models/Custome
 import BaseRepository from './BaseRepository'
 
 export default class CustomerTypeRepository extends BaseRepository<CustomerTypeAttributes> {
-  protected allowedSortByFields = ['customer_type', 'status', 'createdAt', 'updatedAt']
-  protected allowedFilterByFields = ['customer_type']
+  protected allowedSortByFields = ['status', 'createdAt', 'updatedAt']
+  protected allowedFilterByFields = ['customer_type', 'description']
 
   constructor() {
     super(CustomerType)

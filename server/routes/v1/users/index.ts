@@ -17,18 +17,18 @@ import {
 } from '../../../middlewares/requestSchemas'
 import { inRoles, verifyToken } from '../../../middlewares/authJwt'
 
-const lines: Router = express.Router()
+const users: Router = express.Router()
 
-lines.get('/find/all', [verifyToken, inRoles(['ADMIN'])], listUsers)
-lines.get('/', [verifyToken, inRoles(['ADMIN'])], listPagedUsers)
-lines.get('/:id', [verifyToken, inRoles(['ADMIN'])], getUser)
-lines.post('/', [verifyToken, inRoles(['ADMIN']), validateRequest(createUserSchema)], createUser)
-lines.put('/:id', [verifyToken, inRoles(['ADMIN']), validateRequest(updateUserSchema)], updateUser)
-lines.put(
+users.get('/find/all', [verifyToken, inRoles(['ADMIN'])], listUsers)
+users.get('/', [verifyToken, inRoles(['ADMIN'])], listPagedUsers)
+users.get('/:id', [verifyToken, inRoles(['ADMIN'])], getUser)
+users.post('/', [verifyToken, inRoles(['ADMIN']), validateRequest(createUserSchema)], createUser)
+users.put('/:id', [verifyToken, inRoles(['ADMIN']), validateRequest(updateUserSchema)], updateUser)
+users.put(
   '/:id/password',
   [verifyToken, inRoles(['ADMIN']), validateRequest(updatePasswordUserSchema)],
   updatePasswordUser,
 )
-lines.delete('/:id', [verifyToken, inRoles(['ADMIN'])], deleteUser)
+users.delete('/:id', [verifyToken, inRoles(['ADMIN'])], deleteUser)
 
-export default lines
+export default users
