@@ -4,7 +4,7 @@ import BaseRepository from './BaseRepository'
 import ApiError from '../errors/ApiError'
 
 export default class KioskRepository extends BaseRepository<KioskAttributes> {
-  protected allowedSortByFields = ['kiosk_code', 'status', 'createdAt', 'updatedAt']
+  protected allowedSortByFields = ['kiosk_type', 'status', 'createdAt', 'updatedAt']
   protected allowedFilterByFields = ['kiosk_code']
 
   constructor() {

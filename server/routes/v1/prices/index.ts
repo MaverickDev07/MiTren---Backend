@@ -15,6 +15,7 @@ const prices: Router = express.Router()
 
 prices.get('/', listPrices)
 prices.get('/:id', getPrice)
+prices.get('/line_id/:id', getPrice)
 prices.post('/', validateRequest(createPriceSchema), createPrice)
 prices.put('/:id', validateRequest(updatePriceSchema), updatePrice)
 prices.post('/range/:start_station_id/:end_station_id', createOrUpdatePriceByRange)

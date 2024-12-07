@@ -7,6 +7,7 @@ class KioskResource extends BaseResource<KioskAttributes, KioskEntity>() {
     const kioskResource: KioskEntity = {
       id: this.instance.id,
       kiosk_code: this.instance.kiosk_code,
+      kiosk_type: this.instance.kiosk_type,
       station_id: this.instance.station_id,
       status: this.instance.status,
       createdAt: this.instance.createdAt,
@@ -20,6 +21,7 @@ class KioskResource extends BaseResource<KioskAttributes, KioskEntity>() {
     const kioskResource: KioskEntity = {
       id: this.instance.id,
       kiosk_code: this.instance.kiosk_code,
+      kiosk_type: this.instance.kiosk_type,
       station: this.formatStation(this.instance.station_id),
       status: this.instance.status,
       createdAt: this.instance.createdAt,

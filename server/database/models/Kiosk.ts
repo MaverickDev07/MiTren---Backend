@@ -4,6 +4,7 @@ import { StationEntity } from './Station'
 export type KioskEntity = {
   id?: string | any
   kiosk_code: string
+  kiosk_type: string
   status?: string
   station_id?: Schema.Types.ObjectId
   station?: StationEntity
@@ -19,6 +20,13 @@ const KioskSchema = new Schema<KioskAttributes>({
     uppercase: true,
     trim: true,
     unique: true,
+    required: true,
+  },
+  kiosk_type: {
+    type: String,
+    enum: ['QUIOSCO', 'POS'],
+    uppercase: true,
+    trim: true,
     required: true,
   },
   status: {

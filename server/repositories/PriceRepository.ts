@@ -1,3 +1,4 @@
+import { Types } from 'mongoose'
 import Price, { PriceAttributes } from '../database/models/Price'
 import Route from '../database/models/Route'
 import ApiError from '../errors/ApiError'
@@ -9,6 +10,11 @@ export default class PriceRepository extends BaseRepository<PriceAttributes> {
 
   constructor() {
     super(Price)
+  }
+
+  getByLineId(id: string | Types.ObjectId): Promise<Array<PriceAttributes>> {
+    console.log(id)
+    return this.model.find().exec()
   }
 
   async createOrUpdatePrices(

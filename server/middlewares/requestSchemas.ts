@@ -40,13 +40,15 @@ export const updateStationSchema = Joi.object({
 // Kiosk
 export const createKioskSchema = Joi.object({
   kiosk_code: Joi.string().min(3).max(10).required(),
+  kiosk_type: Joi.string().min(3).max(10).required(),
   station_id: Joi.string().alphanum().hex().length(24).required(),
 })
 
 export const updateKioskSchema = Joi.object({
   kiosk_code: Joi.string().min(3).max(10),
+  kiosk_type: Joi.string().min(3).max(10),
   station_id: Joi.string().alphanum().hex().length(24),
-}).or('kiosk_code', 'station_id')
+}).or('kiosk_code', 'kiosk_type', 'station_id')
 
 // Route
 export const createRouteSchema = Joi.object({
@@ -70,6 +72,7 @@ export const updateRouteSchema = Joi.object({
       Joi.object({
         station_id: Joi.string().alphanum().hex().length(24),
         station_name: Joi.string().min(3).max(50),
+        _id: Joi.string().alphanum().hex().length(24),
       }),
     ),
 }).or('line_id', 'stations')
