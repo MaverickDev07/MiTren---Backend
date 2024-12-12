@@ -144,6 +144,17 @@ export const generateCash = async (req: Request, res: Response, next: NextFuncti
   }
 }
 
+export const inhibitDevices = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const repository = new CashRepository()
+    repository.inhibitDevices()
+
+    res.status(200).json({ message: 'Dispositivos inhibidos' })
+  } catch (error: any) {
+    next(error)
+  }
+}
+
 export const createTicket = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const repository = new TicketRepository()
