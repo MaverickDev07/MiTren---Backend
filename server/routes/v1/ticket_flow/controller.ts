@@ -1,5 +1,8 @@
 /* eslint-disable max-lines */
 import { NextFunction, Request, Response } from 'express'
+import { exec } from 'child_process'
+import path from 'path'
+
 import StationPairPricesRepository from '../../../repositories/ticket_flow/StationPairPricesRepository'
 import StationPairPricesResource from '../../../resources/ticket_flow/StationPairPricesResource'
 import LineRepository from '../../../repositories/LineRepository'
@@ -133,16 +136,39 @@ export const verifyQrStatus = async (req: Request, res: Response, next: NextFunc
 }
 
 export const generateCash = async (req: Request, res: Response, next: NextFunction) => {
-  const { body: data } = req
+  // const { body: data } = req
 
   try {
     // const repository = new CashRepository()
     // const response = await repository.generateCash(data)
-    const amount = data.amount
-    const deviceSerial = new DeviceSerial()
-    const message = await deviceSerial.startTransaction(amount)
 
-    res.status(200).json({ message })
+    /*const amount = data.amount
+    const deviceSerial = new DeviceSerial()
+    deviceSerial.startTransaction(amount)*/
+
+    const { amount } = req.body
+
+    if (typeof amount !== 'number' || amount <= 0) {
+      return res.status(400).json({ error: 'Monto inválido. Debe ser un número positivo.' })
+    }
+
+    // Construir la ruta al script
+    const scriptPath = path.join(__dirname, '../../../../scripts/script.js')
+
+    // Ejecutar el script con el monto como argumento
+    exec(`node ${scriptPath} ${amount}`, (error, stdout, stderr) => {
+      if (error) {
+        console.error(`Error al ejecutar el script: ${error.message}`)
+        return res.status(500).json({ error: 'Error al ejecutar el script.' })
+      }
+      if (stderr) {
+        console.error(`Error en el script: ${stderr}`)
+        return res.status(500).json({ error: 'Error en el script.' })
+      }
+
+      console.log(`Salida del script: ${stdout}`)
+      res.status(200).json({ message: 'Operación ejecutada con éxito.', output: stdout })
+    })
   } catch (error: any) {
     next(error)
   }
