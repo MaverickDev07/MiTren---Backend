@@ -20,6 +20,7 @@ export class CashRepository {
   constructor() {
     this.init()
   }
+
   calculateChangeCommands(change: any) {
     const commands = []
     let remainingChange = Math.round(change * 100) / 100 // Redondeo para evitar errores de precisión

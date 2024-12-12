@@ -18,6 +18,7 @@ import TicketResource from '../../../resources/TicketResource'
 import { createPdfBinary } from '../../../utils/LibPdf'
 import { ticketDocument } from './generatePDF'
 import { CashRepository } from '../../../repositories/ticket_flow/CashRepository'
+import { DeviceSerial } from '../../../utils/serial/DeviceSerial'
 
 const veripagosService = new VeripagosService(
   'https://veripagos.com/api',
@@ -135,10 +136,13 @@ export const generateCash = async (req: Request, res: Response, next: NextFuncti
   const { body: data } = req
 
   try {
-    const repository = new CashRepository()
-    const response = await repository.generateCash(data)
+    // const repository = new CashRepository()
+    // const response = await repository.generateCash(data)
+    const amount = data.amount
+    const deviceSerial = new DeviceSerial()
+    const message = await deviceSerial.startTransaction(amount)
 
-    res.status(200).json(response)
+    res.status(200).json({ message })
   } catch (error: any) {
     next(error)
   }
