@@ -308,7 +308,7 @@ export class DeviceSerial {
       }
 
       // Verificar si hay un error en los puertos
-      this.checkForErrors()
+      /*this.checkForErrors()
         .then(() => {
           this.targetAmount = amount
           console.log(`Monto objetivo establecido: ${this.targetAmount}Bs`)
@@ -316,7 +316,10 @@ export class DeviceSerial {
         })
         .catch(error => {
           return reject(`Error en los dispositivos ${error}`)
-        })
+        })*/
+      this.targetAmount = amount
+      console.log(`Monto objetivo establecido: ${this.targetAmount}Bs`)
+      this.checkCoinTubes(resolve, reject)
     })
   }
 
