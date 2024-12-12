@@ -301,34 +301,48 @@ export class DeviceSerial {
   ///// ------  Métodos para utilizar el monedero y billetero  ------ /////
 
   // Método para iniciar la transacción
-  public startTransaction(amount: number): Promise<string> {
-    return new Promise((resolve, reject) => {
-      if (amount <= 0) {
-        return reject('Monto inválido')
-      }
+  public startTransaction(amount: number): void {
+    if (amount <= 0) {
+      throw new Error('El monto debe ser mayor a cero.')
+    }
 
-      // Verificar si hay un error en los puertos
-      /*this.checkForErrors()
-        .then(() => {
-          this.targetAmount = amount
-          console.log(`Monto objetivo establecido: ${this.targetAmount}Bs`)
-          this.checkCoinTubes(resolve, reject)
-        })
-        .catch(error => {
-          return reject(`Error en los dispositivos ${error}`)
-        })*/
-      this.targetAmount = amount
-      console.log(`Monto objetivo establecido: ${this.targetAmount}Bs`)
-      this.checkCoinTubes(resolve, reject)
-    })
+    this.targetAmount = amount
+    console.log(`Monto objetivo establecido: ${this.targetAmount}Bs`)
+    this.checkCoinTubes()
   }
 
   private checkForErrors(): Promise<void> {
     return Promise.race([this.billeteroErrorPromise, this.monederoErrorPromise])
   }
 
-  // Consultar el estado de los tubos del monedero
-  private checkCoinTubes(resolve: any, reject: any): void {
+  checkCoinTubes(): void {
+    console.log('Consultando el estado de los tubos del monedero...')
+    this.sendCommand(this.monederoPort, COMMANDS.TubeStatus)
+
+    this.monederoParser.once('data', (data: Buffer) => {
+      const response: string = data.toString('hex').toUpperCase()
+      console.log(`Respuesta recibida: ${response}`)
+
+      const { tubeStatus, total }: { tubeStatus: { [key: number]: number }; total: number } =
+        this.parseTubeStatus(response)
+      console.log('Estado de los tubos:')
+      Object.entries(tubeStatus)
+        .sort((a, b) => parseFloat(a[0]) - parseFloat(b[0])) // Ordenar por denominación
+        .forEach(([denomination, count]) => console.log(` - ${denomination}Bs: ${count} monedas`))
+      console.log(`Total en Bs: ${total.toFixed(2)}Bs`)
+
+      if (total >= 4.9) {
+        console.log('Suficiente efectivo en tubos. Habilitando dispositivos para el pago...')
+        this.determineBillAcceptance(this.targetAmount) // Configurar billetes aceptados
+        console.log('----------------------------------------------------------------------')
+        this.enableDevices() // Continuar con el flujo normal
+      } else {
+        console.log('No hay suficiente efectivo en los tubos. Operación cancelada.')
+      }
+    })
+  }
+
+  /*private checkCoinTubes(resolve: any, reject: any): void {
     console.log('Consultando el estado de los tubos del monedero...')
     this.sendCommand(this.monederoPort, COMMANDS.TubeStatus)
 
@@ -355,7 +369,7 @@ export class DeviceSerial {
         reject('No hay suficiente efectivo en los tubos.')
       }
     })
-  }
+  }*/
 
   determineBillAcceptance(amount: number): void {
     let command = COMMANDS.InhibitBills // Default: inhibir todos
