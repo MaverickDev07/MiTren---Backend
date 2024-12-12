@@ -208,6 +208,7 @@ export class CashRepository {
 
         if (lastSegments.startsWith('02')) {
           const amount = this.evaluateBill(lastSegments)
+          console.log(`Billete detectado: ${amount}Bs`)
 
           if (amount > 0) {
             if (this.acceptedBills.includes(amount)) {
