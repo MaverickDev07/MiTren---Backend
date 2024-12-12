@@ -1,14 +1,16 @@
 import { SerialPort } from 'serialport'
 import { ByteLengthParser } from '@serialport/parser-byte-length'
 
-export function createSerialPort(path: string, baudRate: number, parity: string) {
+type ParityName = 'none' | 'even' | 'odd' | 'mark'
+
+export function createSerialPort(path: string, baudRate: number, parity: ParityName): SerialPort {
   return new SerialPort({
     path,
     baudRate,
     dataBits: 8,
     parity,
     stopBits: 1,
-    flowControl: false,
+    rtscts: false,
   })
 }
 

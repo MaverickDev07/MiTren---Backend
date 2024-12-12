@@ -1,4 +1,4 @@
-const COMMANDS = {
+export const COMMANDS = {
   //billetero
   BillEnables: [0x02, 0x06, 0x41, 0xff, 0xff, 0xb9],
   Status: [0x02, 0x04, 0xcc, 0x2e],
@@ -32,7 +32,7 @@ const COMMANDS = {
 }
 
 // Tabla de valores y comandos
-const CAMBIO_VALORES = [
+export const CAMBIO_VALORES = [
   { valor: 3.0, comando: COMMANDS.Cambio3Bs },
   { valor: 2.5, comando: COMMANDS.Cambio2_50Bs },
   { valor: 2.0, comando: COMMANDS.Cambio2Bs },

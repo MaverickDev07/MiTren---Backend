@@ -1,21 +1,19 @@
 import express, { Router } from 'express'
 
 import {
-  computeTotalPrice,
   createTicket,
+  generateCash,
   generateQR,
-  getKioskIdByEnv,
   getStationByKioskId,
   listLinesByActive,
   listMethodsByActivate,
   listPagedStationsByLine,
   listPricesByStationPair,
-  preloadVeripagosData,
   verifyQrStatus,
-  validatePrices,
 } from './controller'
 import validateRequest from '../../../middlewares/validateRequest'
-import { createTicketSchema } from '../../../middlewares/requestSchemas'
+import { createTicketSchema, generateCashSchema } from '../../../middlewares/requestSchemas'
+import { computeTotalPrice, getKioskIdByEnv, preloadVeripagosData } from './middleware'
 
 const ticketFlow: Router = express.Router()
 
@@ -27,6 +25,8 @@ ticketFlow.get('/step-4/methods', listMethodsByActivate)
 // Method PagosQR
 ticketFlow.post('/step-4/pqr/generate', [preloadVeripagosData], generateQR)
 ticketFlow.post('/step-4/pqr/verify', verifyQrStatus)
+// Method PagosEfectivo
+ticketFlow.post('/step-4/cash/generate', [validateRequest(generateCashSchema)], generateCash)
 
 // Save TICKET
 ticketFlow.post(

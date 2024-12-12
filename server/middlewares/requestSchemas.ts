@@ -345,6 +345,11 @@ export const updateTicketSchema = Joi.object({
   status: Joi.string().min(3).max(15),
 }).or('promotion_title', 'payment_method', 'prices', 'route', 'status')
 
+// Cash
+export const generateCashSchema = Joi.object({
+  amount: Joi.number().min(0.1).required(),
+})
+
 // Wallet
 export const createWalletSchema = Joi.object({
   code: Joi.string().alphanum().hex().length(24),

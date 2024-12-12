@@ -1,4 +1,4 @@
-import { BilleteroRepository } from '../repositories/BilleteroRepository'
+import { BilleteroRepository } from '../repositories/CashRepository'
 import { MonederoRepository } from '../repositories/MonederoRepository'
 import { calculateChangeCommands } from '../utils/serial/ChangeCalculator'
 
