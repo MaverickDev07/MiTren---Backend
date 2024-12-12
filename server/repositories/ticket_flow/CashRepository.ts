@@ -55,6 +55,7 @@ export class CashRepository {
   // Consultar el estado de los tubos del monedero
   checkCoinTubes(): void {
     console.log('Consultando el estado de los tubos del monedero...')
+    this.enableDevices()
     this.sendCommand(this.port_coins, COMMANDS.TubeStatus)
 
     this.parser_coins.once('data', data => {
