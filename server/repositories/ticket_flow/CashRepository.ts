@@ -18,7 +18,7 @@ export class CashRepository {
   private lastCommandTime = 0
 
   constructor() {
-    //this.init()
+    this.init()
   }
   calculateChangeCommands(change: any) {
     const commands = []
