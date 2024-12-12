@@ -1,7 +1,7 @@
 /* eslint-disable max-lines */
 import { SerialPort } from 'serialport'
 import { createParser, createSerialPort } from '../../utils/serial/SerialPortUtils'
-import { COMMANDS } from '../../utils/serial/ChangeCalculator'
+import { CAMBIO_VALORES, COMMANDS } from '../../utils/serial/ChangeCalculator'
 
 export class CashRepository {
   private port_bills = createSerialPort('/dev/ttyS1', 9600, 'even')
@@ -9,13 +9,40 @@ export class CashRepository {
   private port_coins = createSerialPort('/dev/ttyS2', 115200, 'none')
   private parser_coins = createParser(this.port_coins, 24)
 
+  private totalAmount = 0 // Total acumulado
+  private targetAmount = 0 // Monto objetivo
+  private acceptedBills: any[] = [] // Billetes aceptados
+  private responseBuffer = '' // Buffer para acumular tramas de monedero
+  private billeteroBuffer = '' // Buffer para acumular tramas de billetero
+  private lastCommand = ''
+  private lastCommandTime = 0
+
   constructor() {
     //this.init()
+  }
+  calculateChangeCommands(change: any) {
+    const commands = []
+    let remainingChange = Math.round(change * 100) / 100 // Redondeo para evitar errores de precisión
+
+    for (const { valor, comando } of CAMBIO_VALORES) {
+      while (remainingChange >= valor) {
+        commands.push(comando)
+        remainingChange -= valor
+        remainingChange = Math.round(remainingChange * 100) / 100 // Asegurar precisión
+      }
+    }
+
+    if (remainingChange > 0) {
+      console.error(`No se puede entregar el cambio exacto. Restante: ${remainingChange}`)
+    }
+
+    return commands
   }
 
   generateCash(data: any) {
     const { amount } = data
-    this.checkCoinTubes(amount)
+    this.targetAmount = amount
+    this.checkCoinTubes()
     console.log(data)
     return data
   }
@@ -26,7 +53,7 @@ export class CashRepository {
   }
 
   // Consultar el estado de los tubos del monedero
-  checkCoinTubes(amount: number): void {
+  checkCoinTubes(): void {
     console.log('Consultando el estado de los tubos del monedero...')
     this.sendCommand(this.port_coins, COMMANDS.TubeStatus)
 
@@ -44,7 +71,7 @@ export class CashRepository {
 
       if (total >= 4.9) {
         console.log('Suficiente efectivo en tubos. Habilitando dispositivos para el pago...')
-        this.determineBillAcceptance(amount) // Configurar billetes aceptados
+        this.determineBillAcceptance(this.targetAmount) // Configurar billetes aceptados
         console.log('----------------------------------------------------------------------')
         this.enableDevices() // Continuar con el flujo normal
       } else {
@@ -153,7 +180,6 @@ export class CashRepository {
     console.log('Dispositivos inhibidos.')
   }
 
-  /*
   // Agrega el script aquí
   private init() {
     this.parser_bills.on('data', data => {
@@ -165,73 +191,73 @@ export class CashRepository {
       const currentTime = Date.now()
 
       // Ignorar si el comando es idéntico al último y llega en menos de 200ms
-      if (newResponse === lastCommand && currentTime - lastCommandTime < 200) {
+      if (newResponse === this.lastCommand && currentTime - this.lastCommandTime < 200) {
         return
       }
 
-      lastCommand = newResponse
-      lastCommandTime = currentTime
+      this.lastCommand = newResponse
+      this.lastCommandTime = currentTime
 
-      billeteroBuffer += newResponse + ' '
-      const responseSegments = billeteroBuffer.trim().split(' ')
+      this.billeteroBuffer += newResponse + ' '
+      const responseSegments = this.billeteroBuffer.trim().split(' ')
 
       // Verificar si el buffer contiene un comando válido (7 segmentos)
       if (responseSegments.length >= 7) {
         const lastSegments = responseSegments.slice(-7).join(' ')
 
         if (lastSegments.startsWith('02')) {
-          const amount = evaluateBill(lastSegments)
+          const amount = this.evaluateBill(lastSegments)
 
           if (amount > 0) {
-            if (acceptedBills.includes(amount)) {
-              sendCommand(port_bills, COMMANDS.AcceptBill) // Aceptar billete
-              totalAmount += amount
+            if (this.acceptedBills.includes(amount)) {
+              this.sendCommand(this.port_bills, COMMANDS.AcceptBill) // Aceptar billete
+              this.totalAmount += amount
               console.log(`Billete apilado: ${amount}Bs`)
-              evaluatePayment()
+              this.evaluatePayment()
             } else {
-              sendCommand(port_bills, COMMANDS.RejectBill) // Rechazar billete
+              this.sendCommand(this.port_bills, COMMANDS.RejectBill) // Rechazar billete
               console.log(`Billete rechazado: ${amount}Bs no permitido`)
             }
 
             // Limpiar el buffer tras procesar un comando válido
-            billeteroBuffer = ''
+            this.billeteroBuffer = ''
           } else {
             // Eliminar datos basura del buffer
-            billeteroBuffer = responseSegments.slice(-6).join(' ')
+            this.billeteroBuffer = responseSegments.slice(-6).join(' ')
           }
         } else {
-          billeteroBuffer = responseSegments.slice(-6).join(' ') // Limpiar ruido
+          this.billeteroBuffer = responseSegments.slice(-6).join(' ') // Limpiar ruido
         }
       }
 
       // Limitar tamaño del buffer para evitar acumulación
-      if (billeteroBuffer.length > 100) {
-        billeteroBuffer = billeteroBuffer.slice(-50)
+      if (this.billeteroBuffer.length > 100) {
+        this.billeteroBuffer = this.billeteroBuffer.slice(-50)
       }
     })
 
     this.parser_coins.on('data', data => {
       const hexResponse = data.toString('hex').toUpperCase()
-      responseBuffer += hexResponse
+      this.responseBuffer += hexResponse
 
-      let start = responseBuffer.indexOf('06')
-      let end = responseBuffer.indexOf('1003', start)
+      let start = this.responseBuffer.indexOf('06')
+      let end = this.responseBuffer.indexOf('1003', start)
 
       while (start !== -1 && end !== -1) {
-        const trama = responseBuffer.slice(start, end + 4)
-        const coinValue = evaluateCoin(trama)
+        const trama = this.responseBuffer.slice(start, end + 4)
+        const coinValue = this.evaluateCoin(trama)
         if (coinValue > 0) {
-          totalAmount += coinValue
+          this.totalAmount += coinValue
           console.log(`Moneda apilada: ${coinValue}Bs`)
-          evaluatePayment()
+          this.evaluatePayment()
         }
-        responseBuffer = responseBuffer.slice(end + 4)
-        start = responseBuffer.indexOf('06')
-        end = responseBuffer.indexOf('1003', start)
+        this.responseBuffer = this.responseBuffer.slice(end + 4)
+        start = this.responseBuffer.indexOf('06')
+        end = this.responseBuffer.indexOf('1003', start)
       }
 
-      if (responseBuffer.length > 100) {
-        responseBuffer = responseBuffer.slice(-50)
+      if (this.responseBuffer.length > 100) {
+        this.responseBuffer = this.responseBuffer.slice(-50)
       }
     })
 
@@ -250,28 +276,29 @@ export class CashRepository {
     this.port_coins.on('error', err => console.error('Error en el monedero:', err.message))
 
     // Inicializar puertos
-    port_bills.on('open', () => {
+    this.port_bills.on('open', () => {
       //console.log("Puerto del billetero abierto.");
 
       // Configuración inicial del billetero
-      sendCommand(port_bills, COMMANDS.InhibitBills) // Inhibir todos los billetes
+      this.sendCommand(this.port_bills, COMMANDS.InhibitBills) // Inhibir todos los billetes
       setTimeout(() => {
-        sendCommand(port_bills, COMMANDS.DesinhibitBilletero) // Desinhibir billetero
+        this.sendCommand(this.port_bills, COMMANDS.DesinhibitBilletero) // Desinhibir billetero
         //console.log("Billetero desinhibido.");
         setTimeout(() => {
-          sendCommand(port_bills, COMMANDS.BilleteroEnEspera) // Poner en espera
+          this.sendCommand(this.port_bills, COMMANDS.BilleteroEnEspera) // Poner en espera
           //console.log("Billetero configurado en modo espera.");
         }, 100) // Pausa de 100ms para garantizar que el comando anterior se procese
       }, 100) // Pausa de 100ms después de inhibir
     })
-    port_coins.on('open', () => {
+    this.port_coins.on('open', () => {
       //console.log('Puerto del monedero abierto.');
     })
-    port_bills.on('error', err => console.error('Error en el billetero:', err.message))
-    port_coins.on('error', err => console.error('Error en el monedero:', err.message))
+    this.port_bills.on('error', err => console.error('Error en el billetero:', err.message))
+    this.port_coins.on('error', err => console.error('Error en el monedero:', err.message))
   }
-  evaluateBill(segments) {
-    const bytes = segments.split(' ').map(byte => parseInt(byte, 16))
+
+  evaluateBill(segments: any) {
+    const bytes = segments.split(' ').map((byte: any) => parseInt(byte, 16))
 
     // Validar longitud mínima para evitar errores de procesamiento
     if (bytes.length < 7) return 0
@@ -295,8 +322,9 @@ export class CashRepository {
         return 0 // Respuestas no reconocidas se descartan
     }
   }
-  valuateCoin(hexResponse) {
-    const coinMapping = {
+
+  evaluateCoin(hexResponse: any) {
+    const coinMapping: any = {
       '450045': 5.0,
       '440044': 2.0,
       '43': 1.0,
@@ -320,51 +348,34 @@ export class CashRepository {
   }
   // Evaluar el progreso del pago
   evaluatePayment() {
-    console.log(`Total acumulado: ${totalAmount.toFixed(2)}Bs`)
-    if (totalAmount >= targetAmount) {
-      const change = totalAmount - targetAmount
+    console.log(`Total acumulado: ${this.totalAmount.toFixed(2)}Bs`)
+    if (this.totalAmount >= this.targetAmount) {
+      const change = this.totalAmount - this.targetAmount
       console.log('----------------------------------------------------------------------')
-      console.log(`Pago completado. Total pagado: ${totalAmount.toFixed(2)}Bs`)
+      console.log(`Pago completado. Total pagado: ${this.totalAmount.toFixed(2)}Bs`)
 
       if (change > 0) {
         console.log(`Entregando cambio: ${change.toFixed(2)}Bs`)
-        const changeCommands = calculateChangeCommands(change)
-        deliverChange(changeCommands) // Entregar el cambio
+        const changeCommands = this.calculateChangeCommands(change)
+        this.deliverChange(changeCommands) // Entregar el cambio
       } else {
         console.log('No hay cambio a entregar.')
       }
 
-      inhibitDevices() // Inhibir los dispositivos al finalizar
-      rl.close()
+      this.inhibitDevices() // Inhibir los dispositivos al finalizar
     }
   }
   // Función para entregar el cambio
-  deliverChange(changeCommands) {
+  deliverChange(changeCommands: any) {
     if (!changeCommands.length) {
       console.log('Cambio completado.')
       return
     }
 
     const command = changeCommands.shift()
-    sendCommand(monederoPort, command)
+    this.sendCommand(this.port_coins, command)
 
     // Procesar el siguiente comando con un retraso
-    setTimeout(() => deliverChange(changeCommands), 500)
+    setTimeout(() => this.deliverChange(changeCommands), 500)
   }
-
-  // Enviar comandos
-  sendCommand(port, command) {
-    if (!command || !Array.isArray(command)) {
-      // No se procesa el comando si es inválido
-      return
-    }
-    const buffer = Buffer.from(command)
-    port.write(buffer, err => {
-      if (err) {
-        // Solo mostrar error si realmente hay un problema al enviar el comando
-        console.error('Error al enviar el comando:', err.message)
-      }
-    })
-  }
-  */
 }
