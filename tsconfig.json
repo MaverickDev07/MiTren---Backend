@@ -25,6 +25,6 @@
     "sourceMap": true,
     "typeRoots": ["./server/types", "./node_modules/@types"]
   },
-  "exclude": ["node_modules", "dist", "mongo_data"],
+  "exclude": ["node_modules", "dist", "mongo_data", "scripts"],
   "include": ["./server/types.d.ts", "server.ts", "server/**/*"]
 }
