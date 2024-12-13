@@ -37,6 +37,16 @@ export const getPrice = async (req: Request, res: Response, next: NextFunction) 
   }
 }
 
+export const getPriceByLine = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const repository = new PriceRepository()
+    const listPrice = await repository.getByLineId(req.params.id)
+    res.status(200).json({ listPrice })
+  } catch (error: any) {
+    next(error)
+  }
+}
+
 export const createPrice = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const repository = new PriceRepository()
