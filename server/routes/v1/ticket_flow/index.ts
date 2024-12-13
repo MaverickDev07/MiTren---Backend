@@ -5,7 +5,7 @@ import {
   generateCash,
   generateQR,
   getStationByKioskId,
-  inhibitDevices,
+  stateCash,
   listLinesByActive,
   listMethodsByActivate,
   listPagedStationsByLine,
@@ -28,7 +28,7 @@ ticketFlow.post('/step-4/pqr/generate', [preloadVeripagosData], generateQR)
 ticketFlow.post('/step-4/pqr/verify', verifyQrStatus)
 // Method PagosEfectivo
 ticketFlow.post('/step-4/cash/generate', [validateRequest(generateCashSchema)], generateCash)
-ticketFlow.get('/step-4/cash/inhibit', inhibitDevices)
+ticketFlow.get('/step-4/cash/state', stateCash)
 
 // Save TICKET
 ticketFlow.post(

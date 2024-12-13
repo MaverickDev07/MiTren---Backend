@@ -1,6 +1,8 @@
 /* eslint-disable max-lines */
 import { SerialPort } from 'serialport'
 import { ByteLengthParser } from '@serialport/parser-byte-length'
+import EventEmitter from 'events'
+
 import { CAMBIO_VALORES, COMMANDS } from './ChangeCalculator'
 
 export class DeviceSerial {
@@ -8,20 +10,18 @@ export class DeviceSerial {
   private monederoPort: SerialPort
   private billeteroParser: ByteLengthParser
   private monederoParser: ByteLengthParser
+  private eventEmitter: EventEmitter
 
   private totalAmount: number = 0
   private targetAmount = 0 // Monto objetivo
   private acceptedBills: number[] = []
   private responseBuffer = '' // Buffer para acumular tramas de monedero
   private billeteroBuffer: string = ''
-  private processing: boolean = false
   private lastProcessedTime: number = 0
   private lastValidCommand: string = ''
 
-  private billeteroErrorPromise: Promise<void>
-  private monederoErrorPromise: Promise<void>
-
   constructor() {
+    this.eventEmitter = new EventEmitter()
     // Configuración del puerto serial
     this.billeteroPort = new SerialPort({
       path: '/dev/ttyS1',
@@ -55,48 +55,60 @@ export class DeviceSerial {
         .join(' ')
       const currentTime = Date.now()
 
-      // Ignorar si el comando es idéntico al último válido y llega en menos de 1000ms
-      if (newResponse === this.lastValidCommand && currentTime - this.lastProcessedTime < 1000) {
+      // Ignorar si el comando es idéntico al último válido y llega en 200ms
+      if (newResponse === this.lastValidCommand && currentTime - this.lastProcessedTime < 200) {
         return
       }
 
+      this.lastValidCommand = newResponse
+      this.lastProcessedTime = currentTime
+
       this.billeteroBuffer += newResponse + ' '
-      let responseSegments = this.billeteroBuffer.trim().split(' ')
+      const responseSegments = this.billeteroBuffer.trim().split(' ')
 
       // Verificar si el buffer contiene un comando válido (7 segmentos) y no estamos procesando
-      if (responseSegments.length >= 7 && !this.processing) {
-        this.processing = true
-        setTimeout(() => {
-          const command = responseSegments.slice(0, 7).join(' ')
-          if (command.startsWith('02')) {
-            const amount = this.evaluateBill(command)
+      if (responseSegments.length >= 7) {
+        const lastSegments = responseSegments.slice(-7).join(' ')
 
-            if (amount > 0 && command !== this.lastValidCommand) {
-              this.lastValidCommand = command // Actualizar solo si es un comando válido nuevo
-              if (this.acceptedBills.includes(amount)) {
-                this.sendCommand(this.billeteroPort, COMMANDS.AcceptBill) // Aceptar billete
-                this.totalAmount += amount
-                console.log(`Billete apilado: ${amount}Bs`)
-                this.evaluatePayment()
-              } else {
-                this.sendCommand(this.billeteroPort, COMMANDS.RejectBill) // Rechazar billete
-                console.log(`Billete rechazado: ${amount}Bs no permitido`)
-              }
-              responseSegments = responseSegments.slice(7) // Eliminar el comando procesado
+        if (lastSegments.startsWith('02')) {
+          const amount = this.evaluateBill(lastSegments) // Verifica cómo se calcula 'amount'
+          if (amount > 0) {
+            // Verificar si 'amount' está en la lista de billetes aceptados
+            let command
+            // Determinar qué billetes habilitar según el monto
+            if (amount <= 5.1) {
+              command = COMMANDS.InhibitBills
+            } else if (amount <= 15.1) {
+              command = COMMANDS.Enable10
+            } else if (amount <= 45.1) {
+              command = COMMANDS.Enable10_20
+            } else if (amount <= 95.1) {
+              command = COMMANDS.Enable10_20_50
+            } else if (amount <= 195.1) {
+              command = COMMANDS.Enable10_20_50_100
             } else {
-              // Solo mover el buffer si no es un comando válido o repetido
-              responseSegments = responseSegments.slice(1)
+              command = COMMANDS.Enable10_20_50_100_200
             }
-          } else {
-            // Eliminar el segmento que no inicia con '02'
-            responseSegments = responseSegments.slice(1)
-          }
 
-          // Reconstruir el buffer con los segmentos restantes
-          this.billeteroBuffer = responseSegments.join(' ')
-          this.lastProcessedTime = Date.now()
-          this.processing = false
-        }, 700) // Esperar 1 segundo antes de procesar para asegurar que no sea una lectura duplicada
+            this.sendCommand(this.billeteroPort, command)
+            this.totalAmount += amount
+            console.log(`Billete apilado: ${amount}Bs`)
+            this.evaluatePayment()
+
+            // Limpiar el buffer tras procesar un comando válido
+            this.billeteroBuffer = ''
+          } else {
+            // Eliminar datos basura del buffer
+            this.billeteroBuffer = responseSegments.slice(-6).join(' ')
+          }
+        } else {
+          this.billeteroBuffer = responseSegments.slice(-6).join(' ') // Limpiar ruido
+        }
+      }
+
+      // Limitar tamaño del buffer para evitar acumulación
+      if (this.billeteroBuffer.length > 100) {
+        this.billeteroBuffer = this.billeteroBuffer.slice(-50)
       }
     })
 
@@ -144,29 +156,33 @@ export class DeviceSerial {
       console.log('Puerto del monedero abierto.')
     })
 
-    /*this.billeteroPort.on('error', err => {
+    // Manejo de errores
+    this.billeteroPort.on('error', err => {
       console.error(`[Billetero] Error: ${err.message}`)
-      this.hasError = true
     })
 
     this.monederoPort.on('error', err => {
       console.error(`[Monedero] Error: ${err.message}`)
-      this.hasError = true
-    })*/
-    // Manejo de errores
-    this.billeteroErrorPromise = new Promise((_, reject) => {
-      this.billeteroPort.on('error', err => {
-        console.error(`[Billetero] Error: ${err.message}`)
-        reject(new Error('Error en el billetero'))
-      })
     })
+  }
 
-    this.monederoErrorPromise = new Promise((_, reject) => {
-      this.monederoPort.on('error', err => {
-        console.error(`[Monedero] Error: ${err.message}`)
-        reject(new Error('Error en el monedero'))
-      })
-    })
+  calculateChangeCommands(change: number): number[][] {
+    const commands: number[][] = []
+    let remainingChange: number = Math.round(change * 100) / 100
+
+    for (const { valor, comando } of CAMBIO_VALORES) {
+      while (remainingChange >= valor) {
+        commands.push(comando)
+        remainingChange -= valor
+        remainingChange = Math.round(remainingChange * 100) / 100
+      }
+    }
+
+    if (remainingChange > 0) {
+      console.error(`No se puede entregar el cambio exacto. Restante: ${remainingChange}`)
+    }
+
+    return commands
   }
 
   evaluateBill(segments: string): number {
@@ -231,10 +247,15 @@ export class DeviceSerial {
       console.log('----------------------------------------------------------------------')
       console.log(`Pago completado. Total pagado: ${this.totalAmount.toFixed(2)}Bs`)
 
+      this.eventEmitter.emit('paymentCompleted', {
+        message: 'Pago completado',
+        totalPaid: this.totalAmount.toFixed(2),
+        change: change > 0 ? change.toFixed(2) : null,
+      })
+
       if (change > 0) {
         console.log(`Entregando cambio: ${change.toFixed(2)}Bs`)
-
-        const changeCommands: any[] = this.calculateChangeCommands(change)
+        const changeCommands = this.calculateChangeCommands(change)
         this.deliverChange(changeCommands) // Entregar el cambio
       } else {
         console.log('No hay cambio a entregar.')
@@ -242,25 +263,6 @@ export class DeviceSerial {
 
       this.inhibitDevices() // Inhibir los dispositivos al finalizar
     }
-  }
-
-  calculateChangeCommands(change: number): number[][] {
-    const commands: number[][] = []
-    let remainingChange: number = Math.round(change * 100) / 100
-
-    for (const { valor, comando } of CAMBIO_VALORES) {
-      while (remainingChange >= valor) {
-        commands.push(comando)
-        remainingChange -= valor
-        remainingChange = Math.round(remainingChange * 100) / 100
-      }
-    }
-
-    if (remainingChange > 0) {
-      console.error(`No se puede entregar el cambio exacto. Restante: ${remainingChange}`)
-    }
-
-    return commands
   }
 
   deliverChange(changeCommands: number[][]): void {
@@ -272,9 +274,7 @@ export class DeviceSerial {
     const command = changeCommands.shift()
     this.sendCommand(this.monederoPort, command) // Procesar el siguiente comando con un retraso
 
-    setTimeout(() => {
-      this.deliverChange(changeCommands)
-    }, 500)
+    setTimeout(() => this.deliverChange(changeCommands), 500)
   }
 
   inhibitDevices() {
@@ -309,10 +309,11 @@ export class DeviceSerial {
     this.targetAmount = amount
     console.log(`Monto objetivo establecido: ${this.targetAmount}Bs`)
     this.checkCoinTubes()
+    this.enableBillAcceptor()
   }
 
-  private checkForErrors(): Promise<void> {
-    return Promise.race([this.billeteroErrorPromise, this.monederoErrorPromise])
+  public getEventEmitter(): EventEmitter {
+    return this.eventEmitter
   }
 
   checkCoinTubes(): void {
@@ -331,45 +332,16 @@ export class DeviceSerial {
         .forEach(([denomination, count]) => console.log(` - ${denomination}Bs: ${count} monedas`))
       console.log(`Total en Bs: ${total.toFixed(2)}Bs`)
 
-      if (total >= 4.9) {
-        console.log('Suficiente efectivo en tubos. Habilitando dispositivos para el pago...')
-        this.determineBillAcceptance(this.targetAmount) // Configurar billetes aceptados
-        console.log('----------------------------------------------------------------------')
-        this.enableDevices() // Continuar con el flujo normal
-      } else {
-        console.log('No hay suficiente efectivo en los tubos. Operación cancelada.')
-      }
+      this.eventEmitter.emit('tubeStatus', {
+        total,
+        acceptedBills: this.determineBillAcceptance(this.targetAmount),
+      })
+
+      if (total < 4.9) return
+
+      this.enableDevices() // Continuar con el flujo normal
     })
   }
-
-  /*private checkCoinTubes(resolve: any, reject: any): void {
-    console.log('Consultando el estado de los tubos del monedero...')
-    this.sendCommand(this.monederoPort, COMMANDS.TubeStatus)
-
-    this.monederoParser.once('data', data => {
-      const response = data.toString('hex').toUpperCase()
-      console.log(`Respuesta recibida: ${response}`)
-
-      const { tubeStatus, total } = this.parseTubeStatus(response)
-      console.log('Estado de los tubos:')
-      Object.entries(tubeStatus)
-        .sort((a, b) => parseFloat(a[0]) - parseFloat(b[0])) // Ordenar por denominación
-        .forEach(([denomination, count]) => console.log(` - ${denomination}Bs: ${count} monedas`))
-
-      console.log(`Total en Bs: ${total.toFixed(2)}Bs`)
-
-      if (total >= 4.9) {
-        console.log('Suficiente efectivo en tubos. Habilitando dispositivos para el pago...')
-        this.determineBillAcceptance(this.targetAmount) // Configurar billetes aceptados
-        console.log('----------------------------------------------------------------------')
-        this.enableDevices() // Continuar con el flujo normal
-        resolve(`Transacción iniciada con monto objetivo: ${this.targetAmount}Bs`)
-      } else {
-        console.log('No hay suficiente efectivo en los tubos. Operación cancelada.')
-        reject('No hay suficiente efectivo en los tubos.')
-      }
-    })
-  }*/
 
   determineBillAcceptance(amount: number): void {
     let command = COMMANDS.InhibitBills // Default: inhibir todos
@@ -401,7 +373,7 @@ export class DeviceSerial {
       this.sendCommand(this.billeteroPort, command) // Habilitar billetes permitidos
       console.log(`Billetes aceptados: ${this.acceptedBills.join(', ')}`)
       console.log('-----------------------------------------------')
-    }, 100) // Pausa para permitir el procesamiento
+    }, 50) // Pausa para permitir el procesamiento
   }
 
   // Parsear la respuesta del estado de los tubos

@@ -135,51 +135,43 @@ export const verifyQrStatus = async (req: Request, res: Response, next: NextFunc
   }
 }
 
+let totalMonedero = 0
+let billetesAceptados = []
+
 export const generateCash = async (req: Request, res: Response, next: NextFunction) => {
-  // const { body: data } = req
-
   try {
-    // const repository = new CashRepository()
-    // const response = await repository.generateCash(data)
-
-    /*const amount = data.amount
-    const deviceSerial = new DeviceSerial()
-    deviceSerial.startTransaction(amount)*/
-
     const { amount } = req.body
+    const deviceSerial = new DeviceSerial()
+    deviceSerial.startTransaction(amount)
 
-    if (typeof amount !== 'number' || amount <= 0) {
-      return res.status(400).json({ error: 'Monto inválido. Debe ser un número positivo.' })
-    }
-
-    // Construir la ruta al script
-    const scriptPath = path.join(__dirname, '../../../../scripts/script.js')
-
-    // Ejecutar el script con el monto como argumento
-    exec(`node ${scriptPath} ${amount}`, (error, stdout, stderr) => {
-      if (error) {
-        console.error(`Error al ejecutar el script: ${error.message}`)
-        return res.status(500).json({ error: 'Error al ejecutar el script.' })
-      }
-      if (stderr) {
-        console.error(`Error en el script: ${stderr}`)
-        return res.status(500).json({ error: 'Error en el script.' })
-      }
-
-      console.log(`Salida del script: ${stdout}`)
-      res.status(200).json({ message: 'Operación ejecutada con éxito.', output: stdout })
+    deviceSerial.getEventEmitter().once('tubeStatus', data => {
+      totalMonedero = data.total
+      billetesAceptados = data.acceptedBills
+      res.status(200).json({
+        TotalMonedero: totalMonedero,
+        BilletesAceptados: billetesAceptados,
+      })
     })
   } catch (error: any) {
     next(error)
   }
 }
 
-export const inhibitDevices = async (req: Request, res: Response, next: NextFunction) => {
+export const stateCash = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const repository = new CashRepository()
-    repository.inhibitDevices()
+    const deviceSerial = new DeviceSerial()
+    deviceSerial.getEventEmitter().once('paymentCompleted', data => {
+      res.status(200).json({
+        EstadoPago: 'completado',
+        TotalPagado: data.totalPaid,
+      })
+    })
 
-    res.status(200).json({ message: 'Dispositivos inhibidos' })
+    deviceSerial.getEventEmitter().once('tubeStatus', () => {
+      if (!res.headersSent) {
+        res.status(200).json({ EstadoPago: 'en proceso' })
+      }
+    })
   } catch (error: any) {
     next(error)
   }
