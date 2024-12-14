@@ -32,21 +32,30 @@ export default class PriceRepository extends BaseRepository<PriceAttributes> {
     // Obtener todas las combinaciones de estaciones en la ruta
     for (const [index, start_station] of route.stations.entries()) {
       for (const end_station of route.stations.slice(index + 1)) {
-        console.log(start_station, end_station)
+        const prices = []
+        for (const customer_type of customerTypes) {
+          const price: any = await Price.findOne({
+            customer_type_id: customer_type.id,
+            customer_type: customer_type.customer_type,
+            'start_station.station_id': start_station.station_id,
+            'end_station.station_id': end_station.station_id,
+          })
+          prices.push({
+            customer_type_id: customer_type.id,
+            customer_type: customer_type.customer_type,
+            base_price: price ? price.base_price : 0,
+          })
+        }
+
         response.push({
           start_station,
           end_station,
-          prices: customerTypes.map(customerType => {
-            return {
-              customer_type: customerType.customer_type,
-              price: 0,
-            }
-          }),
+          prices,
         })
       }
     }
 
-    return customerTypes
+    return response
   }
 
   async createOrUpdatePrices(
