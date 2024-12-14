@@ -20,8 +20,8 @@ export const listPrices = async (req: Request, res: Response, next: NextFunction
 export const getPricesByLine = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const repository = new PriceRepository()
-    const priceResource = new PriceResource(await repository.getById(req.params.id))
-    res.status(200).json({ price: priceResource.item() })
+    const prices = await repository.getByLineId(req.params.id)
+    res.status(200).json({ prices })
   } catch (error: any) {
     next(error)
   }

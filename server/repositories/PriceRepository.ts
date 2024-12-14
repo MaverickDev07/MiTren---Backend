@@ -3,6 +3,7 @@ import Price, { PriceAttributes } from '../database/models/Price'
 import Route from '../database/models/Route'
 import ApiError from '../errors/ApiError'
 import BaseRepository from './BaseRepository'
+import CustomerType from '../database/models/CustomerType'
 
 export default class PriceRepository extends BaseRepository<PriceAttributes> {
   protected allowedSortByFields = ['customer_type', 'status', 'createdAt', 'updatedAt']
@@ -12,9 +13,40 @@ export default class PriceRepository extends BaseRepository<PriceAttributes> {
     super(Price)
   }
 
-  getByLineId(id: string | Types.ObjectId): Promise<Array<PriceAttributes>> {
+  async getByLineId(id: string | Types.ObjectId): Promise<any> {
+    // Promise<Array<any>>
     console.log(id)
-    return this.model.find().exec()
+    const route = await Route.findOne({ line_id: id, status: 'ACTIVE' }).exec()
+    const customerTypes = await CustomerType.find({ status: 'ACTIVE' }).exec()
+    const response: any = []
+
+    if (!route) {
+      throw new ApiError({
+        name: 'STATIONS_NOT_IN_ROUTE',
+        message: 'Las estaciones no pertenecen a la misma ruta.',
+        status: 400,
+        code: 'ERR_SNR',
+      })
+    }
+
+    // Obtener todas las combinaciones de estaciones en la ruta
+    for (const [index, start_station] of route.stations.entries()) {
+      for (const end_station of route.stations.slice(index + 1)) {
+        console.log(start_station, end_station)
+        response.push({
+          start_station,
+          end_station,
+          prices: customerTypes.map(customerType => {
+            return {
+              customer_type: customerType.customer_type,
+              price: 0,
+            }
+          }),
+        })
+      }
+    }
+
+    return customerTypes
   }
 
   async createOrUpdatePrices(
