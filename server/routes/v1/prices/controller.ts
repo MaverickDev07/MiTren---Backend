@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import PriceResource from '../../../resources/PriceResource'
 import PriceRepository from '../../../repositories/PriceRepository'
+import ApiError from '../../../errors/ApiError'
 
 export const listPrices = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -17,16 +18,6 @@ export const listPrices = async (req: Request, res: Response, next: NextFunction
   }
 }
 
-export const getPricesByLine = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const repository = new PriceRepository()
-    const prices = await repository.getByLineId(req.params.id)
-    res.status(200).json({ prices })
-  } catch (error: any) {
-    next(error)
-  }
-}
-
 export const getPrice = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const repository = new PriceRepository()
@@ -37,10 +28,22 @@ export const getPrice = async (req: Request, res: Response, next: NextFunction) 
   }
 }
 
-export const getPriceByLine = async (req: Request, res: Response, next: NextFunction) => {
+export const getPricesByLine = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const repository = new PriceRepository()
-    const listPrice = await repository.getByLineId(req.params.id)
+
+    const limit = req.query.limit ? +req.query.limit : 10
+    const page = req.query.page ? +req.query.page : 1
+
+    if (isNaN(limit) || isNaN(page)) {
+      throw new ApiError({
+        name: 'INVALID_DATA_ERROR',
+        message: 'Los parámetros de paginación deben ser números enteros',
+        status: 422,
+        code: 'ERR_INV',
+      })
+    }
+    const listPrice = await repository.getByLineId(req.params.id, { limit, page })
     res.status(200).json({ listPrice })
   } catch (error: any) {
     next(error)
@@ -52,6 +55,16 @@ export const createPrice = async (req: Request, res: Response, next: NextFunctio
     const repository = new PriceRepository()
     const priceResource = new PriceResource(await repository.create(req.body))
     res.status(201).json({ price: priceResource.item() })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const createOrUpdatePrices = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const repository = new PriceRepository()
+    const prices = await repository.createOrUpdate(req.body)
+    res.status(201).json(prices)
   } catch (error) {
     next(error)
   }

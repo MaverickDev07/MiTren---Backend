@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { Types } from 'mongoose'
 import Price, { PriceAttributes } from '../database/models/Price'
 import Route from '../database/models/Route'
@@ -13,12 +14,52 @@ export default class PriceRepository extends BaseRepository<PriceAttributes> {
     super(Price)
   }
 
-  async getByLineId(id: string | Types.ObjectId): Promise<any> {
+  async createOrUpdate(prices: any): Promise<any> {
+    let modifiedCount = 0
+    let upsertedCount = 0
+
+    for (const price of prices) {
+      for (const c_type of price.prices) {
+        const priceData = {
+          base_price: c_type.base_price,
+          customer_type: c_type.customer_type,
+          customer_type_id: c_type.customer_type_id,
+          start_station: price.start_station,
+          end_station: price.end_station,
+        }
+
+        const createOrUpdatePrice = await Price.updateOne(
+          {
+            customer_type: priceData.customer_type.toUpperCase(),
+            customer_type_id: priceData.customer_type_id,
+            'start_station.station_id': priceData.start_station.station_id,
+            'end_station.station_id': priceData.end_station.station_id,
+          },
+          priceData,
+          { upsert: true },
+        )
+
+        if (createOrUpdatePrice.upsertedCount) {
+          upsertedCount++
+        }
+        if (createOrUpdatePrice.modifiedCount) {
+          modifiedCount++
+        }
+      }
+    }
+
+    return {
+      upsertedCount,
+      modifiedCount,
+    }
+  }
+
+  async getByLineId(id: string | Types.ObjectId, params: any): Promise<any> {
     // Promise<Array<any>>
-    console.log(id)
+    const { limit, page } = params
     const route = await Route.findOne({ line_id: id, status: 'ACTIVE' }).exec()
     const customerTypes = await CustomerType.find({ status: 'ACTIVE' }).exec()
-    const response: any = []
+    const docs: any = []
 
     if (!route) {
       throw new ApiError({
@@ -47,7 +88,7 @@ export default class PriceRepository extends BaseRepository<PriceAttributes> {
           })
         }
 
-        response.push({
+        docs.push({
           start_station,
           end_station,
           prices,
@@ -55,7 +96,31 @@ export default class PriceRepository extends BaseRepository<PriceAttributes> {
       }
     }
 
-    return response
+    // Realizar la paginación manualmente
+    const totalDocs = docs.length
+    const startIndex = (page - 1) * limit
+    const endIndex = page * limit
+    const hasPrevPage = page > 1
+    const hasNextPage = endIndex < totalDocs
+    const prevPage = hasPrevPage ? page - 1 : null
+    const nextPage = hasNextPage ? page + 1 : null
+
+    const paginated = docs.slice(startIndex, endIndex)
+
+    // Devolver paginación
+    const paginacion = {
+      docs: paginated,
+      totalDocs,
+      limit,
+      totalPages: Math.ceil(totalDocs / limit),
+      page,
+      hasPrevPage,
+      hasNextPage,
+      prevPage,
+      nextPage,
+    }
+
+    return paginacion
   }
 
   async createOrUpdatePrices(
